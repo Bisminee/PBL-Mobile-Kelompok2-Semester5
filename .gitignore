@@ -44,6 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Local project documentation (kept out of Git)
+/docs/
+
 #context
 context
 proposal
