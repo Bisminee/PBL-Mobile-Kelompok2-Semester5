@@ -8,6 +8,9 @@ satu Pull Request.**
 
 ## 1. Cara Pakai
 
+> Baru pertama kali pakai GitHub? Baca dulu
+> [`panduan-untuk-anggota-baru.md`](panduan-untuk-anggota-baru.md).
+
 ```bash
 # ambil versi terbaru
 git checkout main
