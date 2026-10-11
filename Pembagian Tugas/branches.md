@@ -8,8 +8,8 @@ satu Pull Request.**
 
 ## 1. Cara Pakai
 
-> Baru pertama kali pakai GitHub? Baca dulu
-> [`panduan-untuk-anggota-baru.md`](panduan-untuk-anggota-baru.md).
+> Baru pertama kali pakai GitHub? Baca dulu panduan lengkap di
+> [`README.md`](../README.md) (bagian 0–9).
 
 ```bash
 # ambil versi terbaru
