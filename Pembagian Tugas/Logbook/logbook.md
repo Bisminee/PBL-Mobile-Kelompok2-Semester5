@@ -21,7 +21,7 @@
 | Minggu | Periode | Fokus | Status |
 |--------|---------|-------|--------|
 | 1 | 28 Sep – 4 Okt | Fondasi aplikasi (E1): navigasi, layar, state, kamera, dokumentasi | ✅ |
-| 2 | 5 – 11 Okt | | ⬜ |
+| 2 | 5 – 11 Okt | Logika harmoni warna (E6.4), alur Pull Request | 🟡 |
 | 3 | 12 – 18 Okt | | ⬜ |
 | 4 | 19 – 25 Okt | | ⬜ |
 | 5 | 26 Okt – 1 Nov | | ⬜ |
@@ -59,16 +59,21 @@
 
 ## Minggu 2 — 5 s.d. 11 Okt 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:** _(_isi fokus minggu ini_)_
+**Status:** 🟡 Berjalan
+**Fokus:** Mengerjakan tugas independen pertama (logika harmoni warna), membuka alur Pull Request, dan memperbarui dokumentasi.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 11 Okt | Harmoni warna (E6.4) | Mengimplementasikan 4 aturan harmoni (monochromatic, analogous, complementary, neutral) pada ruang warna CIELCh; fungsi evaluasi pasangan warna dan outfit; ambang yang dapat diubah; keluaran skor 0–1 + nama aturan untuk *explainability* | Nilai warna uji harus dipilih di ruang Lab (bukan HSV) agar kasus komplementer terukur | Integrasi ke skor cadangan rekomendasi (E7.5) | `lib/services/color_harmony.dart`, commit `ebf6c53` |
+| 11 Okt | Pengujian | Menulis 17 unit test: konversi warna, jarak hue, tiap aturan, kasus akromatik, agregasi outfit, dan ambang | — | Menambah test saat integrasi UI | `test/color_harmony_test.dart` |
+| 11 Okt | Kualitas & rilis | Analisis statis bersih, seluruh test lulus (19), dokumentasi fitur ditulis, lalu membuka Pull Request ke `main` | — | Review dan gabung PR | PR #2, `docs/features/004-color-harmony-rules.md` |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** Tugas independen E6.4 selesai. Logika harmoni warna siap dipakai sebagai fitur Model 3, lapisan *explainability*, dan skor cadangan.
 
 **Kendala terbuka:**
+1. Harmoni warna belum tersambung ke UI maupun Model 3 (menunggu E7.4/E7.5).
+2. PR #2 menunggu review sebelum digabung ke `main`.
+3. Gunakan alur branch → PR untuk tugas berikutnya (bukan langsung ke `main`).
 
 ---
 
