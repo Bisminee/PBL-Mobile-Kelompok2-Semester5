@@ -8,22 +8,11 @@ satu Pull Request.**
 
 ## 1. Cara Pakai
 
-> Baru pertama kali pakai GitHub? Baca dulu panduan lengkap di
-> [`README.md`](../README.md) (bagian 0–9).
+Panduan langkah demi langkah (clone, branch, commit, push, Pull Request) ada di
+[`README.md`](../README.md) bagian **3–9**.
 
-```bash
-# ambil versi terbaru
-git checkout main
-git pull origin main
-
-# pindah ke branch tugas yang mau dikerjakan
-git checkout feat/google-login
-
-# kerjakan, lalu simpan & upload
-git add .
-git commit -m "feat: ..."
-git push
-```
+Ringkasnya: pindah ke branch tugas kalian (`git checkout <branch>`), kerjakan,
+lalu commit dan push. **Jangan bekerja langsung di `main`.**
 
 ---
 
