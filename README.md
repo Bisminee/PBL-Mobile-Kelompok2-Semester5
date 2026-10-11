@@ -6,6 +6,10 @@ merekomendasikan kombinasi outfit.
 Panduan ini dibuat untuk **yang belum pernah pakai Git**. Ikuti dari atas ke
 bawah, cukup ketik perintah yang tertulis.
 
+> **Aturan utama proyek ini:** branch **dinamai sesuai fitur**, bukan sesuai nama
+> orang. Tidak ada branch `bisma`, `abim`, dan seterusnya. Semua tugas bersifat
+> terbuka — siapa pun boleh mengerjakannya (lihat folder **`Pembagian Tugas/`**).
+
 ---
 
 ## 0. Git Itu Apa? (Baca Dulu, 2 Menit)
@@ -20,22 +24,18 @@ Bayangkan kode kita seperti **dokumen bersama**:
 | **Commit** | Seperti **"Save"** di game. Menyimpan perubahan di komputer kalian. |
 | **Push** | **Upload** commit dari komputer ke GitHub. |
 | **Pull** | **Download** perubahan terbaru dari GitHub ke komputer. |
-| **Branch** | **Salinan kerja pribadi**. Kalian mengerjakan bagian kalian di sini tanpa mengganggu teman. |
+| **Branch** | **Jalur kerja terpisah** untuk mengerjakan satu fitur tanpa mengganggu yang lain. |
 | **`main`** | Branch **utama** — versi yang harus selalu aman/stabil. |
-| **Pull Request (PR)** | Permintaan **"tolong gabungkan pekerjaan saya ke `main`"**. Teman akan review dulu. |
+| **Pull Request (PR)** | Permintaan **"tolong gabungkan fitur saya ke `main`"**. Teman akan review dulu. |
 
 **Aturan paling penting:**
 
 > 🚫 **Jangan pernah mengerjakan langsung di `main`.**
-> Setiap orang punya **branch pribadi** masing-masing. `main` = hasil final.
-
-Ganti `<repo-url>` di bawah dengan URL GitHub kalian.
+> Buat **branch baru untuk setiap fitur**.
 
 ---
 
 ## 1. Pasang Alat (Sekali Saja)
-
-Pasang di laptop:
 
 1. **Git** — https://git-scm.com/downloads
 2. **Flutter** (pilih *stable*) — https://docs.flutter.dev/get-started/install
@@ -48,8 +48,8 @@ Cek sudah terpasang atau belum:
 flutter doctor
 ```
 
-**Penjelasan:** perintah ini memeriksa apakah alat sudah lengkap. Jika ada tanda
-silang merah, ikuti sarannya sampai semua centang hijau.
+**Penjelasan:** perintah ini memeriksa kelengkapan alat. Jika ada tanda silang
+merah, ikuti sarannya sampai semua centang hijau.
 
 ---
 
@@ -62,8 +62,6 @@ git clone <repo-url>
 ```
 
 **Penjelasan:** menyalin seluruh proyek dari GitHub ke laptop kalian.
-Ganti `<repo-url>` dengan link repo kalian (contoh:
-`https://github.com/tim-kami/sera-z.git`).
 
 **Langkah 2 — Masuk ke folder proyek:**
 
@@ -82,162 +80,153 @@ flutter pub get
 **Penjelasan:** mengunduh semua "bahan" yang dipakai proyek. Wajib dilakukan
 setelah clone, dan setiap kali file `pubspec.yaml` berubah.
 
-**Langkah 4 — Cek HP/emulator yang siap:**
-
-```bash
-flutter devices
-```
-
-**Penjelasan:** menampilkan daftar perangkat yang bisa dipakai untuk menjalankan
-aplikasi.
-
-**Langkah 5 — Jalankan aplikasi:**
+**Langkah 4 — Jalankan aplikasi:**
 
 ```bash
 flutter run
 ```
 
-**Penjelasan:** menjalankan aplikasi di perangkat tadi. Kalau ada lebih dari satu
-perangkat, tentukan dengan `flutter run -d <device-id>`.
-
-> Kalian **tidak perlu** menyalin folder `build/` atau `.dart_tool/`. Folder itu
-> dibuat otomatis oleh Flutter.
+**Penjelasan:** menjalankan aplikasi di HP/emulator yang terdeteksi.
 
 ---
 
-## 3. Buat Branch Pribadi (Sekali Saja)
+## 3. Model Branch: Satu Branch per Fitur (Bukan per Orang)
 
-Setiap orang cukup membuat **satu branch pribadi** dan dipakai terus.
+### 3.1 Aturan
+- **Tidak ada branch bernama orang.** Branch dinamai sesuai **fitur/pekerjaan**.
+- Setiap fitur punya **satu branch** dan **satu Pull Request**.
+- Branch dibuat dari `main` terbaru, umurnya pendek (1–3 hari).
+- Setelah PR digabung, branch dihapus.
 
-**Langkah 1 — Pastikan berada di `main` dan ambil versi terbaru:**
+### 3.2 Apa Itu "Fitur"?
+
+**Fitur** = pekerjaan yang *utuh, bisa diuji sendiri, dan bisa digabung lewat
+satu PR*. Cek dengan pertanyaan ini — kalau **semua "ya"**, berarti satu fitur:
+
+| Pertanyaan | Contoh |
+|------------|--------|
+| Bisa dijelaskan dalam **satu kalimat**? | "Pengguna bisa login dengan Google." |
+| Memberi **nilai** ke pengguna? | Login membuka aplikasi |
+| Bisa **diuji sendiri**? | Login bisa dites tanpa fitur lain |
+| Bisa digabung **tanpa merusak `main`**? | Ya |
+| Punya **kriteria penerimaan**? | "Login berhasil, sesi tersimpan" |
+| Cukup **kecil** untuk satu review? | Idealnya < ~400 baris |
+| Hanya melakukan **satu hal**? | Bukan "login + ubah tema" |
+
+Kalau gagal salah satu → itu **Epic** atau **Tugas**, bukan fitur.
+
+### 3.3 Hierarki
+```
+Epic    = kelompok besar          (E4: Model 1)
+Fitur   = unit siap rilis         (E4.4: latih YOLOv11n-cls)
+Tugas   = langkah di dalam fitur  (siapkan data, latih, evaluasi)
+Bug     = fix/...                 (perbaiki warna salah)
+```
+
+### 3.4 Penamaan Branch
+
+| Awalan | Untuk |
+|--------|-------|
+| `feat/` | Fitur baru |
+| `fix/` | Perbaikan bug |
+| `ml/` | Pekerjaan model/dataset (Python) |
+| `docs/` | Dokumentasi |
+| `test/` | Menambah/memperbaiki test |
+| `chore/` | Tugas kecil (update paket, dll.) |
+
+**Contoh untuk proyek kita:**
+
+| Tugas | Nama branch |
+|-------|-------------|
+| E2.1 Setup `sqflite` | `feat/sqflite-setup` |
+| E2.2 CRUD Lemari | `feat/wardrobe-crud` |
+| E3.1 Login Google | `feat/google-login` |
+| E4.4 Latih YOLOv11n-cls | `ml/yolov11n-cls` |
+| E5.2 K-Means warna | `feat/color-kmeans` |
+| E6.3 Latih MLP | `ml/compat-mlp` |
+| E8.1 UI Lemari | `feat/wardrobe-ui` |
+| E9.1 Rencana uji | `docs/test-plan` |
+
+> Jangan buat `feat/big-ml` (terlalu besar) atau `feat/login-dan-ubah-tema`
+> (dua hal sekaligus). Pecah menjadi beberapa branch.
+
+---
+
+## 4. Membuat Branch Fitur
+
+**Langkah 1 — Pastikan di `main` terbaru:**
 
 ```bash
 git checkout main
 git pull origin main
 ```
 
-**Penjelasan:**
-- `git checkout main` = pindah ke branch `main`.
-- `git pull origin main` = download perubahan terbaru dari `main`.
-
-**Langkah 2 — Buat branch pribadi lalu upload:**
+**Langkah 2 — Buat branch fitur:**
 
 ```bash
-git checkout -b bisma
-git push -u origin bisma
+git checkout -b feat/wardrobe-crud
 ```
 
-**Penjelasan:**
-- `git checkout -b bisma` = membuat branch baru bernama `bisma` **dan** langsung
-  pindah ke sana.
-- `git push -u origin bisma` = upload branch `bisma` ke GitHub. Cukup sekali;
-  nanti cukup `git push`.
+**Penjelasan:** `git checkout -b` = membuat branch baru **dan** langsung pindah
+ke sana. Ganti `feat/wardrobe-crud` dengan nama fitur kalian.
 
-> Ganti `bisma` dengan nama kalian: `abim`, `falahi`, `rizki`, atau `izza`.
-> Branch ini dipakai sampai proyek selesai — **tidak perlu bikin branch baru**
-> tiap mau ubah sesuatu.
+**Langkah 3 — Upload branch ke GitHub (sekali saja):**
+
+```bash
+git push -u origin feat/wardrobe-crud
+```
 
 ---
 
-## 4. Kerja Harian (Yang Sering Kalian Lakukan)
+## 5. Kerja Harian (Commit & Push)
 
-Lakukan langkah ini setiap kali mau mengerjakan sesuatu.
-
-**Langkah 1 — Pindah ke branch pribadi:**
-
-```bash
-git checkout bisma
-```
-
-**Penjelasan:** memastikan kalian bekerja di branch sendiri, bukan `main`.
-
-**Langkah 2 — Ambil update terbaru (opsional tapi disarankan):**
-
-```bash
-git pull origin main
-```
-
-**Penjelasan:** memastikan pekerjaan kalian dimulai dari versi terbaru.
-
-**Langkah 3 — Edit kode** seperti biasa (buka `lib/` di editor).
-
-**Langkah 4 — Lihat file apa yang berubah:**
+**Langkah 1 — Lihat file yang berubah:**
 
 ```bash
 git status
 ```
 
-**Penjelasan:** menampilkan daftar file yang kalian ubah. Berguna untuk memastikan
-tidak ada file yang salah ikut.
-
-**Langkah 5 — Tandai semua perubahan untuk disimpan:**
+**Langkah 2 — Tandai semua perubahan:**
 
 ```bash
 git add .
 ```
 
-**Penjelasan:** memilih file yang akan dimasukkan ke "save". Tanda titik (`.`)
-artinya semua file yang berubah.
-
-**Langkah 6 — Simpan perubahan (commit):**
+**Langkah 3 — Simpan (commit):**
 
 ```bash
-git commit -m "feat: tambah tombol login google"
+git commit -m "feat: tambah CRUD lemari baju"
 ```
 
-**Penjelasan:** menyimpan perubahan sebagai satu riwayat. Teks dalam tanda kutip
-adalah keterangan singkat perubahan kalian.
-
-**Langkah 7 — Upload ke GitHub (push):**
+**Langkah 4 — Upload (push):**
 
 ```bash
 git push
 ```
 
-**Penjelasan:** mengirim commit dari laptop ke branch pribadi di GitHub.
+> **Ulangi setiap menyelesaikan satu bagian pekerjaan.**
 
-> **Ulangi Langkah 1–7 setiap kali menyelesaikan satu bagian pekerjaan.**
-
-**Tips penulisan pesan commit:**
-
-| Awalan | Untuk perubahan apa |
-|--------|---------------------|
-| `feat:` | Fitur baru |
-| `fix:` | Perbaikan bug |
-| `docs:` | Dokumentasi |
-| `refactor:` | Rapikan kode tanpa ubah fungsi |
-| `test:` | Menambah/mengubah test |
-| `chore:` | Tugas kecil (update package, dll.) |
-
-Contoh: `fix: perbaiki warna terdeteksi salah`
+**Awalan pesan commit:** `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`.
 
 ---
 
-## 5. Minta Gabung ke `main` (Pull Request)
+## 6. Minta Gabung ke `main` (Pull Request)
 
-Kalau pekerjaan di branch pribadi sudah siap:
-
-1. Buka repo kalian di **GitHub** (browser).
-2. Akan muncul tombol **"Compare & pull request"** — klik itu.
-   (Kalau tidak muncul: klik tab **Pull requests** → **New pull request**.)
-3. Pastikan:
-   - **base:** `main`
-   - **compare:** `bisma` (branch kalian)
+1. Buka repo di **GitHub** (browser).
+2. Klik **"Compare & pull request"** untuk branch kalian.
+3. Pastikan **base: `main`** dan **compare: `feat/...`** (branch kalian).
 4. Isi deskripsi: **apa yang diubah** dan **cara mengetesnya**.
 5. Klik **Create pull request**.
-6. Minta teman untuk **review**. Kalau sudah setuju, klik
+6. Minta teman **review**. Setelah setuju, klik
    **Merge pull request** → **Confirm merge**.
-7. Selesai! Branch pribadi kalian **tidak dihapus** — tetap dipakai lagi.
+7. Hapus branch fitur setelah digabung (opsional).
 
-**Penjelasan:** Pull Request = cara sopan meminta izin menggabungkan pekerjaan
-kalian. Fitur ini yang membuat `main` tetap aman karena ada pengecekan teman.
+**Penjelasan:** PR adalah cara sopan meminta izin menggabungkan fitur. `main`
+tetap aman karena ada pengecekan teman.
 
 ---
 
-## 6. Cek Update di `main` (Agar Tidak Ketinggalan)
-
-Kalau teman kalian sudah merge pekerjaannya, `main` jadi lebih baru dari branch
-kalian. Ikuti ini untuk menyamakan:
+## 7. Cek Update di `main` (Agar Tidak Ketinggalan)
 
 **Langkah 1 — Lihat apa yang baru di `main`:**
 
@@ -246,11 +235,6 @@ git fetch origin
 git log HEAD..origin/main --oneline
 ```
 
-**Penjelasan:**
-- `git fetch origin` = cek kabar terbaru dari GitHub (belum mengubah file kalian).
-- `git log HEAD..origin/main --oneline` = daftar commit di `main` yang belum ada
-  di branch kalian.
-
 **Langkah 2 — Update `main` di laptop:**
 
 ```bash
@@ -258,19 +242,16 @@ git checkout main
 git pull origin main
 ```
 
-**Langkah 3 — Bawa update itu ke branch pribadi:**
+**Langkah 3 — Bawa update itu ke branch fitur kalian:**
 
 ```bash
-git checkout bisma
+git checkout feat/wardrobe-crud
 git merge main
 ```
 
-**Penjelasan:** `git merge main` menggabungkan versi `main` terbaru ke branch
-kalian, supaya tetap selaras.
-
 ---
 
-## 7. Kalau Muncul Konflik
+## 8. Kalau Muncul Konflik
 
 Konflik terjadi kalau kalian dan teman mengubah **baris yang sama**. Git akan
 menandai file itu seperti ini:
@@ -296,12 +277,11 @@ git commit -m "merge: selesaikan konflik dengan main"
 git push
 ```
 
-> Tenang, konflik itu **normal** dan bukan tanda kesalahan. Ini tugas biasa saat
-> kerja tim.
+> Konflik itu **normal** dan bukan tanda kesalahan.
 
 ---
 
-## 8. Ringkasan Cepat (Simpan Halaman Ini)
+## 9. Ringkasan Cepat
 
 ```bash
 # ---- SEKALI SAJA ----
@@ -309,20 +289,15 @@ git clone <repo-url>
 cd PBL
 flutter pub get
 
-# ---- SEKALI SAJA (buat branch pribadi) ----
+# ---- SETIAP FITUR BARU ----
 git checkout main
 git pull origin main
-git checkout -b bisma
-git push -u origin bisma
-
-# ---- SETIAP KALI KERJA ----
-git checkout bisma
-git pull origin main
-# ... edit kode ...
+git checkout -b feat/nama-fitur
+# ... kerjakan fitur ...
 git status
 git add .
 git commit -m "feat: deskripsi singkat"
-git push
+git push -u origin feat/nama-fitur
 
 # ---- SAAT SIAP GABUNG ----
 # buka GitHub -> Compare & pull request -> Create pull request
@@ -330,17 +305,17 @@ git push
 
 ---
 
-## 9. Jangan Di-commit (Sudah Otomatis Diabaikan)
+## 10. Jangan Di-commit (Sudah Otomatis Diabaikan)
 
 - `build/`, `.dart_tool/`, `.idea/`, `*.iml`
 - `.flutter-plugins-dependencies`
 - `android/local.properties`, `android/.gradle/`, `ios/Pods/`
 - **Rahasia/kunci** (API key, `google-services.json`) — jangan pernah di-upload
-- PDF besar (bagikan lewat Google Drive saja)
+- Folder `context/` (dokumentasi internal, sengaja diabaikan)
 
 ---
 
-## 10. Arti Semua Perintah (Kamus Kilat)
+## 11. Arti Semua Perintah (Kamus Kilat)
 
 ### Git
 
@@ -358,6 +333,7 @@ git push
 | `git push` | Upload commit ke GitHub. |
 | `git push -u origin <branch>` | Upload branch baru (cukup sekali, `-u` menghubungkan). |
 | `git branch` | Lihat daftar branch. `*` = branch aktif. |
+| `git branch -d <branch>` | Hapus branch lokal yang sudah digabung. |
 | `git log --oneline -10` | Lihat 10 riwayat commit terakhir. |
 | `git merge main` | Gabungkan versi `main` ke branch kalian. |
 | `git remote -v` | Lihat link GitHub yang terhubung. |
@@ -375,7 +351,7 @@ git push
 
 ---
 
-## 11. Butuh Bantuan?
+## 12. Butuh Bantuan?
 
 - Baca pesan error dari atas ke bawah — biasanya ada petunjuknya.
 - Coba `git status` dulu untuk melihat kondisi kalian.
