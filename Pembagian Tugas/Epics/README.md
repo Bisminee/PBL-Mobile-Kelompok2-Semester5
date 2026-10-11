@@ -18,7 +18,7 @@ Tidak ada pembagian per orang — semua tugas terbuka untuk siapa saja
 | E3 | [Autentikasi & Cloud](E3-autentikasi-cloud.md) | ⬜ Belum |
 | E4 | [Model 1 — Klasifikasi Jenis Pakaian](E4-model-1-klasifikasi.md) | ⬜ Belum |
 | E5 | [Modul 2 — Ekstraksi Warna](E5-modul-warna.md) | ⬜ Belum |
-| E6 | [Model 3 — Skor Kecocokan](E6-model-3-kecocokan.md) | ⬜ Belum |
+| E6 | [Model 3 — Skor Kecocokan](E6-model-3-kecocokan.md) | 🟡 Sebagian (E6.4 selesai) |
 | E7 | [Integrasi On-device](E7-integrasi-on-device.md) | ⬜ Belum |
 | E8 | [Penyelesaian Fitur](E8-penyelesaian-fitur.md) | 🟡 Sebagian |
 | E9 | [QA & Pengujian](E9-qa-pengujian.md) | 🟡 Sebagian |

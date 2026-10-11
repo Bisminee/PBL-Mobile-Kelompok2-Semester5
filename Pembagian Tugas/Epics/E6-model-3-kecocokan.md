@@ -1,6 +1,6 @@
 # E6 — Model 3: Skor Kecocokan
 
-**Status:** ⬜ Belum
+**Status:** 🟡 Sebagian — E6.4 (aturan harmoni warna) selesai, sudah digabung ke `main` lewat PR #2
 
 ## 1. Apa yang harus dilakukan
 - Menyusun **data pasangan pakaian** (atasan–bawahan) yang dianggap cocok.

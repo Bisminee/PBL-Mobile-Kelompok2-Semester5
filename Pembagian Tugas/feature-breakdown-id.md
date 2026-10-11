@@ -28,7 +28,7 @@ Untuk cara mengambil tugas dan ketergantungan, lihat `context/pembagian-tugas.md
 | E3 | Autentikasi & Cloud | ⬜ Belum |
 | E4 | Model 1 — Klasifikasi jenis pakaian | ⬜ Belum |
 | E5 | Modul 2 — Ekstraksi warna | ⬜ Belum |
-| E6 | Model 3 — Skor kecocokan | ⬜ Belum |
+| E6 | Model 3 — Skor kecocokan | 🟡 Sebagian (E6.4 selesai) |
 | E7 | Integrasi On-device | ⬜ Belum |
 | E8 | Penyelesaian Fitur | 🟡 Sebagian |
 | E9 | QA & Pengujian | 🟡 Sebagian |
@@ -103,7 +103,7 @@ Login → Home → Kamera → Rekomendasi → Detail, serta tangkap kamera.
 | E6.1 | Dataset pasangan + negative sampling | Membentuk pasangan (atasan, bawahan) yang cocok dan pasangan acak yang tidak cocok | 2 | E4.2 | Dataset pasangan berlabel |
 | E6.2 | Feature builder | Menyusun fitur input: kategori (one-hot) + nilai warna (HSV/Lab + selisih hue) | 1 | E6.1 | Vektor fitur terdefinisi |
 | E6.3 | Latih MLP + pembanding | Melatih model skor 0–1 dan membandingkan dengan Random Forest & Logistic Regression | 2 | E6.2 | Metrik vs baseline |
-| E6.4 | Aturan harmoni warna | Membuat skor aturan (komplementer, analog, monokromatik, netral) sebagai penjelas & cadangan | 1,5 | — | Skor aturan 0–1 |
+| E6.4 ✅ | Aturan harmoni warna | Membuat skor aturan (komplementer, analog, monokromatik, netral) sebagai penjelas & cadangan | 1,5 | — | Skor aturan 0–1 — **selesai (PR #2)** |
 | E6.5 | Evaluasi model | Mengukur AUC dan precision@3 serta membandingkan dengan baseline aturan | 1 | E6.3, E6.4 | Target AUC ≥ 0,75 |
 | E6.6 | Ekspor MLP TFLite | Mengonversi MLP ke TFLite int8 untuk dijalankan di perangkat | 1 | E6.3 | `.tflite` jalan di perangkat |
 
