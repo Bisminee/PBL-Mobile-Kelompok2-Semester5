@@ -82,7 +82,7 @@ Login → Home → Kamera → Rekomendasi → Detail, serta tangkap kamera.
 ### E4 — Model 1: Klasifikasi jenis pakaian
 | ID | Jobdesk | Penjelasan | Est | Prasyarat | Kriteria Penerimaan |
 |----|---------|------------|----:|-----------|---------------------|
-| E4.1 | Dataset + EDA | Mengunduh Clothing Dataset Full, memeriksa sebaran, dan membuang kelas ambigu | 1 | — | Dataset bersih + laporan singkat |
+| E4.1 | Dataset + EDA | Mengunduh 3 dataset bebas (Clothing Full, Fashion Product Images, Carousell), memeriksa sebaran, dan membuang kelas ambigu | 1 | — | Dataset bersih + laporan singkat |
 | E4.2 | Gabung kelas + mapping + split | Menggabungkan kelas serupa menjadi ±8–10 kelas, memetakan ke kategori fungsional, membagi 70/15/15 | 1 | E4.1 | Tabel mapping + split tersimpan |
 | E4.3 | Baseline MobileNetV2 | Melatih model pembanding sederhana sebagai patokan akurasi | 1,5 | E4.2 | Akurasi baseline tercatat |
 | E4.4 | Latih YOLOv11n-cls | Melatih model utama (transfer learning + fine-tune) untuk klasifikasi jenis pakaian | 2,5 | E4.2 | Model terlatih + checkpoint |
@@ -100,7 +100,7 @@ Login → Home → Kamera → Rekomendasi → Detail, serta tangkap kamera.
 ### E6 — Model 3: Skor kecocokan
 | ID | Jobdesk | Penjelasan | Est | Prasyarat | Kriteria Penerimaan |
 |----|---------|------------|----:|-----------|---------------------|
-| E6.1 | Dataset pasangan + negative sampling | Membentuk pasangan (atasan, bawahan) yang cocok dan pasangan acak yang tidak cocok | 2 | E4.2 | Dataset pasangan berlabel |
+| E6.1 | Dataset pasangan + negative sampling | Membentuk pasangan (atasan, bawahan) dari Marqo/polyvore + Garments2Look dan pasangan acak yang tidak cocok | 2 | E4.2 | Dataset pasangan berlabel |
 | E6.2 | Feature builder | Menyusun fitur input: kategori (one-hot) + nilai warna (HSV/Lab + selisih hue) | 1 | E6.1 | Vektor fitur terdefinisi |
 | E6.3 | Latih MLP + pembanding | Melatih model skor 0–1 dan membandingkan dengan Random Forest & Logistic Regression | 2 | E6.2 | Metrik vs baseline |
 | E6.4 ✅ | Aturan harmoni warna | Membuat skor aturan (komplementer, analog, monokromatik, netral) sebagai penjelas & cadangan | 1,5 | — | Skor aturan 0–1 — **selesai (PR #2)** |

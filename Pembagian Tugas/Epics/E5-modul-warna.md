@@ -36,5 +36,5 @@
   **E6** (warna menjadi fitur untuk skor kecocokan).
 
 ## 5. Referensi
-- Dataset referensi warna: `../dataset-fashion-color-recommendation.md`
+- Dataset referensi warna: `../../context/datasets-tambahan.md` §2 — label `baseColour` (MIT) sebagai eval set; pengganti Fashion & Color (NC)
 - Teori harmoni warna: `../referensi-metodologi.md`
