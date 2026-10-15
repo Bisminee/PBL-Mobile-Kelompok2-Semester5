@@ -50,14 +50,31 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
         if (actionLabel != null)
-          TextButton(onPressed: onAction, child: Text(actionLabel!)),
+          Flexible(
+            child: TextButton(
+              onPressed: onAction,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                actionLabel!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -102,6 +119,26 @@ class ColorDot extends StatelessWidget {
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 11)),
       ],
+    );
+  }
+}
+
+/// Membatasi lebar konten agar tetap nyaman di layar lebar (web/tablet).
+class MaxWidthBox extends StatelessWidget {
+  const MaxWidthBox({super.key, required this.child, this.maxWidth = 560});
+
+  final Widget child;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.sizeOf(context).width <= maxWidth) return child;
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: child,
+      ),
     );
   }
 }

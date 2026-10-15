@@ -101,7 +101,7 @@ class WardrobeScreen extends ConsumerWidget {
               child: const Text('Tampilkan Semua >'),
             ),
           ),
-          const SizedBox(height: 80),
+          SizedBox(height: 88 + MediaQuery.viewPaddingOf(context).bottom),
         ],
       ),
     );

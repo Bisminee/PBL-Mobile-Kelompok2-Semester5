@@ -27,7 +27,8 @@ class RecommendationScreen extends ConsumerWidget {
           ],
         ),
       ),
-      body: outfits.isEmpty
+      body: MaxWidthBox(
+        child: outfits.isEmpty
           ? _emptyState(context)
           : ListView(
               padding: const EdgeInsets.all(20),
@@ -50,6 +51,7 @@ class RecommendationScreen extends ConsumerWidget {
                 ],
               ],
             ),
+      ),
     );
   }
 

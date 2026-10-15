@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'placeholders.dart';
+
 /// Scaffold shared by the Home and Wardrobe tabs: bottom navigation bar with a
 /// raised center FAB that opens the camera.
 class MainShell extends StatelessWidget {
@@ -18,7 +20,7 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
+      body: MaxWidthBox(child: navigationShell),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/camera'),
         shape: const CircleBorder(),
@@ -28,6 +30,9 @@ class MainShell extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
+        // Tinggi eksplisit + ruang untuk gesture bar agar isi nav tidak terpotong.
+        height: 68 + MediaQuery.viewPaddingOf(context).bottom,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
             Expanded(
@@ -82,9 +87,17 @@ class _NavItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(selected ? activeIcon : icon, color: color),
+          Icon(selected ? activeIcon : icon, size: 22, color: color),
           const SizedBox(height: 2),
-          Text(label, style: TextStyle(fontSize: 12, color: color)),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12, color: color),
+            ),
+          ),
         ],
       ),
     );

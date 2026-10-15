@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../services/providers.dart';
+import '../widgets/placeholders.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -29,7 +30,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: MaxWidthBox(
+        child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Container(
@@ -104,6 +106,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

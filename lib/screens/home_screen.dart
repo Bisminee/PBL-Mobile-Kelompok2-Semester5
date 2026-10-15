@@ -113,7 +113,7 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 80),
+          SizedBox(height: 88 + MediaQuery.viewPaddingOf(context).bottom),
         ],
       ),
     );
