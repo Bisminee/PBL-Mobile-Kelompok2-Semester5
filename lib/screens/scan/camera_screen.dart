@@ -1,20 +1,23 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/garment.dart';
-import '../services/camera_service.dart';
-import '../services/providers.dart';
+import '../../config/app_routes.dart';
+import '../../config/app_text_styles.dart';
+import '../../services/camera_service.dart';
+import '../../widgets/scan/camera_controls.dart';
+import '../../widgets/scan/camera_overlay.dart';
 
-class CameraScreen extends ConsumerStatefulWidget {
+/// Layar kamera. Tampilan dari desain Sera-Z; logika kamera (inisialisasi,
+/// lifecycle, ganti kamera, ambil foto, penanganan error) dari versi `lib`.
+class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
   @override
-  ConsumerState<CameraScreen> createState() => _CameraScreenState();
+  State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends ConsumerState<CameraScreen>
+class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
   CameraController? _controller;
   int _cameraIndex = 0;
@@ -22,6 +25,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   String? _errorMessage;
 
   List<CameraDescription> get _cameras => CameraService.cameras;
+
+  bool get _canCapture {
+    final controller = _controller;
+    return controller != null &&
+        controller.value.isInitialized &&
+        !_isInitializing;
+  }
 
   @override
   void initState() {
@@ -93,20 +103,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       final XFile file = await controller.takePicture();
-
-      // Placeholder attributes until Model 1 (type) and Module 2 (color) run.
-      ref.read(wardrobeProvider.notifier).add(
-            Garment(
-              id: DateTime.now().microsecondsSinceEpoch.toString(),
-              category: 'Atasan',
-              colorName: 'merah',
-              colorValue: const Color(0xFFB23A48),
-              imagePath: file.path,
-            ),
-          );
-
       if (!mounted) return;
-      context.pushReplacement('/recommendation');
+      // Foto baru ditambahkan ke lemari setelah dikonfirmasi di halaman
+      // pratinjau ("Gunakan Foto"); "Ambil Ulang" kembali ke sini.
+      context.push(AppRoutes.cameraPreview, extra: file.path);
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -136,43 +136,33 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sera-Z Camera'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: _buildBody(),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              tooltip: 'Switch camera',
-              onPressed: _cameras.length < 2 ? null : _switchCamera,
-              icon: const Icon(Icons.cameraswitch),
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(child: _buildPreview()),
+                SafeArea(
+                  bottom: false,
+                  child: CameraOverlay(onClose: () => context.pop()),
+                ),
+              ],
             ),
-            IconButton.filled(
-              tooltip: 'Take picture',
-              iconSize: 36,
-              onPressed:
-                  _controller == null || !_controller!.value.isInitialized
-                      ? null
-                      : _takePicture,
-              icon: const Icon(Icons.camera_alt),
-            ),
-            IconButton(
-              tooltip: 'Refresh',
-              onPressed: _cameras.isEmpty
-                  ? null
-                  : () => _initializeCamera(_cameras[_cameraIndex]),
-              icon: const Icon(Icons.refresh),
-            ),
-          ],
-        ),
+          ),
+          CameraControls(
+            canCapture: _canCapture,
+            canSwitch: _cameras.length >= 2,
+            onCapture: _takePicture,
+            onSwitch: _switchCamera,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildPreview() {
     if (_errorMessage != null) {
       return Center(
         child: Padding(
@@ -180,9 +170,22 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.no_photography, size: 64),
+              const Icon(Icons.no_photography, size: 64, color: Colors.white),
               const SizedBox(height: 12),
-              Text(_errorMessage!, textAlign: TextAlign.center),
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body.copyWith(color: Colors.white),
+              ),
+              if (_cameras.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                TextButton.icon(
+                  onPressed: () => _initializeCamera(_cameras[_cameraIndex]),
+                  icon: const Icon(Icons.refresh, color: Colors.white),
+                  label: const Text('Refresh',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ],
           ),
         ),
@@ -193,7 +196,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     if (_isInitializing ||
         controller == null ||
         !controller.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(color: Colors.white));
     }
 
     // Read the real camera size (sensor preview size, in landscape
