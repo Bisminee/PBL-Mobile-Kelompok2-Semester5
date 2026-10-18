@@ -22,7 +22,7 @@
 |--------|---------|-------|--------|
 | 1 | 28 Sep – 4 Okt | Fondasi aplikasi (E1): navigasi, layar, state, kamera, dokumentasi | ✅ |
 | 2 | 5 – 11 Okt | Logika harmoni warna (E6.4), alur Pull Request | 🟡 |
-| 3 | 12 – 18 Okt | | ⬜ |
+| 3 | 12 – 18 Okt | Pipeline Model 1 (PR #3), kualitas UI, keputusan lisensi dataset, persiapan E4.1 | 🟡 |
 | 4 | 19 – 25 Okt | | ⬜ |
 | 5 | 26 Okt – 1 Nov | | ⬜ |
 | 6 | 2 – 8 Nov | | ⬜ |
@@ -79,16 +79,22 @@
 
 ## Minggu 3 — 12 s.d. 18 Okt 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:**
+**Status:** 🟡 Berjalan
+**Fokus:** Pipeline Model 1 (PR #3), perbaikan kualitas UI (responsive layout), keputusan lisensi dataset, dan persiapan E4.1 (dataset + EDA).
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 13 Okt | Pipeline Model 1 | Menyusun pipeline lengkap E4.1–E4.6: 6 script ML (persiapan dataset, penyeimbang, baseline, latih YOLOv11n-cls, evaluasi, ekspor TFLite), label maps 3 dataset, panduan teknis + rencana kerja tim; membuka PR #3 | Menunggu reviewer | Review & gabung PR #3 | PR #3, commit `febf71b` |
+| 15–16 Okt | Kualitas UI | Memperbaiki overflow layout & menambah scrolling (Detail: `NestedScrollView` + tab pinned; `MaxWidthBox`; `BottomAppBar` adaptif); 26 widget test responsif di 4 ukuran layar; `flutter analyze` bersih, 45 test lulus | — | — | commit `5bbe1ac`, `test/layout_test.dart` |
+| 16 Okt | Dataset & dokumen | Audit lisensi dataset (20+ kandidat) → memilih paket bebas: Clothing Full (CC0), Fashion Product Images (MIT), Carousell (MIT); mengganti dataset non-komersial di rencana (FashionStylist → Marqo/polyvore + Garments2Look; Digikala → `baseColour`); menyelaraskan dokumen tugas E4/E5/E6; menulis ulang panduan Model 1 & `ml/README` (Bahasa Indonesia) | — | Unduh dataset | commit `f3ffa00`; PR #3 (`4183345`, `7145600`) |
+| 18 Okt | Persiapan E4.1 | Menyiapkan lingkungan ML (`ml/.venv`: pandas, pillow, matplotlib), menulis skrip EDA `ml/scripts/00_eda.py`, membuat `ml/data/raw/`; mulai unduh 3 dataset manual dari Kaggle | Dataset belum selesai diunduh (manual via browser) | Jalankan EDA → E4.2 | `ml/scripts/00_eda.py` |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** Pipeline Model 1 diajukan lewat PR #3 (menunggu review); PR #2 (harmoni warna) digabung ke `main`; perbaikan responsive layout masuk `main` (45 test lulus); keputusan lisensi dataset difinalkan + dokumen tugas diselaraskan (E4/E5/E6); lingkungan ML + skrip EDA siap; branch bernama orang dibersihkan. Jalur ML (dataset) masih menunggu unduhan.
 
 **Kendala terbuka:**
+1. Dataset belum diunduh → EDA & E4.2 bergeser (jalur kritis).
+2. PR #3 menunggu reviewer.
+3. Harmoni warna belum tersambung ke UI/Model 3 (menunggu E7.4/E7.5).
 
 ---
 
