@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/outfit.dart';
-import '../services/providers.dart';
-import '../widgets/placeholders.dart';
+import '../config/app_routes.dart';
+import '../config/app_text_styles.dart';
+import '../widgets/circle_icon_button.dart';
+import '../widgets/pill_chip.dart';
+import '../widgets/outfit_featured_card.dart';
+import '../widgets/outfit_compact_card.dart';
 
-class RecommendationScreen extends ConsumerWidget {
+class RecommendationScreen extends StatefulWidget {
   const RecommendationScreen({super.key});
 
   @override
+<<<<<<< Updated upstream
   Widget build(BuildContext context, WidgetRef ref) {
     final outfits = ref.watch(recommendationsProvider);
 
@@ -109,113 +112,94 @@ class RecommendationScreen extends ConsumerWidget {
       ),
     );
   }
+=======
+  State<RecommendationScreen> createState() => _RecommendationScreenState();
+>>>>>>> Stashed changes
 }
 
-class _PairCard extends StatelessWidget {
-  const _PairCard({
-    required this.number,
-    required this.outfit,
-    required this.onDetail,
-  });
-
-  final int number;
-  final Outfit outfit;
-  final VoidCallback onDetail;
+class _RecommendationScreenState extends State<RecommendationScreen> {
+  static const _filters = ['Semua', 'Kampus', 'Santai', 'Hangout'];
+  String _filter = 'Semua';
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text('$number',
-                          style:
-                              const TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(outfit.title,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(outfit.subtitle,
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.black54)),
-                        ],
-                      ),
-                    ),
-                    Text('${outfit.scorePercent}%',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    ColorDot(
-                        color: outfit.top.colorValue,
-                        label: outfit.top.colorName),
-                    const SizedBox(width: 16),
-                    ColorDot(
-                        color: outfit.bottom.colorValue,
-                        label: outfit.bottom.colorName),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                for (final reason in outfit.reasons)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 2),
-                    child: Text('• $reason',
-                        style: const TextStyle(fontSize: 13, height: 1.4)),
-                  ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          Row(
+    void openDetail() => context.push(AppRoutes.detail);
+
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Outfit disimpan')),
-                    );
-                  },
-                  child: const Text('Simpan'),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleIconButton(
+                      icon: Icons.chevron_left, onPressed: () => context.pop()),
+                  const CircleIconButton(icon: Icons.tune),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text('Rekomendasi Outfit', style: AppTextStyles.display),
+              const SizedBox(height: 6),
+              Text('Ditemukan berdasarkan pakaian yang kamu miliki.',
+                  style: AppTextStyles.bodySecondary),
+              const SizedBox(height: 14),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final f in _filters) ...[
+                      PillChip(
+                        label: f,
+                        selected: f == _filter,
+                        onTap: () => setState(() => _filter = f),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                  ],
                 ),
               ),
-              const SizedBox(height: 40, child: VerticalDivider(width: 1)),
-              Expanded(
-                child: TextButton(
-                  onPressed: onDetail,
-                  child: const Text('Detail'),
-                ),
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text('4 OUTFIT DITEMUKAN', style: AppTextStyles.mono(10)),
               ),
+              const SizedBox(height: 14),
+              OutfitFeaturedCard(onDetail: openDetail),
+              const SizedBox(height: 14),
+              OutfitCompactCard(
+                title: 'Clean Minimal',
+                score: 89,
+                items: 'Kaos · Jeans · Sneakers',
+                description: 'Abu denim melembutkan hitam, sneakers putih membuat tampilan ringan.',
+                tags: const ['Color Harmony', 'Your Wardrobe'],
+                onTap: openDetail,
+              ),
+              const SizedBox(height: 14),
+              OutfitCompactCard(
+                title: 'Layered Neutral',
+                score: 86,
+                items: 'Coat · Kaos · Chino',
+                description: 'Coat abu menambah lapisan rapi di atas kaos hitam, pas untuk presentasi.',
+                tags: const ['Color Harmony', 'Layering'],
+                onTap: openDetail,
+              ),
+              const SizedBox(height: 14),
+              OutfitCompactCard(
+                title: 'Tonal Street',
+                score: 81,
+                items: 'Kaos · Celana · Sneakers',
+                description: 'Tone hitam penuh terlihat tegas; sneakers putih jadi titik kontras.',
+                tags: const ['Your Wardrobe'],
+                onTap: openDetail,
+              ),
+              const SizedBox(height: 32),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

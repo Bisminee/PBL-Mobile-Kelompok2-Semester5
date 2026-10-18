@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+<<<<<<< Updated upstream
 /// Scaffold shared by the Home and Wardrobe tabs: bottom navigation bar with a
 /// raised center FAB that opens the camera.
+=======
+import '../config/app_routes.dart';
+import 'floating_nav_bar.dart';
+
+/// Shell dengan bottom nav melayang: Home | Kamera | Lemari.
+/// Profil dibuka dari avatar di Home.
+>>>>>>> Stashed changes
 class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.navigationShell});
 
@@ -18,6 +26,7 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< Updated upstream
       body: navigationShell,
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/camera'),
@@ -86,6 +95,15 @@ class _NavItem extends StatelessWidget {
           const SizedBox(height: 2),
           Text(label, style: TextStyle(fontSize: 12, color: color)),
         ],
+=======
+      extendBody: true,
+      body: navigationShell,
+      bottomNavigationBar: FloatingNavBar(
+        index: navigationShell.currentIndex,
+        onHome: () => _goBranch(0),
+        onWardrobe: () => _goBranch(1),
+        onCamera: () => context.push(AppRoutes.camera),
+>>>>>>> Stashed changes
       ),
     );
   }

@@ -1,107 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/providers.dart';
 
-class SignUpScreen extends ConsumerStatefulWidget {
+import '../config/app_routes.dart';
+import '../config/app_text_styles.dart';
+import '../widgets/app_button.dart';
+import '../widgets/app_text_field.dart';
+import '../widgets/circle_icon_button.dart';
+
+class SignUpScreen extends ConsumerWidget {
   const SignUpScreen({super.key});
 
   @override
-  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
-}
-
-class _SignUpScreenState extends ConsumerState<SignUpScreen> {
-  final _identity = TextEditingController();
-  final _password = TextEditingController();
-  final _confirm = TextEditingController();
-  final _phone = TextEditingController();
-
-  @override
-  void dispose() {
-    _identity.dispose();
-    _password.dispose();
-    _confirm.dispose();
-    _phone.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextButton.icon(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  label: const Text(
-                    'Back to login',
-                    style: TextStyle(color: Colors.white),
-                  ),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 24),
+              CircleIconButton(
+                icon: Icons.chevron_left,
+                size: 52,
+                onPressed: () => context.pop(),
+              ),
+              const SizedBox(height: 16),
+              Text('Buat akun', style: AppTextStyles.display),
+              const SizedBox(height: 10),
+              Text('Simpan lemarimu dan dapatkan\nrekomendasi yang personal.',
+                  style: AppTextStyles.bodySecondary),
+              const SizedBox(height: 24),
+              const AppTextField(label: 'Nama', hint: 'Nama lengkap'),
+              const SizedBox(height: 18),
+              const AppTextField(
+                  label: 'Email',
+                  hint: 'fala@email.com',
+                  keyboardType: TextInputType.emailAddress),
+              const SizedBox(height: 18),
+              const AppTextField(
+                label: 'Password',
+                hint: 'Buat password',
+                isPassword: true,
+                helper: 'Minimal 8 karakter, kombinasi huruf dan angka.',
+              ),
+              const SizedBox(height: 18),
+              const AppTextField(
+                  label: 'Konfirmasi Password',
+                  hint: 'Ulangi password',
+                  isPassword: true),
+              const SizedBox(height: 40),
+              AppButton(
+                label: 'Daftar',
+                onPressed: () {
+                  ref.read(authProvider.notifier).signIn();
+                  context.go(AppRoutes.home);
+                },
+              ),
+              const SizedBox(height: 28),
+              Center(
+                child: GestureDetector(
+                  onTap: () => context.pop(),
+                  child: Column(children: [
+                    Text('Sudah punya akun?', style: AppTextStyles.bodySecondary),
+                    const SizedBox(height: 2),
+                    Text('Masuk', style: AppTextStyles.labelBold.copyWith(fontSize: 14)),
+                  ]),
                 ),
-                const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _identity,
-                  decoration: const InputDecoration(
-                    hintText: 'Email or Phone',
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _password,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Password',
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _confirm,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Confirm password',
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _phone,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: 'Phone',
-                    prefixIcon: Icon(Icons.smartphone),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: () {
-                    ref.read(authProvider.notifier).signIn();
-                    context.go('/home');
-                  },
-                  child: const Text('Sign Up'),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),

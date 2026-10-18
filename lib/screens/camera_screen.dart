@@ -1,20 +1,23 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/garment.dart';
+import '../config/app_routes.dart';
+import '../config/app_text_styles.dart';
 import '../services/camera_service.dart';
-import '../services/providers.dart';
+import '../widgets/circle_icon_button.dart';
+import '../widgets/corner_frame.dart';
 
-class CameraScreen extends ConsumerStatefulWidget {
+/// Layar kamera. Tampilan dari desain Sera-Z; logika kamera (inisialisasi,
+/// lifecycle, ganti kamera, ambil foto, penanganan error) dari versi `lib`.
+class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
   @override
-  ConsumerState<CameraScreen> createState() => _CameraScreenState();
+  State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends ConsumerState<CameraScreen>
+class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
   CameraController? _controller;
   int _cameraIndex = 0;
@@ -22,6 +25,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   String? _errorMessage;
 
   List<CameraDescription> get _cameras => CameraService.cameras;
+
+  bool get _canCapture {
+    final controller = _controller;
+    return controller != null &&
+        controller.value.isInitialized &&
+        !_isInitializing;
+  }
 
   @override
   void initState() {
@@ -93,20 +103,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       final XFile file = await controller.takePicture();
-
-      // Placeholder attributes until Model 1 (type) and Module 2 (color) run.
-      ref.read(wardrobeProvider.notifier).add(
-            Garment(
-              id: DateTime.now().microsecondsSinceEpoch.toString(),
-              category: 'Atasan',
-              colorName: 'merah',
-              colorValue: const Color(0xFFB23A48),
-              imagePath: file.path,
-            ),
-          );
-
       if (!mounted) return;
-      context.pushReplacement('/recommendation');
+      // Foto baru ditambahkan ke lemari setelah dikonfirmasi di halaman
+      // pratinjau ("Gunakan Foto"); "Ambil Ulang" kembali ke sini.
+      context.push(AppRoutes.cameraPreview, extra: file.path);
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,44 +135,200 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
+    const overlay = Color(0x99000000);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sera-Z Camera'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: _buildBody(),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              tooltip: 'Switch camera',
-              onPressed: _cameras.length < 2 ? null : _switchCamera,
-              icon: const Icon(Icons.cameraswitch),
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(child: _buildPreview()),
+                SafeArea(
+                  bottom: false,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 8,
+                        left: 20,
+                        right: 20,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CircleIconButton(
+                              icon: Icons.close,
+                              background: overlay,
+                              iconColor: Colors.white,
+                              onPressed: () => context.pop(),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: overlay,
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Row(children: [
+                                const CircleAvatar(
+                                    radius: 3, backgroundColor: Colors.white),
+                                const SizedBox(width: 8),
+                                Text('AI SCAN',
+                                    style: AppTextStyles.mono(10,
+                                        color: Colors.white)),
+                              ]),
+                            ),
+                            const CircleIconButton(
+                              icon: Icons.bolt,
+                              background: overlay,
+                              iconColor: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 64,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Color(0x22000000), blurRadius: 10)
+                              ],
+                            ),
+                            child: Row(mainAxisSize: MainAxisSize.min, children: [
+                              const CircleAvatar(
+                                  radius: 3, backgroundColor: Colors.black),
+                              const SizedBox(width: 8),
+                              Text('Kaos terdeteksi',
+                                  style: AppTextStyles.labelBold),
+                            ]),
+                          ),
+                        ),
+                      ),
+                      const Positioned.fill(
+                        top: 92,
+                        bottom: 70,
+                        left: 28,
+                        right: 28,
+                        child: IgnorePointer(
+                          child: CornerFrame(
+                            color: Colors.white,
+                            cornerLength: 42,
+                            radius: 18,
+                            child: SizedBox.expand(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 24,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 9),
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF6E6E73),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Text('Posisikan pakaian di dalam frame',
+                                style: AppTextStyles.labelBold
+                                    .copyWith(color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            IconButton.filled(
-              tooltip: 'Take picture',
-              iconSize: 36,
-              onPressed:
-                  _controller == null || !_controller!.value.isInitialized
-                      ? null
-                      : _takePicture,
-              icon: const Icon(Icons.camera_alt),
+          ),
+          Container(
+            color: Colors.black,
+            padding: const EdgeInsets.fromLTRB(32, 24, 32, 36),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14)),
+                        child:
+                            const Icon(Icons.dry_cleaning_outlined, size: 34),
+                      ),
+                      Semantics(
+                        button: true,
+                        label: 'Take picture',
+                        child: GestureDetector(
+                          onTap: _canCapture ? _takePicture : null,
+                          child: Opacity(
+                            opacity: _canCapture ? 1 : 0.4,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: Colors.white, width: 4),
+                              ),
+                              child: const DecoratedBox(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Semantics(
+                        button: true,
+                        label: 'Switch camera',
+                        child: GestureDetector(
+                          onTap: _cameras.length < 2 ? null : _switchCamera,
+                          child: Opacity(
+                            opacity: _cameras.length < 2 ? 0.4 : 1,
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xFF1D1D1F),
+                                  shape: BoxShape.circle),
+                              child: const Icon(Icons.cached,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Text('FOTO PAKAIAN',
+                      style: AppTextStyles.mono(10,
+                          color: Colors.white70, ls: 2)),
+                ],
+              ),
             ),
-            IconButton(
-              tooltip: 'Refresh',
-              onPressed: _cameras.isEmpty
-                  ? null
-                  : () => _initializeCamera(_cameras[_cameraIndex]),
-              icon: const Icon(Icons.refresh),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildPreview() {
     if (_errorMessage != null) {
       return Center(
         child: Padding(
@@ -180,9 +336,22 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.no_photography, size: 64),
+              const Icon(Icons.no_photography, size: 64, color: Colors.white),
               const SizedBox(height: 12),
-              Text(_errorMessage!, textAlign: TextAlign.center),
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body.copyWith(color: Colors.white),
+              ),
+              if (_cameras.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                TextButton.icon(
+                  onPressed: () => _initializeCamera(_cameras[_cameraIndex]),
+                  icon: const Icon(Icons.refresh, color: Colors.white),
+                  label: const Text('Refresh',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ],
           ),
         ),
@@ -193,7 +362,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     if (_isInitializing ||
         controller == null ||
         !controller.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(color: Colors.white));
     }
 
     return Center(
