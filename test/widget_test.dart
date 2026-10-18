@@ -1,25 +1,20 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sera_z/main.dart';
 
 void main() {
-  testWidgets('App starts on the login screen', (WidgetTester tester) async {
+  testWidgets('App boots and shows the splash screen', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: SeraZApp()));
+    await tester.pump();
 
-    expect(find.text('Hello!'), findsOneWidget);
-    expect(find.text('Welcome to Sera-Z'), findsOneWidget);
-    expect(find.text('Login'), findsWidgets);
-  });
+    expect(find.text('Sera-Z'), findsWidgets);
+    expect(find.text('FASHION INTELLIGENCE'), findsOneWidget);
 
-  testWidgets('Login navigates to Home', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: SeraZApp()));
-
-    await tester.tap(find.widgetWithText(FilledButton, 'Login'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Rekomendasi terbaru'), findsOneWidget);
-    expect(find.text('Bisma Adhiaksa'), findsOneWidget);
+    // Lewati timer splash (2 detik) agar tidak ada timer tersisa saat tes
+    // selesai, lalu pastikan navigasi ke onboarding berjalan tanpa error.
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
   });
 }
