@@ -41,5 +41,5 @@
   **E7** (integrasi model ke aplikasi).
 
 ## 5. Referensi
-- Dataset: `../dataset-clothing-full.md`
+- Dataset: `../../context/datasets-tambahan.md` §1 — Clothing Full (CC0) + Fashion Product Images (MIT) + Carousell (MIT); detail: `../../context/dataset-clothing-full.md`
 - Pemetaan paper: `../referensi-metodologi.md`

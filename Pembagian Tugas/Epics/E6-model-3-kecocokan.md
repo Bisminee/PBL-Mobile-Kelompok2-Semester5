@@ -1,6 +1,6 @@
 # E6 — Model 3: Skor Kecocokan
 
-**Status:** ⬜ Belum
+**Status:** 🟡 Sebagian — E6.4 (aturan harmoni warna) selesai, sudah digabung ke `main` lewat PR #2
 
 ## 1. Apa yang harus dilakukan
 - Menyusun **data pasangan pakaian** (atasan–bawahan) yang dianggap cocok.
@@ -16,7 +16,7 @@
 - Menyiapkan model agar dapat dijalankan di perangkat.
 
 ## 2. Bagaimana melakukannya
-- Ambil data outfit dari dataset yang memiliki informasi gaya dan acara.
+- Ambil data outfit dari **Marqo/polyvore** + **Garments2Look** — dataset bebas ✅ dengan informasi gaya dan acara.
 - Bentuk pasangan positif (cocok) dan negatif (tidak cocok) dengan jumlah
   seimbang agar model tidak bias.
 - Susun fitur yang menggabungkan **kategori** dan **warna** kedua item.
@@ -40,5 +40,5 @@
 - Menjadi prasyarat untuk **E7** (integrasi skor ke halaman rekomendasi).
 
 ## 5. Referensi
-- Dataset pasangan: `../fashionstylist.md`
+- Dataset pasangan: `../../context/datasets-tambahan.md` §3 — Marqo/polyvore + Garments2Look (Apache-2.0); pengganti FashionStylist (NC)
 - Paper kompatibilitas: `../referensi-metodologi.md`

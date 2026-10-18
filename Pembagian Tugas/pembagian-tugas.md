@@ -50,7 +50,7 @@ Kode tugas (E1–E10) mengacu pada `context/feature-breakdown-id.md`.
 | E3.1 🟢 | `google_sign_in` + Firebase Auth | Auth | Flutter | 2 | Tinggi | ____ |
 | E4.1 🟢🧩 | Unduh dataset + EDA + buang kelas ambigu | Model 1 | Python/ML | 1 | Tinggi | ____ |
 | E5.1 🟢 | Crop tengah + *thresholding* latar | Warna | Dart/gambar | 1 | Tinggi | ____ |
-| E6.4 🟢 | Aturan harmoni warna (komplementer/analog/mono/netral) | Model 3 | Logika warna | 1,5 | Tinggi | ____ |
+| E6.4 ✅ | Aturan harmoni warna (komplementer/analog/mono/netral) | Model 3 | Logika warna | 1,5 | Tinggi | ✅ Selesai (PR #2) |
 | E9.1 🟢 | Rencana uji + ≥ 20 test case fungsional | QA | QA dasar | 2 | Tinggi | ____ |
 | E10.1 🟢 | Logbook mingguan + notulen | Dokumentasi | Tulis | 3 | Sedang | ____ |
 | E10.2 🟢 | Kumpulkan 150 foto lapangan | Dokumentasi | Dokumentasi | 2 | Sedang | ____ |
