@@ -196,11 +196,39 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Center(
-      child: AspectRatio(
-        aspectRatio: controller.value.aspectRatio,
-        child: CameraPreview(controller),
-      ),
+    // Read the real camera size (sensor preview size, in landscape
+    // coordinates) and size the preview panel to match it, so the image is
+    // not squeezed. In portrait the width/height must be swapped.
+    final Size? previewSize = controller.value.previewSize;
+    final bool isPortrait =
+        MediaQuery.orientationOf(context) == Orientation.portrait;
+    final double cameraAspect;
+    if (previewSize != null && previewSize.width > 0 && previewSize.height > 0) {
+      cameraAspect = isPortrait
+          ? previewSize.height / previewSize.width
+          : previewSize.width / previewSize.height;
+    } else {
+      final double ratio = controller.value.aspectRatio;
+      cameraAspect = isPortrait ? 1 / ratio : ratio;
+    }
+
+    // Fit the camera-sized panel into the available space (letterboxed).
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double width = constraints.maxWidth;
+        double height = width / cameraAspect;
+        if (height > constraints.maxHeight) {
+          height = constraints.maxHeight;
+          width = height * cameraAspect;
+        }
+        return Center(
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: CameraPreview(controller),
+          ),
+        );
+      },
     );
   }
 }
