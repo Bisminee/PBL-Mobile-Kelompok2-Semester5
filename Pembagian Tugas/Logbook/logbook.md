@@ -12,7 +12,7 @@
 - Isi **setiap minggu**, jangan menumpuk di akhir.
 - Kolom **Bukti/Link** diisi tautan commit, PR, dokumen, atau foto kegiatan.
 - Format tanggal: `28 Sep`.
-- Status mingguan: ✅ selesai · 🟡 berjalan · ⬜ belum mulai.
+- Status mingguan: Selesai · Berjalan · Belum mulai.
 
 ---
 
@@ -20,22 +20,22 @@
 
 | Minggu | Periode | Fokus | Status |
 |--------|---------|-------|--------|
-| 1 | 28 Sep – 4 Okt | Fondasi aplikasi (E1): navigasi, layar, state, kamera, dokumentasi | ✅ |
-| 2 | 5 – 11 Okt | Logika harmoni warna (E6.4), alur Pull Request | 🟡 |
-| 3 | 12 – 18 Okt | Pipeline Model 1 (PR #3), kualitas UI, keputusan lisensi dataset, persiapan E4.1 | 🟡 |
-| 4 | 19 – 25 Okt | | ⬜ |
-| 5 | 26 Okt – 1 Nov | | ⬜ |
-| 6 | 2 – 8 Nov | | ⬜ |
-| 7 | 9 – 15 Nov | | ⬜ |
-| 8 | 16 – 22 Nov | | ⬜ |
-| 9 | 23 – 29 Nov | | ⬜ |
-| 10 | 30 Nov – 6 Des | | ⬜ |
+| 1 | 28 Sep – 4 Okt | Fondasi aplikasi (E1): navigasi, layar, state, kamera, dokumentasi | Selesai |
+| 2 | 5 – 11 Okt | Logika harmoni warna (E6.4), alur Pull Request | Berjalan |
+| 3 | 12 – 18 Okt | Pipeline Model 1 (PR #3), kualitas UI, keputusan lisensi dataset, persiapan E4.1 | Berjalan |
+| 4 | 19 – 25 Okt | Susulan jalur ML (E4.1–E4.3) + evaluasi/ekspor Model 1, warna, penyimpanan, login | Belum |
+| 5 | 26 Okt – 1 Nov | Latih YOLOv11n-cls, palet warna, MLP Model 3, profil & sesi, UI lemari | Belum |
+| 6 | 2 – 8 Nov | Evaluasi & ekspor MLP, integrasi loader TFLite, konten Home | Belum |
+| 7 | 9 – 15 Nov | Sign out, ranking + fallback + latensi, halaman Admin & Profil, uji usability | Belum |
+| 8 | 16 – 22 Nov | Ranking + explainability, tab Detail, pengujian fungsional, konsolidasi evaluasi, draf laporan M1 | Belum |
+| 9 | 23 – 29 Nov | | Belum |
+| 10 | 30 Nov – 6 Des | | Belum |
 
 ---
 
 ## Minggu 1 — 28 Sep s.d. 4 Okt 2026
 
-**Status:** ✅ Selesai
+**Status:** Selesai
 **Fokus:** Membangun fondasi aplikasi (Epic E1) dan menyiapkan dokumentasi serta pembagian tugas.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
@@ -48,7 +48,7 @@
 | 3 Okt | Dokumentasi teknis | Menyusun dokumen konteks: proposal, referensi metodologi, arsitektur data, wireframe & UX spec, penjelasan epic | Fitur *connectors* Figma tidak tersedia di versi akun → pendekatan plugin flow dibatalkan | Melanjutkan dokumen interaksi manual | `context/`, `docs/wireframe-interactions.md` |
 | 4 Okt | Pembagian tugas | Menyusun rincian fitur & pembagian tugas, kolam tugas tanpa pemilik, daftar epic, pemetaan branch, lalu membuat 8 branch tugas independen dan mem-push-nya | `gh` CLI belum login → pembuatan PR masih manual | Mulai E2.1, E6.4, E9.1 | `Pembagian Tugas/`, commit `ab26e44` |
 
-**Ringkasan capaian Minggu 1:** fondasi aplikasi selesai (E1 ✅), dokumentasi & pembagian tugas siap, 8 branch tugas independen sudah tersedia di GitHub.
+**Ringkasan capaian Minggu 1:** fondasi aplikasi selesai (E1), dokumentasi & pembagian tugas siap, 8 branch tugas independen sudah tersedia di GitHub.
 
 **Kendala terbuka (dibawa ke minggu berikutnya):**
 1. `gh` CLI belum login → PR dibuat manual lewat GitHub.
@@ -59,7 +59,7 @@
 
 ## Minggu 2 — 5 s.d. 11 Okt 2026
 
-**Status:** 🟡 Berjalan
+**Status:** Berjalan
 **Fokus:** Mengerjakan tugas independen pertama (logika harmoni warna), membuka alur Pull Request, dan memperbarui dokumentasi.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
@@ -79,7 +79,7 @@
 
 ## Minggu 3 — 12 s.d. 18 Okt 2026
 
-**Status:** 🟡 Berjalan
+**Status:** Berjalan
 **Fokus:** Pipeline Model 1 (PR #3), perbaikan kualitas UI (responsive layout), keputusan lisensi dataset, dan persiapan E4.1 (dataset + EDA).
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
@@ -100,82 +100,82 @@
 
 ## Minggu 4 — 19 s.d. 25 Okt 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:**
+**Status:** Rencana (diperbarui saat minggu berjalan)
+**Fokus:** Menyusul jalur ML (dataset + EDA + split) dan memulai pekerjaan paralel: warna, penyimpanan, autentikasi.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 19–25 Okt | Susulan & target W4 | Menyusul: unduh dataset + EDA (E4.1), merge/split (E4.2), baseline (E4.3). Target: evaluasi & ekspor TFLite (E4.5–E4.6), K-Means warna (E5.2), pasangan Model 3 (E6.1), penyimpanan (E2.5–E2.6), login (E3.1) | Jalur ML masih mengejar ketertinggalan | Latih YOLOv11n-cls (E4.4); palet warna (E5.3–E5.4); fitur + MLP (E6.2–E6.3); profil & sesi (E3.2–E3.3); UI lemari (E8.1–E8.2) | — |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
 
-**Kendala terbuka:**
+**Kendala terbuka:** —
 
 ---
 
 ## Minggu 5 — 26 Okt s.d. 1 Nov 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:**
+**Status:** Rencana (diperbarui saat minggu berjalan)
+**Fokus:** Pelatihan model utama (YOLOv11n-cls), modul warna, Model 3, dan fitur aplikasi.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 26 Okt–1 Nov | Pelatihan & fitur | Latih YOLOv11n-cls + fine-tune (E4.4); palet 14 warna + unit test (E5.3–E5.4); feature builder + MLP (E6.2–E6.3); record cloud & sesi (E3.2–E3.3); UI lemari + outfit tersimpan (E8.1–E8.2) | — | Evaluasi + ekspor MLP (E6.5–E6.6); loader TFLite (E7.1–E7.3); konten Home (E8.4) | — |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
 
-**Kendala terbuka:**
+**Kendala terbuka:** —
 
 ---
 
 ## Minggu 6 — 2 s.d. 8 Nov 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:**
+**Status:** Rencana (diperbarui saat minggu berjalan)
+**Fokus:** Integrasi model ke aplikasi (TFLite) dan penyelesaian fitur.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 2–8 Nov | Integrasi | Evaluasi MLP (E6.5); ekspor TFLite MLP (E6.6); loader + inferensi Model 1 (E7.1–E7.3); konten Home (E8.4) | — | Sign out & hapus akun (E3.4); ranking + fallback + latensi (E7.4–E7.6); halaman Admin & Profil (E8.6–E8.7); uji usability (E9.6) | — |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
 
-**Kendala terbuka:**
+**Kendala terbuka:** —
 
 ---
 
 ## Minggu 7 — 9 s.d. 15 Nov 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:**
+**Status:** Rencana (diperbarui saat minggu berjalan)
+**Fokus:** Penyempurnaan integrasi, fitur lanjutan, dan mulai pengujian usability.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 9–15 Nov | Penyempurnaan | Sign out + jalur hapus akun (E3.4); skor Model 3 di rekomendasi + fallback + ukur latensi (E7.4–E7.6); halaman Admin (E8.6); halaman Profil (E8.7); mulai uji usability + SUS (E9.6) | — | Ranking + explainability (E8.3); tab Detail (E8.5); pengujian fungsional (E9.2); konsolidasi evaluasi ML (E9.5) | — |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
 
-**Kendala terbuka:**
+**Kendala terbuka:** —
 
 ---
 
 ## Minggu 8 — 16 s.d. 22 Nov 2026
 
-**Status:** ⬜ Belum mulai
-**Fokus:**
+**Status:** Rencana (diperbarui saat minggu berjalan)
+**Fokus:** Penutupan Milestone 1: pengujian fungsional, konsolidasi evaluasi, dan draf laporan.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| | | | | | |
+| 16–22 Nov | Penutupan M1 | Ranking + teks explainability (E8.3); tab Detail data nyata (E8.5); eksekusi fungsional black-box + catat bug (E9.2); konsolidasi laporan evaluasi ML (E9.5); tabulasi kuesioner (E10.3); draf laporan Milestone 1 | — | Milestone 2: uji performa & kompatibilitas (E9.3–E9.4), pelacakan bug (E9.7), laporan akhir (E10.4–E10.5) | — |
 
-**Ringkasan capaian:**
+**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
 
-**Kendala terbuka:**
+**Kendala terbuka:** —
 
 ---
 
 ## Minggu 9 — 23 s.d. 29 Nov 2026
 
-**Status:** ⬜ Belum mulai
+**Status:** Belum mulai
 **Fokus:**
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
@@ -190,7 +190,7 @@
 
 ## Minggu 10 — 30 Nov s.d. 6 Des 2026
 
-**Status:** ⬜ Belum mulai
+**Status:** Belum mulai
 **Fokus:**
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
