@@ -62,8 +62,8 @@ Nama berkas layar berakhiran `_screen.dart`, widget `_card.dart`,
 - Branch dari `main` terbaru, umur pendek (1-3 hari).
 - `dev` adalah branch integrasi untuk uji bersama; PR tetap mengarah ke `main`.
 - Tidak ada branch bernama orang.
-- Aturan lengkap, daftar nama branch per tugas, dan alur PR ada di
-  `Pembagian Tugas/panduan-branch.md`.
+- Aturan lengkap dan daftar nama branch per tugas ada di
+  `Pembagian Tugas/pembagian-tugas-minggu-5.docx` bagian 6.
 
 ### Commit
 

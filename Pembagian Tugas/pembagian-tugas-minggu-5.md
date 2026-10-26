@@ -130,13 +130,69 @@ Semua PR wajib lulus `flutter analyze` dan `flutter test` sebelum digabung.
 
 ---
 
-## 6. Aturan
+## 6. Aturan branch
+
+Setiap tugas dikerjakan di branch sendiri. Branch dibuat dari `main` terbaru,
+bukan dari `dev`, bukan dari branch anggota lain. Setelah PR digabung, branch
+dihapus. Jangan menggabungkan dua tugas dalam satu branch.
+
+| Anggota | Tugas | Branch | PR ke |
+|---|---|---|---|
+| Pras | E2.1 setup DB | `feat/sqflite-setup` | `main` |
+| Pras | E2.2 CRUD lemari | `feat/wardrobe-crud` | `main` |
+| Pras | E2.3 simpan foto | `feat/photo-storage` | `main` |
+| Ahmad | E2.4 tabel outfit + riwayat | `feat/outfit-tables` | `main` |
+| Ahmad | E2.5 muat data saat start | `feat/load-on-start` | `main` |
+| Ahmad | E2.6 unit test DAO | `test/dao` | `main` |
+| Bisma | Persiapan Firebase | `chore/firebase-setup` | `main` |
+| Bisma | E3.1 login Google | `feat/google-login` | `main` |
+| Bisma | E3.2 record cloud | `feat/cloud-profile` | `main` |
+| Bisma | E3.3 sesi persisten | `feat/session-persist` | `main` |
+| Bisma | E3.4 sign out + hapus akun | `feat/sign-out` | `main` |
+| Izza | E8.1 CRUD UI Lemari | `feat/wardrobe-ui` | `main` |
+| Izza | E8.6 halaman Admin | `feat/admin-master-data` | `main` |
+| Abim | E8.7 halaman Profil | `feat/profile-screen` | `main` |
+| Abim | E8.2 simpan outfit | `feat/save-outfit` | `main` |
+| Abim | E8.4 konten Home | `feat/home-content` | `main` |
+
+Awalan branch yang dipakai: `feat/` untuk fitur, `fix/` untuk bug, `test/` untuk
+test, `docs/` untuk dokumentasi, `chore/` untuk konfigurasi, `ml/` untuk model
+(dijeda), dan `refactor/` untuk merapikan struktur.
+
+Branch yang tidak boleh dibuat: nama orang (`abim`, `pras`), `dev2`, `backup`,
+`coba`, atau satu branch untuk semua tugas.
+
+Membuat dan menutup branch:
+
+```bash
+git switch main
+git pull origin main
+git switch -c feat/wardrobe-crud
+git push -u origin feat/wardrobe-crud
+
+# setelah PR digabung
+git switch main
+git pull origin main
+git branch -d feat/wardrobe-crud
+git push origin --delete feat/wardrobe-crud
+```
+
+Catatan: branch `feat/sqflite-setup` yang ada sekarang berisi kode lama (24 commit
+di belakang `main`). Hapus dulu, lalu buat ulang dari `main` sebelum E2.1
+dikerjakan.
+
+Branch usang lain yang perlu dibersihkan: `docs/test-plan`, `docs/field-photos`,
+`docs/logbook`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`,
+`data-training`, `feat/app-foundation`, `feat/color-harmony-rules`. Semuanya
+sudah tergabung ke `main` atau hanya berisi commit kosong.
+
+## 7. Aturan kerja
 
 1. Maksimal 2 tugas aktif per orang.
-2. Satu tugas = satu branch = satu PR; PR mengarah ke `main`. Daftar nama branch
-   per tugas ada di `Pembagian Tugas/panduan-branch.md`.
+2. Satu tugas = satu branch = satu PR; PR mengarah ke `main`.
 3. `dev` hanya untuk uji integrasi, bukan tempat menyimpan hasil akhir.
 4. Tugas yang prasyaratnya belum selesai tidak diambil.
 5. Anggota yang selesai lebih cepat boleh mengambil tugas mobile lain yang belum
    selesai, tetap maksimal 2 tugas aktif.
-6. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 1 November.
+6. `flutter analyze` dan `flutter test` wajib lulus sebelum PR dibuka.
+7. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 1 November.

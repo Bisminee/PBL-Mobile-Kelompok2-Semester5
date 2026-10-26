@@ -27,9 +27,6 @@ kesalahan yang sering terjadi.
 Branch adalah ruang kerja terpisah untuk **satu tugas**. Tujuannya agar
 pekerjaanmu tidak mengganggu pekerjaan orang lain dan mudah direview.
 
-Panduan lengkap (alur PR, konflik, pembersihan branch) ada di
-`Pembagian Tugas/panduan-branch.md`.
-
 #### Aturan branch
 
 1. **Satu tugas = satu branch = satu PR.** Jangan menggabungkan dua tugas dalam

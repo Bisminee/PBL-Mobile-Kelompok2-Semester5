@@ -111,8 +111,8 @@ flutter run
 - Branch dibuat dari `main` terbaru, umurnya pendek (1–3 hari).
 - Setelah PR digabung, branch dihapus.
 
-Daftar nama branch untuk setiap tugas, alur PR, dan cara menangani konflik ada di
-**`Pembagian Tugas/panduan-branch.md`**.
+Daftar nama branch untuk setiap tugas minggu ini ada di
+**`Pembagian Tugas/pembagian-tugas-minggu-5.docx`** bagian 6.
 
 ### 3.2 Apa Itu "Fitur"?
 
