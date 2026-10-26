@@ -150,6 +150,19 @@ Bug     = fix/...                 (perbaiki warna salah)
 > Jangan buat `feat/big-ml` (terlalu besar) atau `feat/login-dan-ubah-tema`
 > (dua hal sekaligus). Pecah menjadi beberapa branch.
 
+### 3.5 Branch `dev` untuk uji bersama
+
+Selain `main`, ada branch **`dev`** yang dipakai untuk **pengujian bersama**
+sebelum sebuah pekerjaan dianggap siap masuk `main`.
+
+- `dev` berisi gabungan pekerjaan yang sedang diuji tim (integrasi antar fitur).
+- Branch fitur tetap dibuat dari `main`, dan Pull Request tetap mengarah ke
+  `main`. `dev` hanya tempat mencoba, bukan tempat menyimpan hasil akhir.
+- Jangan menyimpan pekerjaan permanen di `dev`; setelah diuji, hasilnya masuk
+  lewat PR ke `main`.
+- `dev` juga memuat **konteks proyek untuk AI** (`AGENTS.md` dan `ai-context/`)
+  agar semua anggota memakai aturan dan gambaran proyek yang sama.
+
 ---
 
 ## 4. Membuat Branch Fitur
