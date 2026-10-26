@@ -4,6 +4,12 @@ Periode: **27 Oktober – 1 November 2026**
 Cakupan: pembangunan mobile saja (E2, E3, E8.1, E8.2, E8.4, E8.6, E8.7)
 Dijeda: E4, E5, E6, E7, E8.3, E8.5, E9, E10
 
+> **CATATAN DARI BISMA**
+>
+> **JANGAN TAKUT SALAH PUSH, JANGAN TAKUT BIKIN KESALAHAN**
+>
+> **TAKUT KALAU KALIAN NGGAK ADA KONTRIBUSI DI GITHUB**
+
 Dokumen ini menjelaskan, untuk setiap tugas: apa tujuannya, file apa yang dibuat,
 langkah pengerjaannya, tugas siapa yang harus ditunggu, cara mengujinya, dan
 kesalahan yang sering terjadi.

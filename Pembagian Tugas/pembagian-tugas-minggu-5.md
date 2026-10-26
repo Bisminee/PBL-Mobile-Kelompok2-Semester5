@@ -4,6 +4,12 @@ Tim Sera-Z · Kelas TI-3D · Semester 5
 Periode: **27 Oktober – 1 November 2026**
 Disusun: 27 Oktober 2026
 
+> **CATATAN DARI BISMA**
+>
+> **JANGAN TAKUT SALAH PUSH, JANGAN TAKUT BIKIN KESALAHAN**
+>
+> **TAKUT KALAU KALIAN NGGAK ADA KONTRIBUSI DI GITHUB**
+
 Fokus: **pembangunan mobile saja**. ML dan pemrosesan gambar belum dikerjakan.
 
 Dikerjakan: E2 penyimpanan, E3 autentikasi, E8.1, E8.2, E8.4, E8.6, E8.7.

@@ -3,6 +3,12 @@
 Aplikasi mobile Flutter yang mengenali jenis dan warna pakaian dari foto, lalu
 merekomendasikan kombinasi outfit.
 
+> **CATATAN DARI BISMA**
+>
+> **JANGAN TAKUT SALAH PUSH, JANGAN TAKUT BIKIN KESALAHAN**
+>
+> **TAKUT KALAU KALIAN NGGAK ADA KONTRIBUSI DI GITHUB**
+
 Panduan ini dibuat untuk **yang belum pernah pakai Git**. Ikuti dari atas ke
 bawah, cukup ketik perintah yang tertulis.
 
