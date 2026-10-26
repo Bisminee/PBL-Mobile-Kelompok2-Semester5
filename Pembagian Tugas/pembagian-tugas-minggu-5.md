@@ -133,7 +133,8 @@ Semua PR wajib lulus `flutter analyze` dan `flutter test` sebelum digabung.
 ## 6. Aturan
 
 1. Maksimal 2 tugas aktif per orang.
-2. Satu tugas = satu branch = satu PR; PR mengarah ke `main`.
+2. Satu tugas = satu branch = satu PR; PR mengarah ke `main`. Daftar nama branch
+   per tugas ada di `Pembagian Tugas/panduan-branch.md`.
 3. `dev` hanya untuk uji integrasi, bukan tempat menyimpan hasil akhir.
 4. Tugas yang prasyaratnya belum selesai tidak diambil.
 5. Anggota yang selesai lebih cepat boleh mengambil tugas mobile lain yang belum

@@ -148,7 +148,8 @@ Baru dimulai setelah E2, E3, dan E8.1-E8.7 (yang tidak menunggu ML) lulus uji:
 ## 9. Aturan
 
 1. Maksimal 2 tugas aktif per orang.
-2. Satu tugas = satu branch = satu PR.
+2. Satu tugas = satu branch = satu PR. Nama branch dan alur PR mengikuti
+   `Pembagian Tugas/panduan-branch.md`.
 3. Tugas yang prasyaratnya belum selesai tidak diambil.
 4. Kalau tertahan lebih dari satu hari, lepas tugas dan tulis catatan.
 5. Anggota yang selesai lebih cepat boleh mengambil tugas mobile lain yang
