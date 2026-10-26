@@ -22,25 +22,129 @@ kesalahan yang sering terjadi.
 6. Setelah PR digabung, kabari grup dan perbarui status di papan Notion.
 7. Branch `dev` hanya untuk uji integrasi, tidak untuk menyimpan hasil akhir.
 
-### 0.2 Nama branch yang dipakai
+### 0.2 Branch: aturan dan daftar per tugas
 
-| Tugas | Branch |
+Branch adalah ruang kerja terpisah untuk **satu tugas**. Tujuannya agar
+pekerjaanmu tidak mengganggu pekerjaan orang lain dan mudah direview.
+
+#### Aturan branch
+
+1. **Satu tugas = satu branch = satu PR.** Jangan menggabungkan dua tugas dalam
+   satu branch.
+2. Branch selalu dibuat dari **`main` terbaru**, bukan dari `dev`, bukan dari
+   branch anggota lain.
+3. Nama branch menyebut **pekerjaan**, bukan nama orang.
+4. Umur branch pendek, 1–3 hari. Setelah PR digabung, branch dihapus.
+5. Jangan push langsung ke `main`. `dev` hanya untuk uji integrasi, bukan tempat
+   menyimpan hasil akhir.
+6. Kalau tugas dipecah, branch-nya ikut dipecah. Contoh: E2.1 dan E2.2 memakai
+   dua branch berbeda.
+7. Jangan mencampur dua jenis pekerjaan. Branch database tidak boleh sekaligus
+   mengubah tampilan.
+8. Jangan membuat branch baru hanya untuk mengganti satu baris; gabungkan ke
+   branch tugas yang sedang berjalan.
+
+#### Awalan nama branch
+
+| Awalan | Dipakai untuk | Contoh |
+|---|---|---|
+| `feat/` | Fitur atau kemampuan baru | `feat/wardrobe-crud` |
+| `fix/` | Perbaikan bug | `fix/login-error` |
+| `test/` | Menambah atau memperbaiki test | `test/dao` |
+| `docs/` | Dokumentasi | `docs/readme-setup` |
+| `chore/` | Perawatan kecil (paket, konfigurasi) | `chore/firebase-setup` |
+| `ml/` | Pekerjaan model dan dataset (dijeda) | `ml/model1-pipeline` |
+| `refactor/` | Merapikan struktur tanpa mengubah perilaku (harus disetujui tim) | `refactor/folder` |
+
+Nama branch memakai huruf kecil dan tanda hubung. Contoh benar:
+`feat/photo-storage`. Contoh salah: `Abim`, `branch-baru`, `coba`, `fix1`,
+`feat/abim-kerjain-semua`.
+
+#### Daftar branch yang harus dibuat
+
+**Pras — penyimpanan**
+
+| Branch | Untuk tugas | Isi perubahan | PR ke |
+|---|---|---|---|
+| `feat/sqflite-setup` | E2.1 setup DB | `pubspec.yaml`, `lib/services/database_helper.dart`, `test/database_test.dart` | `main` |
+| `feat/wardrobe-crud` | E2.2 CRUD lemari | `lib/services/wardrobe_dao.dart`, `toMap`/`fromMap` di `lib/models/garment.dart` | `main` |
+| `feat/photo-storage` | E2.3 simpan foto | `lib/services/photo_storage.dart`, `lib/screens/scan/camera_preview_screen.dart` | `main` |
+
+Catatan: branch `feat/sqflite-setup` yang ada sekarang berisi kode lama (24
+commit di belakang `main`). Hapus dulu, lalu buat ulang dari `main`.
+
+**Ahmad — lanjutan penyimpanan**
+
+| Branch | Untuk tugas | Isi perubahan | PR ke |
+|---|---|---|---|
+| `feat/outfit-tables` | E2.4 tabel outfit + riwayat | `lib/services/outfit_dao.dart` | `main` |
+| `feat/load-on-start` | E2.5 muat data saat start | `lib/services/providers.dart`, `lib/main.dart` | `main` |
+| `test/dao` | E2.6 unit test DAO | `test/wardrobe_dao_test.dart`, `test/outfit_dao_test.dart` | `main` |
+
+**Bisma — autentikasi**
+
+| Branch | Untuk tugas | Isi perubahan | PR ke |
+|---|---|---|---|
+| `chore/firebase-setup` | Persiapan Firebase | `android/app/build.gradle.kts`, `.gitignore` (tanpa `google-services.json`) | `main` |
+| `feat/google-login` | E3.1 login Google | `lib/services/auth_service.dart`, `lib/screens/auth/login_screen.dart` | `main` |
+| `feat/cloud-profile` | E3.2 record cloud | `lib/services/user_repository.dart` | `main` |
+| `feat/session-persist` | E3.3 sesi persisten | `lib/services/providers.dart`, `lib/config/app_router.dart` | `main` |
+| `feat/sign-out` | E3.4 sign out + hapus akun | `lib/services/auth_service.dart`, `lib/screens/profile/profile_screen.dart` | `main` |
+
+**Izza — fitur lemari dan admin**
+
+| Branch | Untuk tugas | Isi perubahan | PR ke |
+|---|---|---|---|
+| `feat/wardrobe-ui` | E8.1 CRUD UI Lemari | `lib/screens/wardrobe/wardrobe_screen.dart`, `lib/widgets/wardrobe/` | `main` |
+| `feat/admin-master-data` | E8.6 halaman Admin | `lib/screens/admin/admin_screen.dart`, `lib/services/master_data_dao.dart`, `lib/config/app_routes.dart`, `lib/config/app_router.dart` | `main` |
+
+**Abim — profil, outfit, Home**
+
+| Branch | Untuk tugas | Isi perubahan | PR ke |
+|---|---|---|---|
+| `feat/profile-screen` | E8.7 halaman Profil | `lib/screens/profile/profile_screen.dart` | `main` |
+| `feat/save-outfit` | E8.2 simpan outfit | `lib/screens/outfit/recommendation_screen.dart`, `lib/screens/outfit/detail_screen.dart` | `main` |
+| `feat/home-content` | E8.4 konten Home | `lib/screens/home/home_screen.dart`, `lib/widgets/home/` | `main` |
+
+#### Branch yang tidak boleh dibuat
+
+| Branch | Alasan |
 |---|---|
-| E2.1 | `feat/sqflite-setup` |
-| E2.2 | `feat/wardrobe-crud` |
-| E2.3 | `feat/photo-storage` |
-| E2.4 | `feat/outfit-tables` |
-| E2.5 | `feat/load-on-start` |
-| E2.6 | `test/dao` |
-| E3.1 | `feat/google-login` |
-| E3.2 | `feat/cloud-profile` |
-| E3.3 | `feat/session-persist` |
-| E3.4 | `feat/sign-out` |
-| E8.1 | `feat/wardrobe-ui` |
-| E8.2 | `feat/save-outfit` |
-| E8.4 | `feat/home-content` |
-| E8.6 | `feat/admin-master-data` |
-| E8.7 | `feat/profile-screen` |
+| Nama orang (`abim`, `pras`, `bisma`) | Aturan repo: branch menyebut pekerjaan, bukan orang |
+| `dev2`, `dev-baru`, `staging` | Hanya ada satu `dev` |
+| `backup`, `cadangan`, `jangan-dihapus` | Hasil kerja harus masuk lewat PR, bukan disimpan di branch |
+| `coba`, `tes`, `asdf` | Tidak jelas isinya dan sulit direview |
+| Satu branch untuk semua tugas | Melanggar aturan satu tugas satu PR |
+
+#### Cara membuat dan menutup branch
+
+Membuat:
+
+```bash
+git switch main
+git pull origin main
+git switch -c feat/wardrobe-crud
+git push -u origin feat/wardrobe-crud
+```
+
+Setelah PR digabung:
+
+```bash
+git switch main
+git pull origin main
+git branch -d feat/wardrobe-crud
+git push origin --delete feat/wardrobe-crud
+```
+
+Kalau branch lama sudah usang dan akan dipakai lagi (seperti
+`feat/sqflite-setup`), hapus lalu buat ulang:
+
+```bash
+git branch -D feat/sqflite-setup
+git push origin --delete feat/sqflite-setup
+git switch main && git pull
+git switch -c feat/sqflite-setup
+```
 
 ### 0.3 Isi PR yang baik
 
@@ -581,6 +685,8 @@ Boleh mengambil tugas mobile lain yang belum selesai, dengan syarat:
 1. Tetap maksimal 2 tugas aktif.
 2. Prasyaratnya sudah selesai.
 3. Kabari pemilik aslinya di grup agar tidak dobel.
+4. Buat branch baru untuk tugas yang kamu ambil; jangan memakai branch orang
+   lain dan jangan mengubah kodenya.
 
 Urutan bantuan yang disarankan:
 
