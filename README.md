@@ -10,6 +10,19 @@ bawah, cukup ketik perintah yang tertulis.
 > orang. Tidak ada branch `bisma`, `abim`, dan seterusnya. Semua tugas bersifat
 > terbuka — siapa pun boleh mengerjakannya (lihat folder **`Pembagian Tugas/`**).
 
+## Unduh Aplikasi
+
+[![Download APK](https://img.shields.io/badge/Download-APK-green?logo=android)](https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/releases/latest/download/sera-z.apk)
+
+Atau lihat semua versi di halaman [Releases](https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/releases).
+
+### Cara pasang
+1. Unduh `sera-z.apk` dari HP Android.
+2. Buka file tersebut, lalu izinkan **Install dari sumber tidak dikenal** bila diminta.
+3. Jika muncul peringatan Google Play Protect, pilih **Tetap instal**.
+4. Buka aplikasi dan izinkan akses kamera saat diminta.
+
+> Persyaratan: Android 7.0 (API 24) ke atas.
 ---
 
 ## 0. Git Itu Apa? (Baca Dulu, 2 Menit)
