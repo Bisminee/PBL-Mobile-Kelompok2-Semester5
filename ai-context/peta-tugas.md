@@ -84,11 +84,11 @@ Prinsip: mobile dulu, ML menyusul. Rincian per tugas dan kriteria selesai ada di
 
 | Anggota | Tugas minggu 5 | ho |
 |---|---|---:|
-| Abim Mustawa | E2.1 setup DB, E2.2 CRUD, E2.3 simpan foto | 3,5 dari 7,0 |
+| Faatihurrizki Prasojo | E2.1 setup DB, E2.2 CRUD, E2.3 simpan foto | 3,5 dari 7,0 |
 | Bisma Adhiaksa | E3.1 login Google, E3.2 record cloud, E3.3 sesi | 4,0 dari 6,5 |
-| Faatihurrizki Prasojo | E5.1 crop, E4.1 dataset + EDA, E5.2 mulai | 4,0 dari 7,0 |
+| Abim Mustawa | E5.1 crop, E5.2 mulai K-Means, E10.2 foto lapangan | 4,0 dari 7,0 |
 | Izza Dhafira Fanani | E8.6 halaman Admin, E10.2 foto lapangan | 4,0 dari 6,0 |
-| Ahmad Falahi | Review PR #3, E9.1 rencana uji 20 test case | 2,5 dari 6,0 |
+| Ahmad Falahi | Review PR #3, E9.1 rencana uji, E4.1 dataset + EDA | 4,0 dari 7,5 |
 
 Daftar kerja harian: `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
 Jadwal 10 minggu dan prioritas: `Pembagian Tugas/timeline.md`.

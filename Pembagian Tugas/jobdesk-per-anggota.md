@@ -8,27 +8,31 @@ fondasi aplikasi selesai.
 Estimasi dalam jam-orang (ho). Prasyarat mengikuti
 `feature-breakdown-id.md`.
 
+Perubahan 27 Oktober: tugas penyimpanan (E2) dipindahkan dari Abim ke
+Faatihurrizki Prasojo (Pras). Sebagai penyeimbang, modul warna (E5) dan foto
+lapangan (E10.2) pindah ke Abim.
+
 ---
 
 ## 1. Ringkasan beban
 
 | Anggota | Fokus | Tugas mobile | ho mobile | ho ML |
 |---|---|---|---:|---:|
-| Abim Mustawa | Penyimpanan | E2.1–E2.6 | 7,0 | 0 |
+| Faatihurrizki Prasojo | Penyimpanan | E2.1–E2.6 | 7,0 | 0 |
 | Bisma Adhiaksa | Autentikasi + profil | E3.1–E3.4, E8.7 | 6,5 | 0 |
 | Izza Dhafira Fanani | UI fitur + dokumentasi | E8.1, E8.4, E8.6, E10.1 | 6,0 | 0 |
-| Faatihurrizki Prasojo | Modul warna + data | E5.1–E5.4 | 5,0 | 2,0 (E4.1–E4.2) |
-| Ahmad Falahi | QA, dokumentasi, foto | — | 0 | 0 |
-| **Total** | | | **24,5** | **2,0** |
+| Abim Mustawa | Modul warna + foto lapangan | E5.1–E5.4, E10.2 | 7,0 | 0 |
+| Ahmad Falahi | QA, dokumentasi, data ML | E9.1, E10.5, E8.2 | 5,5 | 2,0 (E4.1–E4.2) |
+| **Total** | | | **32,0** | **2,0** |
 
-Tugas QA dan dokumentasi Ahmad (E9.1, E10.2, E10.5) dihitung terpisah: 6,0 ho.
+Rentang beban 5,5–7,5 ho per orang, termasuk tugas ML.
 
 ---
 
-## 2. Abim Mustawa — penyimpanan (7,0 ho)
+## 2. Faatihurrizki Prasojo — penyimpanan (7,0 ho)
 
-Semua tugas ini adalah rantai yang tidak bisa dipotong. Setelah E2.1 selesai,
-E2.2 dan E2.3 bisa paralel; E2.4 menyusul; E2.5 dan E2.6 menutup.
+Rantai ini tidak bisa dipotong. Setelah E2.1 selesai, E2.2 dan E2.3 bisa
+paralel; E2.4 menyusul; E2.5 dan E2.6 menutup.
 
 | Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
 |---:|---|---|---:|---|---|---|
@@ -46,7 +50,9 @@ Yang membuka pekerjaan orang lain:
 - E2.4 membuka E8.2 (Ahmad).
 - E2.5 membuka E8.4 (Izza).
 
-Karena itu E2.1 dan E2.2 adalah prioritas nomor satu di tim.
+Karena itu E2.1 dan E2.2 tetap prioritas nomor satu di tim, meskipun pemiliknya
+berganti. Branch yang dipakai: `feat/sqflite-setup` (buat ulang dari `main`
+karena branch lama sudah usang).
 
 ---
 
@@ -78,12 +84,11 @@ Tugas rutin: memantau PR, memperbarui papan Notion, rekap mingguan.
 | 5 | E8.3 | Ranking rekomendasi + teks explainability | 1,5 | E7.4 | Minggu 8 | Alasan tampil per outfit |
 | 6 | E8.5 | Tab Detail data nyata | 1,5 | E8.3 | Minggu 8 | Tab menampilkan data item |
 
-E8.3 dan E8.5 sengaja ditaruh terakhir karena menunggu integrasi Model 3. Jangan
-dikerjakan sebelum E7.4 selesai.
+E8.3 dan E8.5 sengaja ditaruh terakhir karena menunggu integrasi Model 3.
 
 ---
 
-## 5. Faatihurrizki Prasojo — modul warna dan data (7,0 ho)
+## 5. Abim Mustawa — modul warna dan foto lapangan (7,0 ho)
 
 | Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
 |---:|---|---|---:|---|---|---|
@@ -91,28 +96,27 @@ dikerjakan sebelum E7.4 selesai.
 | 2 | E5.2 | K-Means (k=3–5) Lab/HSV di Dart | 2,0 | E5.1 | Minggu 5–6 | Warna dominan benar pada 8 dari 10 gambar |
 | 3 | E5.3 | Pemetaan palet 14 nama warna | 1,0 | E5.2 | Minggu 6 | Nama warna sesuai |
 | 4 | E5.4 | Unit test warna | 1,0 | E5.3 | Minggu 6 | Test lulus |
-| 5 | E4.1 | Unduh dataset + EDA (tugas latar) | 1,0 | — | Minggu 5 | Dataset masuk `ml/data/raw/`, laporan EDA ada |
-| 6 | E4.2 | Gabung kelas + mapping + split | 1,0 | E4.1 | Minggu 6 | Mapping dan split tersimpan |
+| 5 | E10.2 | 150 foto lapangan untuk set uji | 2,0 | — | Minggu 5–6 | Set foto siap |
 
-E4.1 hanya butuh waktu unduh, bukan pengerjaan penuh. Kerjakan di sela E5,
-jangan menunggu.
+Branch: `feat/color-crop` untuk E5.1, lalu `feat/color-kmeans` untuk E5.2.
 
 ---
 
-## 6. Ahmad Falahi — QA, dokumentasi, dan foto (6,0 ho)
+## 6. Ahmad Falahi — QA, dokumentasi, dan data ML (7,5 ho)
 
 Sementara mobile belum selesai, Ahmad mengambil pekerjaan yang tidak menunggu
-kode: rencana uji, foto lapangan, dan dokumentasi. Pelatihan model masuk setelah
-mobile selesai.
+kode, ditambah tugas data ML yang punya waktu tunggu panjang.
 
 | Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
 |---:|---|---|---:|---|---|---|
 | 1 | — | Review PR #3 (rutin) | — | — | 28 Okt | PR digabung |
 | 2 | E9.1 | Rencana uji + minimal 20 test case fungsional | 2,0 | — | Minggu 5 | Test case terdokumentasi |
-| 3 | E10.2 | 150 foto lapangan untuk set uji | 2,0 | — | Minggu 5–6 | Set foto siap |
-| 4 | E10.5 | Dokumentasi fitur di `docs/` + README | 2,0 | E8.* | Minggu 6–7 | Dokumentasi mutakhir |
-| 5 | E8.2 | Simpan outfit ke "Outfit Tersimpan" | 1,5 | E2.4 | Minggu 6 | Outfit tersimpan terdaftar |
-| 6 | E9.2 | Eksekusi fungsional black-box + catat bug | 2,0 | E8.* | Minggu 9 | Hasil tercatat |
+| 3 | E4.1 | Unduh dataset + EDA + buang kelas ambigu | 1,0 | — | Minggu 5 | Dataset bersih + laporan EDA |
+| 4 | E4.2 | Gabung kelas + mapping + split 70/15/15 | 1,0 | E4.1 | Minggu 5–6 | Mapping + split tersimpan |
+| 5 | E10.5 | Dokumentasi fitur di `docs/` + README | 2,0 | E8.* | Minggu 6–7 | Dokumentasi mutakhir |
+| 6 | E8.2 | Simpan outfit ke "Outfit Tersimpan" | 1,5 | E2.4 | Minggu 6 | Outfit tersimpan terdaftar |
+
+E4.1 hanya butuh waktu unduh, bukan pengerjaan penuh. Jalankan di sela E9.1.
 
 ---
 
@@ -133,10 +137,13 @@ Dikerjakan mulai minggu 6, setelah E2 dan E3 berjalan dan E5 selesai.
 | E6.6 Ekspor MLP ke TFLite | 1,0 | E6.3 | Abim |
 | E7.1 Loader TFLite + isolate | 1,5 | E4.6, E6.6 | Ahmad |
 | E7.2 Inferensi Model 1 | 2,0 | E7.1 | Ahmad |
-| E7.3 Ganti atribut placeholder | 1,5 | E7.2, E5.2 | Faatihurrizki |
+| E7.3 Ganti atribut placeholder | 1,5 | E7.2, E5.2 | Abim |
 | E7.4 Skor Model 3 di rekomendasi | 1,5 | E7.1, E6.4 | Izza |
 | E7.5 Fallback aturan | 1,0 | E7.4 | Izza |
 | E7.6 Ukur latensi dan ukuran model | 1,0 | E7.2, E7.4 | Bisma |
+
+Catatan: Faatihurrizki mengerjakan E6.1–E6.2 setelah rantai E2 selesai, karena
+penyimpanan tetap prioritas lebih tinggi.
 
 ---
 
