@@ -124,3 +124,29 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 5. Setiap Minggu: rekap mingguan dan perbarui dokumen ini bila ada pergeseran.
 6. Scope freeze pada 30 November: setelah itu hanya perbaikan bug, pengujian, dan
    laporan.
+
+---
+
+## 8. Prioritas eksekusi: mobile dulu, ML menyusul
+
+Jalur kritis di atas bersifat teknis: tanpa E4/E6, integrasi tidak bisa jalan.
+Namun urutan **pengerjaan harian** disusun agar aplikasi bisa dipakai lebih dulu.
+ML tetap berjalan sebagai tugas latar, bukan ditinggalkan.
+
+| Prioritas | Tugas | Alasan | Perkiraan |
+|---|---|---|---|
+| P0 | E2.1, E2.2 | Membuka empat tugas fitur sekaligus | Minggu 5 |
+| P0 | E3.1 | Membuka autentikasi lanjutan dan halaman Profil | Minggu 5 |
+| P0 | E5.1 | Tanpa prasyarat, tidak butuh dataset | Minggu 5 |
+| P0 | E9.1 | Harus ada sebelum pengujian; tidak butuh kode | Minggu 5 |
+| P0 | Review PR #3 | Kode ML berhenti selama PR belum digabung | 28 Okt |
+| P1 | E4.1, E4.2 | Lead time unduh; menghambat seluruh jalur ML | Minggu 5–6 |
+| P1 | E2.3, E3.2, E3.3, E5.2, E8.6 | Lanjutan langsung dari P0 | Minggu 5–6 |
+| P2 | E4.3, E4.4, E5.3, E5.4, E2.4, E2.5 | Fondasi model dan penyimpanan lanjutan | Minggu 6 |
+| P2 | E6.1–E6.3, E4.5, E4.6 | Model 3 dan artefak TFLite | Minggu 7 |
+| P3 | E7.1–E7.6 | Integrasi, menunggu `.tflite` | Minggu 8–9 |
+| P3 | E8.3, E8.5 | Menunggu skor Model 3 (E7.4) | Minggu 8–9 |
+
+Konsekuensi yang perlu disadari: menunda E4.1 sampai mobile selesai akan
+menggeser E7, E8.3, E9.2, dan laporan akhir. Karena itu E4.1 tetap dijadwalkan
+minggu ini sebagai tugas latar dengan beban 1 ho.

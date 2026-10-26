@@ -77,21 +77,21 @@ fitur (2).
 4. Tugas boleh ditukar, tetapi laporkan di grup agar tidak dobel.
 5. Status di papan Notion diperbarui setiap hari.
 
-## 4. Rencana minggu 5 (26 Oktober - 1 November 2026)
+## 4. Jobdesk minggu 5 (27 Oktober - 1 November 2026)
 
-| Anggota | Tugas | ho |
+Prinsip: mobile dulu, ML menyusul. Rincian per tugas dan kriteria selesai ada di
+`Pembagian Tugas/jobdesk-per-anggota.md`.
+
+| Anggota | Tugas minggu 5 | ho |
 |---|---|---:|
-| Faatihurrizki Prasojo | E4.1 dataset + EDA, E4.2 split, E5.1 crop, E5.2 K-Means | 5,0 |
-| Bisma Adhiaksa | E3.1 login Google, E9.1 rencana uji + 20 test case | 4,0 |
-| Izza Dhafira Fanani | E10.2 50 foto lapangan, E8.6 halaman Admin | 4,0 |
-| Abim Mustawa | E2.1 setup DB, E2.2 CRUD, E2.3 simpan foto | 3,5 |
-| Ahmad Falahi | Review PR #3, E4.3 baseline, E4.4 mulai latih | 3,0 |
+| Abim Mustawa | E2.1 setup DB, E2.2 CRUD, E2.3 simpan foto | 3,5 dari 7,0 |
+| Bisma Adhiaksa | E3.1 login Google, E3.2 record cloud, E3.3 sesi | 4,0 dari 6,5 |
+| Faatihurrizki Prasojo | E5.1 crop, E4.1 dataset + EDA, E5.2 mulai | 4,0 dari 7,0 |
+| Izza Dhafira Fanani | E8.6 halaman Admin, E10.2 foto lapangan | 4,0 dari 6,0 |
+| Ahmad Falahi | Review PR #3, E9.1 rencana uji 20 test case | 2,5 dari 6,0 |
 
-Fokus: menutup PR #3 dan mengunduh dataset (jalur kritis), sambil menjalankan
-tugas yang tidak bergantung dataset.
-
-Rincian per anggota: `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
-Jadwal 10 minggu: `Pembagian Tugas/timeline.md`.
+Daftar kerja harian: `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
+Jadwal 10 minggu dan prioritas: `Pembagian Tugas/timeline.md`.
 
 ## 5. Definisi selesai
 
