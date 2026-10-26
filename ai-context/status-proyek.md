@@ -1,6 +1,6 @@
 # Status Proyek
 
-Diperbarui: 26 Oktober 2026 (branch `dev`)
+Diperbarui: 27 Oktober 2026 (branch `dev`)
 
 ## 1. Ringkasan
 
@@ -26,10 +26,13 @@ Diperbarui: 26 Oktober 2026 (branch `dev`)
 - Aturan harmoni warna (`lib/services/color_harmony.dart`) beserta 17 test,
   digabung lewat PR #2.
 - PR #3 (pipeline Model 1): enam skrip ML, label map tiga dataset, panduan
-  Model 1 versi Bahasa Indonesia. Menunggu review.
+  Model 1 versi Bahasa Indonesia. Status GitHub: dapat digabung (tanpa konflik),
+  tetapi belum ada review.
 - Dokumen: logbook minggu 1-8, laporan milestone 1, keputusan lisensi dataset
   bebas (Clothing Full CC0, Fashion Product Images MIT, Carousell MIT).
 - `AGENTS.md` dan `ai-context/` ditambahkan di branch `dev`.
+- Timeline 10 minggu disusun ulang (jalur ML tertinggal sekitar 3 minggu) dan
+  pembagian tugas minggu 5 dibuat.
 
 ## 3. Test
 
@@ -49,24 +52,25 @@ Diperbarui: 26 Oktober 2026 (branch `dev`)
 
 ## 5. Langkah berikut
 
-Urutan yang disarankan:
+Urutan yang disarankan (minggu 5, 26 Oktober - 1 November 2026):
 
-1. Review dan gabungkan PR #3.
-2. Unduh tiga dataset, jalankan EDA, lalu E4.2 (split).
-3. Sambil menunggu data: E2.1-E2.2 (Abim), E3.1 (Bisma), E5.1-E5.2
-   (Faatihurrizki), E8.1 dan E8.6 (Izza).
+1. Review dan gabungkan PR #3 (paling lambat 28 Oktober).
+2. Unduh tiga dataset, jalankan EDA, lalu E4.2 (split) (paling lambat 31 Oktober).
+3. Sambil menunggu data: E2.1-E2.2 (Abim), E3.1 (Bisma), E5.1 (Faatihurrizki),
+   E9.1 (Bisma), E10.2 (Izza).
 4. Setelah split siap: E4.3 baseline dan E4.4 pelatihan (Ahmad).
 5. Setelah model jadi: E4.5 evaluasi, E4.6 ekspor, lalu E7.
+
+Rincian per orang ada di `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
+Jadwal 10 minggu ada di `Pembagian Tugas/timeline.md`.
 
 ## 6. Catatan branch
 
 | Branch | Isi |
 |---|---|
-| `main` | Versi stabil; semua rute UI sudah ada |
+| `main` | Versi stabil, `2e33e55` (README instruksi unduh aplikasi) |
 | `dev` | Integrasi dan uji bersama; berisi `AGENTS.md` dan `ai-context/` |
-| `ml/model1-pipeline` | PR #3, pipeline Model 1 |
+| `ml/model1-pipeline` | PR #3, pipeline Model 1, dapat digabung |
 | `feat/color-harmony-rules` | Sudah digabung lewat PR #2 |
 | `feat/app-foundation` | Sudah digabung lewat PR #4 |
-
-Branch lama yang hanya berisi commit kosong atau dokumen sebaiknya dihapus
-agar tidak membingungkan.
+| `docs/*`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`, `data-training`, `feat/sqflite-setup` | Tidak berisi commit baru, isinya sudah ada di `main`; aman dihapus |

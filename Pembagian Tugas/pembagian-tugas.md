@@ -5,7 +5,7 @@ di tim boleh mengambil jobdesk mana pun selama **prasyaratnya sudah selesai**.
 Tugas hanya dibedakan menjadi **Independen** (tanpa prasyarat) dan **Dependen**
 (butuh prasyarat).
 
-Kode tugas (E1–E10) mengacu pada `context/feature-breakdown-id.md`.
+Kode tugas (E1–E10) mengacu pada `Pembagian Tugas/feature-breakdown-id.md`.
 
 ---
 
@@ -55,7 +55,8 @@ Kode tugas (E1–E10) mengacu pada `context/feature-breakdown-id.md`.
 | E10.1 🟢 | Logbook mingguan + notulen | Dokumentasi | Tulis | 3 | Sedang | ____ |
 | E10.2 🟢 | Kumpulkan 150 foto lapangan | Dokumentasi | Dokumentasi | 2 | Sedang | ____ |
 
-**Subtotal independen: 13,5 ho** — boleh jalan semua di Minggu 1.
+**Subtotal independen tersisa: 12,0 ho** (E6.4 sudah selesai) — boleh jalan
+sekarang tanpa menunggu siapa pun.
 
 ---
 
@@ -180,6 +181,8 @@ utamakan agar cepat diambil di Minggu 1.
 | Independen | 8 | 13,5 ho |
 | Dependen | 40 | 64 ho |
 | **Total** | **48** | **77,5 ho** |
+| Sudah selesai | 1 (E6.4) | 1,5 ho |
+| **Tersisa** | **47** | **76,0 ho** |
 
 **Ketersediaan tim:** 5 orang × 10 minggu ≈ **50 orang-minggu**. Artinya beban
 perlu dibagi rata, dan tugas independen harus dikerjakan paralel sejak awal.
@@ -208,3 +211,63 @@ menentukan siapa mengambil apa.
 - Penanggung fitur (E8) → penanggung QA (E9): serahkan APK yang bisa diuji.
 - Penanggung foto lapangan (E10.2) → penanggung uji ketahanan (E4.5): serahkan
   set foto **sebelum** pengujian.
+
+---
+
+## 10. Status per 27 Oktober 2026
+
+Dokumen ini tetap tanpa pemilik tetap. Tabel di bawah hanya mencatat **kondisi
+terkini**, bukan penugasan permanen. Pembagian per orang untuk minggu berjalan
+ada di `pembagian-tugas-minggu-5.md`.
+
+### 10.1 Status epic
+
+| Epic | Kondisi | Keterangan |
+|---|---|---|
+| E1 Fondasi Aplikasi | Selesai | Digabung lewat PR #4 |
+| E2 Penyimpanan | Belum mulai | Belum ada kode sqflite |
+| E3 Autentikasi | Belum mulai | Login masih palsu in-memory |
+| E4 Model 1 | Pipeline siap, belum dilatih | PR #3 terbuka, dataset belum diunduh |
+| E5 Modul warna | Belum mulai | Tidak bergantung dataset, bisa jalan |
+| E6 Model 3 | Sebagian | E6.4 selesai; E6.1 dst. menunggu E4.2 |
+| E7 Integrasi | Belum bisa mulai | Menunggu E4.6 dan E6.6 |
+| E8 Fitur aplikasi | Sebagian | UI dasar ada; data masih placeholder |
+| E9 QA | Belum mulai | Rencana uji belum disusun |
+| E10 Dokumentasi | Berjalan | Logbook 1–8 dan laporan M1 ada |
+
+### 10.2 Tugas yang bisa dikerjakan sekarang
+
+| ID | Tugas | Alasan siap |
+|---|---|---|
+| E2.1 | Setup `sqflite` + helper DB | Tanpa prasyarat |
+| E3.1 | Login Google + Firebase Auth | Tanpa prasyarat (butuh `google-services.json` lokal) |
+| E4.1 | Unduh dataset + EDA | Tanpa prasyarat; penghambat utama proyek |
+| E5.1 | Crop + thresholding latar | Tanpa prasyarat |
+| E9.1 | Rencana uji + 20 test case | Tanpa prasyarat |
+| E10.1 | Logbook mingguan | Rutin |
+| E10.2 | 150 foto lapangan | Tanpa prasyarat |
+
+### 10.3 Tugas yang tertahan
+
+| Tugas | Tertahan oleh |
+|---|---|
+| E4.2–E4.6, E6.1–E6.6 | E4.1 (dataset belum ada) |
+| E7.1–E7.6 | E4.6 dan E6.6 (artefak `.tflite` belum ada) |
+| E8.1, E8.2, E8.4, E8.6 | E2.1/E2.2/E2.4/E2.5 |
+| E8.3, E8.5 | E7.4 |
+| E8.7, E3.2–E3.4 | E3.1 |
+| E9.2–E9.7 | Fitur E8 dan artefak model |
+
+### 10.4 Kondisi branch dan PR
+
+| Branch | Kondisi |
+|---|---|
+| `main` | Stabil, `2e33e55` (README instruksi unduh aplikasi) |
+| `dev` | Integrasi dan uji, `017b787` (konteks AI) |
+| `ml/model1-pipeline` | PR #3 terbuka, 1.317 baris, 14 berkas, tanpa review |
+| `feat/color-harmony-rules` | Sudah digabung (PR #2) |
+| `feat/app-foundation` | Sudah digabung (PR #4) |
+| Branch `docs/*`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`, `data-training`, `feat/sqflite-setup` | Tidak berisi commit baru; isinya sudah ada di `main`. Aman dihapus. |
+
+**Jalur kritis saat ini:** `E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3
+→ E9.2 → E10.4`. Setiap hari keterlambatan E4.1 menunda seluruh integrasi.

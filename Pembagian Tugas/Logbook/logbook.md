@@ -100,31 +100,40 @@
 
 ## Minggu 4 — 19 s.d. 25 Okt 2026
 
-**Status:** Rencana (diperbarui saat minggu berjalan)
-**Fokus:** Menyusul jalur ML (dataset + EDA + split) dan memulai pekerjaan paralel: warna, penyimpanan, autentikasi.
+**Status:** Selesai (dokumen)
+**Fokus:** Menyusun laporan kemajuan Milestone 1 dan merapikan dokumen pendukung.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 19–25 Okt | Susulan & target W4 | Menyusul: unduh dataset + EDA (E4.1), merge/split (E4.2), baseline (E4.3). Target: evaluasi & ekspor TFLite (E4.5–E4.6), K-Means warna (E5.2), pasangan Model 3 (E6.1), penyimpanan (E2.5–E2.6), login (E3.1) | Jalur ML masih mengejar ketertinggalan | Latih YOLOv11n-cls (E4.4); palet warna (E5.3–E5.4); fitur + MLP (E6.2–E6.3); profil & sesi (E3.2–E3.3); UI lemari (E8.1–E8.2) | — |
+| 19–25 Okt | Laporan Milestone 1 | Menyusun laporan kemajuan Milestone 1 memakai template resmi (isi saja, tata letak tetap), melengkapi logbook minggu 1–8, membuat lampiran PDF logbook, dan merapikan dokumen pembagian tugas | Tidak ada commit kode pada rentang ini; dataset belum diunduh dan PR #3 belum direview | Membuka jalur data pada minggu 5 | `docs/`, `Pembagian Tugas/Logbook/logbook.md` (lokal) |
 
-**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
+**Ringkasan capaian:** Laporan Milestone 1 selesai dan logbook minggu 1–8 lengkap.
+Tidak ada perubahan kode pada minggu ini.
 
-**Kendala terbuka:** —
+**Kendala terbuka:**
+1. Dataset E4.1 belum diunduh (jalur kritis).
+2. PR #3 belum direview.
 
 ---
 
 ## Minggu 5 — 26 Okt s.d. 1 Nov 2026
 
-**Status:** Rencana (diperbarui saat minggu berjalan)
-**Fokus:** Pelatihan model utama (YOLOv11n-cls), modul warna, Model 3, dan fitur aplikasi.
+**Status:** Berjalan
+**Fokus:** Menutup PR #3, mengunduh dataset, dan menjalankan pekerjaan yang tidak bergantung dataset.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 26 Okt–1 Nov | Pelatihan & fitur | Latih YOLOv11n-cls + fine-tune (E4.4); palet 14 warna + unit test (E5.3–E5.4); feature builder + MLP (E6.2–E6.3); record cloud & sesi (E3.2–E3.3); UI lemari + outfit tersimpan (E8.1–E8.2) | — | Evaluasi + ekspor MLP (E6.5–E6.6); loader TFLite (E7.1–E7.3); konten Home (E8.4) | — |
+| 26 Okt | Konteks tim | Menambahkan branch `dev` untuk uji integrasi, `AGENTS.md`, dan folder `ai-context/` (arsitektur, konvensi kode, peta tugas, status proyek) agar anggota dan agen AI memakai konteks yang sama; memperbarui README bagian branch `dev` | `main` sudah bergerak satu commit (`2e33e55`), `dev` perlu disinkronkan | Sinkronkan `dev` dengan `main` | commit `017b787` |
+| 27 Okt | Perencanaan | Menyusun ulang timeline 10 minggu sesuai kondisi nyata (jalur ML tertinggal sekitar 3 minggu), membuat pembagian tugas minggu 5, dan memperbarui status pada daftar jobdesk | — | — | `Pembagian Tugas/timeline.md`, `pembagian-tugas-minggu-5.md` |
+| 28–1 Nov | Target W5 | Review dan gabung PR #3; unduh dataset + EDA (E4.1) dan split (E4.2); crop warna (E5.1) dan K-Means (E5.2); setup sqflite (E2.1) dan CRUD lemari (E2.2); login Google (E3.1); rencana uji (E9.1); 50 foto lapangan (E10.2) | Dataset dan Firebase belum siap | Baseline dan pelatihan Model 1 (E4.3–E4.4) | — |
 
-**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
+**Ringkasan capaian:** Branch `dev` dan konteks AI tersedia; timeline dan pembagian
+tugas minggu 5 diperbarui. (diperbarui saat minggu berjalan)
 
-**Kendala terbuka:** —
+**Kendala terbuka:**
+1. Dataset E4.1 belum diunduh.
+2. PR #3 belum direview.
+3. Firebase dan `google-services.json` belum disiapkan.
 
 ---
 

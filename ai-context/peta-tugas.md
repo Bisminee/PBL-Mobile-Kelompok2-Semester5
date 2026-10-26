@@ -77,19 +77,21 @@ fitur (2).
 4. Tugas boleh ditukar, tetapi laporkan di grup agar tidak dobel.
 5. Status di papan Notion diperbarui setiap hari.
 
-## 4. Rencana minggu 4 (19-25 Oktober 2026)
+## 4. Rencana minggu 5 (26 Oktober - 1 November 2026)
 
 | Anggota | Tugas | ho |
 |---|---|---:|
 | Faatihurrizki Prasojo | E4.1 dataset + EDA, E4.2 split, E5.1 crop, E5.2 K-Means | 5,0 |
-| Ahmad Falahi | E4.3 baseline, E4.4 latih YOLOv11n-cls | 4,0 |
-| Bisma Adhiaksa | E3.1 login Google, E3.2 record cloud, E3.3 sesi | 4,0 |
-| Izza Dhafira Fanani | E8.1 UI Lemari, E8.6 halaman Admin | 4,0 |
+| Bisma Adhiaksa | E3.1 login Google, E9.1 rencana uji + 20 test case | 4,0 |
+| Izza Dhafira Fanani | E10.2 50 foto lapangan, E8.6 halaman Admin | 4,0 |
 | Abim Mustawa | E2.1 setup DB, E2.2 CRUD, E2.3 simpan foto | 3,5 |
+| Ahmad Falahi | Review PR #3, E4.3 baseline, E4.4 mulai latih | 3,0 |
 
-Rencana lengkap per anggota (mobile dan ML) ada di
-`Pembagian Tugas/pembagian-mobile-per-anggota.md` dan
-`Pembagian Tugas/pembagian-tugas-minggu-4.md` (berkas lokal).
+Fokus: menutup PR #3 dan mengunduh dataset (jalur kritis), sambil menjalankan
+tugas yang tidak bergantung dataset.
+
+Rincian per anggota: `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
+Jadwal 10 minggu: `Pembagian Tugas/timeline.md`.
 
 ## 5. Definisi selesai
 
