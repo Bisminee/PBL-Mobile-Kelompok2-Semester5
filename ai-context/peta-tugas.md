@@ -97,5 +97,5 @@ Jadwal 10 minggu dan prioritas: `Pembagian Tugas/timeline.md`.
 
 1. Berjalan di perangkat Android nyata lewat alur utama.
 2. Test terkait lulus (unit, widget, atau metrik model).
-3. Digabung lewat PR yang direview ke `main`.
+3. Digabung lewat PR yang direview ke `dev` (bukan ke `main`).
 4. Tercatat di `docs/features/` atau laporan ML.

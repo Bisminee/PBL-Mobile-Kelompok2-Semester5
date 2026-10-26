@@ -59,8 +59,9 @@ Nama berkas layar berakhiran `_screen.dart`, widget `_card.dart`,
 | `test/` | Menambah test | `test/color-kmeans` |
 | `chore/` | Perawatan | `chore/update-deps` |
 
-- Branch dari `main` terbaru, umur pendek (1-3 hari).
-- `dev` adalah branch integrasi untuk uji bersama; PR tetap mengarah ke `main`.
+- Branch dibuat dari `dev` terbaru, umur pendek (1-3 hari).
+- PR mengarah ke `dev`, bukan ke `main`. `main` hanya menerima penggabungan
+  `dev` pada akhir milestone.
 - Tidak ada branch bernama orang.
 - Aturan lengkap dan daftar nama branch per tugas ada di
   `Pembagian Tugas/pembagian-tugas-minggu-5.docx` bagian 6.
@@ -88,7 +89,7 @@ Format: `<awalan>: <ringkasan singkat>` dengan awalan `feat`, `fix`, `docs`,
 
 ## 7. Larangan
 
-1. Push langsung ke `main`.
+1. Push langsung ke `dev` atau `main`.
 2. Commit `build/`, `.dart_tool/`, `ml/data/`, `ml/.venv/`, model `.pt`,
    `google-services.json`, atau API key.
 3. Menambah dependensi tanpa membahasnya di PR.

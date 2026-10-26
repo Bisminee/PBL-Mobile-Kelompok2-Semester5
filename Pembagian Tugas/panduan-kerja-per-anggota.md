@@ -14,13 +14,13 @@ kesalahan yang sering terjadi.
 
 ### 0.1 Alur kerja harian
 
-1. Pagi: `git switch main`, `git pull`, lalu buat branch baru dari `main`.
+1. Pagi: `git switch dev`, `git pull`, lalu buat branch baru dari `dev`.
 2. Kerjakan satu tugas saja sampai selesai.
 3. `flutter analyze` dan `flutter test` sebelum commit.
 4. Commit dengan awalan `feat:`, `fix:`, atau `test:`.
-5. Push, buka PR ke `main`, minta satu reviewer.
+5. Push, buka PR ke `dev`, minta satu reviewer.
 6. Setelah PR digabung, kabari grup dan perbarui status di papan Notion.
-7. Branch `dev` hanya untuk uji integrasi, tidak untuk menyimpan hasil akhir.
+7. `main` hanya menerima penggabungan `dev` pada akhir milestone.
 
 ### 0.2 Branch: aturan dan daftar per tugas
 
@@ -31,12 +31,11 @@ pekerjaanmu tidak mengganggu pekerjaan orang lain dan mudah direview.
 
 1. **Satu tugas = satu branch = satu PR.** Jangan menggabungkan dua tugas dalam
    satu branch.
-2. Branch selalu dibuat dari **`main` terbaru**, bukan dari `dev`, bukan dari
+2. Branch selalu dibuat dari **`dev` terbaru**, bukan dari `main`, bukan dari
    branch anggota lain.
 3. Nama branch menyebut **pekerjaan**, bukan nama orang.
 4. Umur branch pendek, 1–3 hari. Setelah PR digabung, branch dihapus.
-5. Jangan push langsung ke `main`. `dev` hanya untuk uji integrasi, bukan tempat
-   menyimpan hasil akhir.
+5. Pull Request mengarah ke **`dev`**. Jangan push langsung ke `dev` atau `main`.
 6. Kalau tugas dipecah, branch-nya ikut dipecah. Contoh: E2.1 dan E2.2 memakai
    dua branch berbeda.
 7. Jangan mencampur dua jenis pekerjaan. Branch database tidak boleh sekaligus
@@ -66,45 +65,45 @@ Nama branch memakai huruf kecil dan tanda hubung. Contoh benar:
 
 | Branch | Untuk tugas | Isi perubahan | PR ke |
 |---|---|---|---|
-| `feat/sqflite-setup` | E2.1 setup DB | `pubspec.yaml`, `lib/services/database_helper.dart`, `test/database_test.dart` | `main` |
-| `feat/wardrobe-crud` | E2.2 CRUD lemari | `lib/services/wardrobe_dao.dart`, `toMap`/`fromMap` di `lib/models/garment.dart` | `main` |
-| `feat/photo-storage` | E2.3 simpan foto | `lib/services/photo_storage.dart`, `lib/screens/scan/camera_preview_screen.dart` | `main` |
+| `feat/sqflite-setup` | E2.1 setup DB | `pubspec.yaml`, `lib/services/database_helper.dart`, `test/database_test.dart` | `dev` |
+| `feat/wardrobe-crud` | E2.2 CRUD lemari | `lib/services/wardrobe_dao.dart`, `toMap`/`fromMap` di `lib/models/garment.dart` | `dev` |
+| `feat/photo-storage` | E2.3 simpan foto | `lib/services/photo_storage.dart`, `lib/screens/scan/camera_preview_screen.dart` | `dev` |
 
 Catatan: branch `feat/sqflite-setup` yang ada sekarang berisi kode lama (24
-commit di belakang `main`). Hapus dulu, lalu buat ulang dari `main`.
+commit di belakang `main`). Hapus dulu, lalu buat ulang dari `dev`.
 
 **Ahmad — lanjutan penyimpanan**
 
 | Branch | Untuk tugas | Isi perubahan | PR ke |
 |---|---|---|---|
-| `feat/outfit-tables` | E2.4 tabel outfit + riwayat | `lib/services/outfit_dao.dart` | `main` |
-| `feat/load-on-start` | E2.5 muat data saat start | `lib/services/providers.dart`, `lib/main.dart` | `main` |
-| `test/dao` | E2.6 unit test DAO | `test/wardrobe_dao_test.dart`, `test/outfit_dao_test.dart` | `main` |
+| `feat/outfit-tables` | E2.4 tabel outfit + riwayat | `lib/services/outfit_dao.dart` | `dev` |
+| `feat/load-on-start` | E2.5 muat data saat start | `lib/services/providers.dart`, `lib/main.dart` | `dev` |
+| `test/dao` | E2.6 unit test DAO | `test/wardrobe_dao_test.dart`, `test/outfit_dao_test.dart` | `dev` |
 
 **Bisma — autentikasi**
 
 | Branch | Untuk tugas | Isi perubahan | PR ke |
 |---|---|---|---|
-| `chore/firebase-setup` | Persiapan Firebase | `android/app/build.gradle.kts`, `.gitignore` (tanpa `google-services.json`) | `main` |
-| `feat/google-login` | E3.1 login Google | `lib/services/auth_service.dart`, `lib/screens/auth/login_screen.dart` | `main` |
-| `feat/cloud-profile` | E3.2 record cloud | `lib/services/user_repository.dart` | `main` |
-| `feat/session-persist` | E3.3 sesi persisten | `lib/services/providers.dart`, `lib/config/app_router.dart` | `main` |
-| `feat/sign-out` | E3.4 sign out + hapus akun | `lib/services/auth_service.dart`, `lib/screens/profile/profile_screen.dart` | `main` |
+| `chore/firebase-setup` | Persiapan Firebase | `android/app/build.gradle.kts`, `.gitignore` (tanpa `google-services.json`) | `dev` |
+| `feat/google-login` | E3.1 login Google | `lib/services/auth_service.dart`, `lib/screens/auth/login_screen.dart` | `dev` |
+| `feat/cloud-profile` | E3.2 record cloud | `lib/services/user_repository.dart` | `dev` |
+| `feat/session-persist` | E3.3 sesi persisten | `lib/services/providers.dart`, `lib/config/app_router.dart` | `dev` |
+| `feat/sign-out` | E3.4 sign out + hapus akun | `lib/services/auth_service.dart`, `lib/screens/profile/profile_screen.dart` | `dev` |
 
 **Izza — fitur lemari dan admin**
 
 | Branch | Untuk tugas | Isi perubahan | PR ke |
 |---|---|---|---|
-| `feat/wardrobe-ui` | E8.1 CRUD UI Lemari | `lib/screens/wardrobe/wardrobe_screen.dart`, `lib/widgets/wardrobe/` | `main` |
-| `feat/admin-master-data` | E8.6 halaman Admin | `lib/screens/admin/admin_screen.dart`, `lib/services/master_data_dao.dart`, `lib/config/app_routes.dart`, `lib/config/app_router.dart` | `main` |
+| `feat/wardrobe-ui` | E8.1 CRUD UI Lemari | `lib/screens/wardrobe/wardrobe_screen.dart`, `lib/widgets/wardrobe/` | `dev` |
+| `feat/admin-master-data` | E8.6 halaman Admin | `lib/screens/admin/admin_screen.dart`, `lib/services/master_data_dao.dart`, `lib/config/app_routes.dart`, `lib/config/app_router.dart` | `dev` |
 
 **Abim — profil, outfit, Home**
 
 | Branch | Untuk tugas | Isi perubahan | PR ke |
 |---|---|---|---|
-| `feat/profile-screen` | E8.7 halaman Profil | `lib/screens/profile/profile_screen.dart` | `main` |
-| `feat/save-outfit` | E8.2 simpan outfit | `lib/screens/outfit/recommendation_screen.dart`, `lib/screens/outfit/detail_screen.dart` | `main` |
-| `feat/home-content` | E8.4 konten Home | `lib/screens/home/home_screen.dart`, `lib/widgets/home/` | `main` |
+| `feat/profile-screen` | E8.7 halaman Profil | `lib/screens/profile/profile_screen.dart` | `dev` |
+| `feat/save-outfit` | E8.2 simpan outfit | `lib/screens/outfit/recommendation_screen.dart`, `lib/screens/outfit/detail_screen.dart` | `dev` |
+| `feat/home-content` | E8.4 konten Home | `lib/screens/home/home_screen.dart`, `lib/widgets/home/` | `dev` |
 
 #### Branch yang tidak boleh dibuat
 
@@ -121,17 +120,17 @@ commit di belakang `main`). Hapus dulu, lalu buat ulang dari `main`.
 Membuat:
 
 ```bash
-git switch main
-git pull origin main
+git switch dev
+git pull origin dev
 git switch -c feat/wardrobe-crud
 git push -u origin feat/wardrobe-crud
 ```
 
-Setelah PR digabung:
+Setelah PR digabung ke `dev`:
 
 ```bash
-git switch main
-git pull origin main
+git switch dev
+git pull origin dev
 git branch -d feat/wardrobe-crud
 git push origin --delete feat/wardrobe-crud
 ```
@@ -142,7 +141,7 @@ Kalau branch lama sudah usang dan akan dipakai lagi (seperti
 ```bash
 git branch -D feat/sqflite-setup
 git push origin --delete feat/sqflite-setup
-git switch main && git pull
+git switch dev && git pull
 git switch -c feat/sqflite-setup
 ```
 

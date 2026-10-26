@@ -27,7 +27,8 @@ Kode tugas (E1–E10) mengacu pada `Pembagian Tugas/feature-breakdown-id.md`.
 2. Pilih tugas dengan label `independent` (bisa langsung) atau `dependent`
    (cek prasyarat dulu).
 3. Tulis nama kalian di kolom **Diambil oleh**.
-4. Kerjakan di **branch pribadi** kalian, commit, push, lalu buka PR.
+4. Buat **branch fitur dari `dev`**, kerjakan, commit, push, lalu buka PR ke
+   `dev`.
 5. Setelah PR digabung → tandai `done`.
 
 ### Legenda
@@ -201,7 +202,7 @@ menentukan siapa mengambil apa.
 
 1. Berjalan di perangkat Android nyata lewat alur utama.
 2. Test terkait lulus (unit/widget/metrik model).
-3. Digabung lewat PR yang direview ke `main` (jangan push langsung ke `main`).
+3. Digabung lewat PR yang direview ke `dev` (jangan push langsung ke `dev`).
 4. Didokumentasikan di `docs/features/` (atau laporan ML untuk model).
 
 ## 9. Aturan Serah-Terima

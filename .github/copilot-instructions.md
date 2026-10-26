@@ -8,7 +8,8 @@ Ringkas:
 - Proyek Flutter (Dart), state Riverpod, routing `go_router`.
 - Semua teks UI, komentar, dan dokumentasi memakai Bahasa Indonesia.
 - Tanpa emoji.
-- Jangan menulis langsung ke `main`; satu fitur satu branch satu PR.
+- Jangan menulis langsung ke `dev` atau `main`; satu fitur satu branch satu PR,
+  dan PR mengarah ke `dev`.
 - Gunakan token desain di `lib/config/` (`app_colors`, `app_sizes`,
   `app_text_styles`) alih-alih nilai hardcode.
 - Jangan menghapus atau melemahkan test.

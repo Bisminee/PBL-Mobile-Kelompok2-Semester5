@@ -117,8 +117,8 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 
 ## 7. Aturan pelaksanaan
 
-1. Satu tugas = satu branch = satu PR; PR mengarah ke `main`, `dev` dipakai untuk
-   uji integrasi.
+1. Satu tugas = satu branch = satu PR; branch dibuat dari `dev` dan PR mengarah
+   ke `dev`. `main` hanya menerima penggabungan `dev` pada akhir milestone.
 2. Maksimal 2 tugas aktif per orang.
 3. Tugas yang tertahan prasyarat tidak diambil; pindah ke tugas independen.
 4. Setiap Jumat: perbarui status di papan Notion dan logbook.

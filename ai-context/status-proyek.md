@@ -69,7 +69,7 @@ Jadwal 10 minggu ada di `Pembagian Tugas/timeline.md`.
 | Branch | Isi |
 |---|---|
 | `main` | Versi stabil, `2e33e55` (README instruksi unduh aplikasi) |
-| `dev` | Integrasi dan uji bersama; berisi `AGENTS.md` dan `ai-context/` |
+| `dev` | Branch kerja bersama: tempat branch fitur dibuat dan tujuan PR |
 | `ml/model1-pipeline` | PR #3, pipeline Model 1, dapat digabung |
 | `feat/color-harmony-rules` | Sudah digabung lewat PR #2 |
 | `feat/app-foundation` | Sudah digabung lewat PR #4 |

@@ -154,5 +154,5 @@ Login → Home → Kamera → Rekomendasi → Detail, serta tangkap kamera.
 
 1. Berjalan di perangkat Android nyata lewat alur utama.
 2. Test terkait lulus (unit/widget/metrik model).
-3. Digabung lewat PR yang direview ke `main` (jangan push langsung ke `main`).
+3. Digabung lewat PR yang direview ke `dev` (jangan push langsung ke `dev`).
 4. Didokumentasikan di `docs/features/` (atau laporan ML untuk model).

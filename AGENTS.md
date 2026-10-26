@@ -36,9 +36,10 @@ Tiga komponen ML:
 1. **Bahasa Indonesia** untuk teks UI, komentar, dokumentasi, dan pesan commit.
    Nama kelas, variabel, dan berkas tetap bahasa Inggris.
 2. **Tanpa emoji** di kode, dokumen, pesan commit, maupun balasan chat.
-3. **Jangan push langsung ke `main`.** Satu fitur = satu branch = satu PR.
-   Branch dinamai fitur (`feat/`, `fix/`, `ml/`, `docs/`, `test/`, `chore/`),
-   bukan nama orang. Branch `dev` dipakai untuk integrasi dan uji bersama.
+3. **Branch fitur dibuat dari `dev`, dan PR mengarah ke `dev`.** Jangan push
+   langsung ke `main` maupun `dev`. Satu fitur = satu branch = satu PR. Branch
+   dinamai fitur (`feat/`, `fix/`, `ml/`, `docs/`, `test/`, `chore/`), bukan nama
+   orang. Setelah milestone stabil, `dev` digabung ke `main` lewat PR terpisah.
 4. Maksimal **2 tugas aktif** per orang; selesaikan satu PR sebelum mengambil
    tugas berikutnya.
 5. Jangan commit rahasia (`google-services.json`, API key) dan artefak:

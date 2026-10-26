@@ -46,7 +46,7 @@ penyimpanan yang harus berurutan; Bisma memegang rantai autentikasi utuh.
 | 2 | E2.2 | CRUD `wardrobe_items` (tambah, ambil, ubah, hapus) | 1,5 | E2.1 | 29 Okt | Item tetap ada setelah restart |
 | 3 | E2.3 | Simpan foto ke folder dokumen, simpan hanya path | 1,0 | E2.1 | 30 Okt | Foto tampil, DB tidak membengkak |
 
-Branch: `feat/sqflite-setup` (buat ulang dari `main`, branch lama usang).
+Branch: `feat/sqflite-setup` (buat ulang dari `dev`, branch lama usang).
 
 Yang dibuka: E8.6 (butuh E2.1) dan E8.1 (butuh E2.2). Karena itu E2.1 adalah
 tugas pertama yang harus selesai di seluruh tim.
