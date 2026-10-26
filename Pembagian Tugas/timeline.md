@@ -38,15 +38,15 @@ Keterlambatan jalur ML: **sekitar 3 minggu** dari rencana awal.
 | 2 | 5 – 11 Okt | Kamera dan aturan warna | E1 lanjutan (kamera), E6.4 aturan harmoni (PR #2) | — | Selesai |
 | 3 | 12 – 18 Okt | Pipeline ML dan kualitas UI | PR #3 pipeline Model 1, perbaikan layout responsif, keputusan lisensi dataset | — | Selesai |
 | 4 | 19 – 25 Okt | Laporan Milestone 1 | Penyusunan laporan Milestone 1, logbook minggu 1–8 | CP-2 Milestone 1 (24 Okt) | Selesai (laporan), jalur ML tertinggal |
-| 5 | 26 Okt – 1 Nov | Membuka jalur data | Review dan gabung PR #3, E4.1 dataset + EDA, E4.2 split, E5.1 crop, E2.1, E3.1, E9.1 | — | Berjalan |
-| 6 | 2 – 8 Nov | Latih Model 1 dan modul warna | E4.3 baseline, E4.4 latih YOLOv11n-cls, E5.2 K-Means, E2.2–E2.3, E3.2–E3.3 | — | Rencana |
-| 7 | 9 – 15 Nov | Ekspor model dan Model 3 | E4.5 evaluasi, E4.6 ekspor TFLite, E6.1 pasangan, E6.2 fitur, E2.4–E2.6, E8.6 | — | Rencana |
-| 8 | 16 – 22 Nov | Model 3 dan awal integrasi | E6.3 latih MLP, E6.5 evaluasi, E7.1 loader, E7.2 inferensi Model 1, E8.1, E3.4 | CP-3 Milestone 2 (20 Nov) | Rencana |
-| 9 | 23 – 29 Nov | Integrasi penuh dan QA awal | E6.6 ekspor MLP, E7.3–E7.6, E8.2–E8.5, E9.2 uji fungsional | — | Rencana |
-| 10 | 30 Nov – 6 Des | Freeze, QA, laporan | E9.3–E9.7, E10.3–E10.5, polish, demo | CP-4 Final (4 Des) | Rencana |
+| 5 | 26 Okt – 1 Nov | Pondasi mobile | E2.1–E2.4, E3.1, E8.6 | — | Berjalan |
+| 6 | 2 – 8 Nov | Menyelesaikan mobile | E2.5–E2.6, E3.2–E3.4, E8.1, E8.2, E8.4, E8.7 | — | Rencana |
+| 7 | 9 – 15 Nov | Mulai ML dan pemrosesan gambar | E5.1–E5.2, E4.1–E4.3 | — | Rencana |
+| 8 | 16 – 22 Nov | Latih model | E4.4–E4.6, E6.1–E6.2, E5.3–E5.4 | CP-3 Milestone 2 (27 Nov) | Rencana |
+| 9 | 23 – 29 Nov | Integrasi dan QA awal | E6.3–E6.6, E7.1–E7.5, E8.3, E8.5, E9.2 | — | Rencana |
+| 10 | 30 Nov – 6 Des | Freeze, QA, laporan | E7.6, E9.3–E9.7, E10.3–E10.5, demo | CP-4 Final (4 Des) | Rencana |
 
-Catatan: CP-3 Milestone 2 digeser dari 13 Nov ke **20 Nov** karena E7 baru bisa
-mulai setelah E4.6 dan E6.6. CP-4 tetap 4 Desember.
+Catatan: CP-3 Milestone 2 digeser dari 13 Nov ke **27 Nov** karena ML baru dimulai
+minggu 7. CP-4 tetap 4 Desember.
 
 ---
 
@@ -54,15 +54,16 @@ mulai setelah E4.6 dan E6.6. CP-4 tetap 4 Desember.
 
 | Epic | Tugas tersisa | Target minggu | Penanggung sementara |
 |---|---|---|---|
-| E2 Penyimpanan | E2.1–E2.6 (7,0 ho) | 5–7 | Abim Mustawa |
-| E3 Autentikasi | E3.1–E3.4 (5,0 ho) | 5–8 | Bisma Adhiaksa |
-| E4 Model 1 | E4.1–E4.6 (8,0 ho) | 5–7 | Faatihurrizki (data), Ahmad (latih) |
-| E5 Modul warna | E5.1–E5.4 (5,0 ho) | 5–6 | Faatihurrizki |
-| E6 Model 3 | E6.1–E6.3, E6.5–E6.6 (7,0 ho) | 7–9 | Ahmad (latih), Bisma (evaluasi) |
-| E7 Integrasi | E7.1–E7.6 (9,5 ho) | 8–9 | Ahmad (E7.1–E7.2), Izza (E7.4–E7.6) |
-| E8 Fitur aplikasi | E8.1–E8.7 (11,5 ho) | 5–9 | Izza (UI), Bisma (outfit, profil) |
-| E9 QA | E9.1–E9.7 (11,0 ho) | 5, 9–10 | Bisma (rencana), seluruh tim (eksekusi) |
-| E10 Dokumentasi | E10.1–E10.5 (11,5 ho) | 5–10 | Izza (logbook, laporan), tim (foto) |
+| E2 Penyimpanan | E2.1–E2.6 (7,0 ho) | 5–6 | Pras (E2.1–E2.3), Ahmad (E2.4–E2.6) |
+| E3 Autentikasi | E3.1–E3.4 (5,0 ho) | 5–6 | Bisma Adhiaksa |
+| E8 Fitur aplikasi | E8.1, E8.2, E8.4, E8.6, E8.7 (8,5 ho) | 5–6 | Izza (E8.1, E8.6), Abim (E8.2, E8.4, E8.7) |
+| E4 Model 1 | E4.1–E4.6 (8,0 ho) | 7–8 | Ahmad |
+| E5 Modul warna | E5.1–E5.4 (5,0 ho) | 7–8 | Abim |
+| E6 Model 3 | E6.1–E6.3, E6.5–E6.6 (7,0 ho) | 8–9 | Pras (data), Ahmad (latih), Bisma (evaluasi) |
+| E7 Integrasi | E7.1–E7.6 (9,5 ho) | 9–10 | Ahmad, Izza, Abim |
+| E8 Fitur lanjutan | E8.3, E8.5 (3,0 ho) | 9 | Izza |
+| E9 QA | E9.1–E9.7 (11,0 ho) | 9–10 | Bisma dan seluruh tim |
+| E10 Dokumentasi | E10.1–E10.5 (11,5 ho) | 9–10 | Izza |
 
 Penanggung sementara hanya berlaku untuk minggu berjalan dan boleh ditukar.
 Aturan tetap: maksimal 2 tugas aktif per orang.
@@ -96,7 +97,7 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 |---|---|---|---|
 | CP-1 Proposal | 2 Okt 2026 | Proposal proyek | Selesai |
 | CP-2 Milestone 1 | 24 Okt 2026 | Laporan kemajuan, desain, rencana ML | Selesai (laporan); pelatihan model menyusul |
-| CP-3 Milestone 2 | 20 Nov 2026 | Model terintegrasi, fitur inti, uji fungsional | Rencana, berisiko |
+| CP-3 Milestone 2 | 27 Nov 2026 | Model terintegrasi, fitur inti, uji fungsional | Rencana, berisiko |
 | CP-4 Final | 4 Des 2026 | Aplikasi rilis, laporan akhir, demo | Rencana |
 
 ---
@@ -105,8 +106,8 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 
 | Risiko | Dampak | Mitigasi |
 |---|---|---|
-| Dataset E4.1 belum diunduh | Seluruh E4, E6, E7 bergeser | Selesaikan unduhan paling lambat 29 Okt; sementara itu kerjakan E5, E2, E3 |
-| PR #3 belum direview | Kode pipeline tidak bisa dipakai | Review paling lambat 28 Okt, satu reviewer cukup |
+| ML dan pemrosesan gambar dijeda sampai mobile selesai | E7, E8.3, E9.2, dan laporan bergeser | Mobile diselesaikan 1 Nov, ML mulai 9 Nov; CP-3 digeser ke 27 Nov |
+| PR #3 belum direview | Kode pipeline tidak bisa dipakai saat ML dimulai | Review sebelum 9 Nov, tidak perlu minggu ini |
 | Akurasi model di bawah 80 persen | Target laporan tidak tercapai | Siapkan baseline MobileNetV2 dan fine-tune; catat hasil apa adanya |
 | Integrasi TFLite mepet | E7 dan E8.3 tidak selesai | Mulai E7.1 segera setelah artefak pertama ada, jangan menunggu model sempurna |
 | Beban QA menumpuk di akhir | Bug tidak tertangani | E9.1 disusun minggu 5, uji fungsional bertahap sejak minggu 9 |
@@ -129,24 +130,26 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 
 ## 8. Prioritas eksekusi: mobile dulu, ML menyusul
 
-Jalur kritis di atas bersifat teknis: tanpa E4/E6, integrasi tidak bisa jalan.
-Namun urutan **pengerjaan harian** disusun agar aplikasi bisa dipakai lebih dulu.
-ML tetap berjalan sebagai tugas latar, bukan ditinggalkan.
+Semua pekerjaan ML dan pemrosesan gambar dijeda. Fokus minggu 5–6 hanya
+pembangunan aplikasi.
 
 | Prioritas | Tugas | Alasan | Perkiraan |
 |---|---|---|---|
-| P0 | E2.1, E2.2 | Membuka empat tugas fitur sekaligus | Minggu 5 |
-| P0 | E3.1 | Membuka autentikasi lanjutan dan halaman Profil | Minggu 5 |
-| P0 | E5.1 | Tanpa prasyarat, tidak butuh dataset | Minggu 5 |
-| P0 | E9.1 | Harus ada sebelum pengujian; tidak butuh kode | Minggu 5 |
-| P0 | Review PR #3 | Kode ML berhenti selama PR belum digabung | 28 Okt |
-| P1 | E4.1, E4.2 | Lead time unduh; menghambat seluruh jalur ML | Minggu 5–6 |
-| P1 | E2.3, E3.2, E3.3, E5.2, E8.6 | Lanjutan langsung dari P0 | Minggu 5–6 |
-| P2 | E4.3, E4.4, E5.3, E5.4, E2.4, E2.5 | Fondasi model dan penyimpanan lanjutan | Minggu 6 |
-| P2 | E6.1–E6.3, E4.5, E4.6 | Model 3 dan artefak TFLite | Minggu 7 |
-| P3 | E7.1–E7.6 | Integrasi, menunggu `.tflite` | Minggu 8–9 |
-| P3 | E8.3, E8.5 | Menunggu skor Model 3 (E7.4) | Minggu 8–9 |
+| P0 | E2.1 | Membuka E8.1, E8.6, dan seluruh E2 lanjutan | 28 Okt |
+| P0 | E2.2 | Membuka E8.1 | 29 Okt |
+| P0 | E3.1 | Membuka E3.2–E3.4 dan E8.7 | 29 Okt |
+| P0 | E2.4 | Membuka E8.2 | 30 Okt |
+| P1 | E2.3, E2.5, E2.6 | Melengkapi penyimpanan | 31 Okt–1 Nov |
+| P1 | E3.2–E3.4 | Melengkapi autentikasi | 30 Okt–1 Nov |
+| P1 | E8.6, E8.1 | Fitur lemari dan admin | 29 Okt–1 Nov |
+| P1 | E8.7, E8.2, E8.4 | Profil, outfit, Home | 31 Okt–1 Nov |
+| P2 | E5 modul warna | Pemrosesan gambar, menyusul | Minggu 7 |
+| P2 | E4 Model 1 | ML, menyusul | Minggu 7 |
+| P3 | E6 Model 3 | ML, menyusul | Minggu 8 |
+| P3 | E7 integrasi TFLite | Menunggu artefak model | Minggu 9 |
+| P3 | E8.3, E8.5 | Menunggu E7.4 | Minggu 9 |
+| P3 | E9 QA, E10 dokumentasi | Menyusul setelah fitur stabil | Minggu 9–10 |
 
-Konsekuensi yang perlu disadari: menunda E4.1 sampai mobile selesai akan
-menggeser E7, E8.3, E9.2, dan laporan akhir. Karena itu E4.1 tetap dijadwalkan
-minggu ini sebagai tugas latar dengan beban 1 ho.
+Konsekuensi: menghentikan ML sampai mobile selesai menggeser seluruh jalur
+integrasi. CP-3 Milestone 2 dijadwalkan ulang ke **27 November** dan scope freeze
+tetap 30 November.

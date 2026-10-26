@@ -52,16 +52,16 @@ Diperbarui: 27 Oktober 2026 (branch `dev`)
 
 ## 5. Langkah berikut
 
-Urutan yang disarankan (minggu 5, 26 Oktober - 1 November 2026):
+Fokus minggu 5-6: **pembangunan mobile saja**. ML dan pemrosesan gambar dijeda.
 
-1. Review dan gabungkan PR #3 (paling lambat 28 Oktober).
-2. Unduh tiga dataset, jalankan EDA, lalu E4.2 (split) (paling lambat 31 Oktober).
-3. Sambil menunggu data: E2.1-E2.2 (Abim), E3.1 (Bisma), E5.1 (Faatihurrizki),
-   E9.1 (Bisma), E10.2 (Izza).
-4. Setelah split siap: E4.3 baseline dan E4.4 pelatihan (Ahmad).
-5. Setelah model jadi: E4.5 evaluasi, E4.6 ekspor, lalu E7.
+1. E2.1 lalu E2.2 (Pras) - membuka E8.1 dan E8.6.
+2. E3.1 (Bisma) - membuka E3.2-E3.4 dan E8.7.
+3. E2.4-E2.6 (Ahmad) - membuka E8.2 dan E8.4.
+4. E8.6 dan E8.1 (Izza), E8.7/E8.2/E8.4 (Abim).
+5. Setelah mobile stabil (1 Nov): mulai E5, E4, lalu E6 dan E7.
 
-Rincian per orang ada di `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
+Rincian per orang ada di `Pembagian Tugas/jobdesk-per-anggota.md`.
+Daftar kerja harian ada di `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
 Jadwal 10 minggu ada di `Pembagian Tugas/timeline.md`.
 
 ## 6. Catatan branch

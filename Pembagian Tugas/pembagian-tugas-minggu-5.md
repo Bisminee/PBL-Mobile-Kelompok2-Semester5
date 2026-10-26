@@ -1,27 +1,27 @@
 # Daftar Kerja Minggu 5 — Sera-Z
 
 Tim Sera-Z · Kelas TI-3D · Semester 5
-Periode: **27 Oktober – 1 November 2026** (sisa minggu 5)
+Periode: **27 Oktober – 1 November 2026**
 Disusun: 27 Oktober 2026
 
-Prinsip minggu ini: **mobile dulu, ML menyusul**.
-Perubahan 27 Oktober: penyimpanan (E2) pindah dari Abim ke Faatihurrizki Prasojo
-(Pras); modul warna (E5) dan foto lapangan (E10.2) pindah ke Abim.
+Fokus: **pembangunan mobile saja**. ML dan pemrosesan gambar belum dikerjakan.
+
+Dikerjakan: E2 penyimpanan, E3 autentikasi, E8.1, E8.2, E8.4, E8.6, E8.7.
+Dijeda: E4, E5, E6, E7, E8.3, E8.5, E9, E10.
+
+Total 20,5 ho, rata-rata 4,1 ho per orang.
 
 ---
 
-## 1. Prioritas
+## 1. Ringkasan tugas
 
-| Prioritas | Tugas | Pemilik | Alasan |
-|---|---|---|---|
-| P0 | E2.1, E2.2 | Pras | Membuka E8.6, E8.1, E8.2, E8.4 |
-| P0 | E3.1 | Bisma | Membuka E3.2–E3.4 dan E8.7 |
-| P0 | E5.1 | Abim | Tanpa prasyarat, tidak butuh dataset |
-| P0 | E9.1 | Ahmad | Harus siap sebelum E9.2; bisa jalan tanpa kode |
-| P0 | Review dan gabung PR #3 | Ahmad, Bisma | Kode pipeline ML berhenti di PR |
-| P1 | E4.1–E4.2 | Ahmad | Jalur kritis jangka panjang, lead time unduh |
-| P2 | E2.3, E3.2, E3.3, E5.2, E8.6 | Pras, Bisma, Abim, Izza | Lanjutan setelah P0 |
-| Ditunda | E4.3–E4.6, E6.*, E7.* | — | Menunggu data dan artefak model |
+| Anggota | Tugas | ho |
+|---|---|---:|
+| Pras | E2.1 setup DB, E2.2 CRUD lemari, E2.3 simpan foto | 3,5 |
+| Ahmad | E2.4 tabel outfit + riwayat, E2.5 muat saat start, E2.6 test DAO | 3,5 |
+| Bisma | E3.1 login Google, E3.2 record cloud, E3.3 sesi, E3.4 sign out | 5,0 |
+| Izza | E8.6 halaman Admin, E8.1 CRUD UI Lemari | 4,0 |
+| Abim | E8.7 halaman Profil, E8.2 simpan outfit, E8.4 konten Home | 4,5 |
 
 ---
 
@@ -33,94 +33,109 @@ Perubahan 27 Oktober: penyimpanan (E2) pindah dari Abim ke Faatihurrizki Prasojo
 |---|---|---|
 | Pras | E2.1 setup `sqflite`, `path_provider`, helper DB | DB terbuka, skema v1 |
 | Bisma | Buat proyek Firebase + `google-services.json` lokal | Berkas kunci ada, tidak di-commit |
-| Abim | E5.1 crop tengah + thresholding latar | Crop berjalan pada 5 sampel |
-| Izza | Mulai E10.2 foto lapangan | 20 foto pertama |
-| Ahmad | Review PR #3 + mulai unduh 3 dataset | Komentar review, unduhan berjalan |
+| Ahmad | Siapkan skema SQL `outfits` dan `recommendation_history` | Rancangan tabel siap, menunggu E2.1 |
+| Izza | Rancangan layar dan skema master data E8.6 | Rancangan disetujui |
+| Abim | Rangka UI statis halaman Profil (E8.7) | Tampilan jadi, belum tersambung |
 
 ### Rabu, 28 Oktober
 
 | Orang | Tugas | Keluaran |
 |---|---|---|
-| Pras | E2.2 CRUD `wardrobe_items` | Insert, ambil, hapus berjalan |
+| Pras | E2.2 CRUD `wardrobe_items` | Tambah, ambil, hapus berjalan |
 | Bisma | E3.1 `google_sign_in` + Firebase Auth | Login berhasil di perangkat |
-| Abim | Selesaikan E5.1, mulai E5.2 K-Means | Crop final, kerangka K-Means |
-| Izza | E8.6 rancangan master data | Rancangan tabel dan layar |
-| Ahmad | Review PR #3 selesai, mulai E9.1 | PR siap digabung, kerangka test case |
+| Ahmad | E2.4 implementasi tabel + DAO | Simpan dan daftar outfit berhasil |
+| Izza | E8.6 implementasi (setelah E2.1) | Admin membaca master data |
+| Abim | Lanjut E8.7 + siapkan integrasi data | UI shell selesai |
 
 ### Kamis, 29 Oktober
 
 | Orang | Tugas | Keluaran |
 |---|---|---|
 | Pras | E2.3 simpan foto (hanya path di DB) | Foto tampil setelah restart |
-| Bisma | E3.2 record cloud `users` + `profiles` | Profil terbentuk saat login |
-| Abim | E5.2 K-Means (k=3–5) Lab/HSV | Warna dominan benar pada 5 sampel |
-| Izza | E8.6 implementasi (setelah E2.1) | Layar admin membaca master data |
-| Ahmad | E9.1 minimal 20 test case | Dokumen rencana uji |
+| Bisma | Uji E3.1 + E3.2 record cloud | Profil terbentuk saat login |
+| Ahmad | Selesaikan E2.4 | DAO outfit dan riwayat lulus uji manual |
+| Izza | Selesaikan E8.6 | Master data dapat dikelola |
+| Abim | Mulai E8.2 (setelah E2.4) | Form simpan outfit |
 
 ### Jumat, 30 Oktober
 
 | Orang | Tugas | Keluaran |
 |---|---|---|
-| Pras | E2.4 tabel `outfits` + `recommendation_history` | DAO outfit dan riwayat |
+| Pras | Review PR E2 + bantu Izza | PR E2 siap digabung |
 | Bisma | E3.3 sesi persisten | Masih login setelah restart |
-| Abim | E5.2 lanjutan | Warna dominan stabil pada 8 dari 10 sampel |
-| Izza | E8.1 mulai CRUD UI Lemari | Form tambah dan daftar item |
-| Ahmad | E4.1 EDA + mulai E10.5 dokumentasi | Laporan EDA singkat |
+| Ahmad | E2.5 muat lemari dan riwayat saat start | Data muncul setelah cold start |
+| Izza | Mulai E8.1 (setelah E2.2) | Daftar item dan form tambah |
+| Abim | Lanjut E8.2 | Outfit tersimpan terdaftar |
 
 ### Sabtu, 31 Oktober
 
 | Orang | Tugas | Keluaran |
 |---|---|---|
-| Pras | E2.5 muat data saat start | Data muncul setelah cold start |
-| Bisma | E3.4 sign out + jalur hapus akun | Logout bersih |
-| Abim | E5.3 palet 14 warna | Nama warna sesuai sampel |
-| Izza | E8.1 filter dan empty state | CRUD penuh berjalan |
-| Ahmad | E9.1 selesai + E4.2 split | 20 test case final, split tersimpan |
+| Pras | Bantu E8.1 bagian filter | Filter berjalan |
+| Bisma | E3.4 sign out + hapus akun | Logout bersih |
+| Ahmad | E2.6 unit test DAO | Test lulus |
+| Izza | E8.1 empty state dan hapus item | CRUD penuh berjalan |
+| Abim | Mulai E8.4 (setelah E2.5) | Home memakai data nyata |
 
 ### Minggu, 1 November
 
 | Orang | Tugas | Keluaran |
 |---|---|---|
-| Pras | E2.6 unit test DAO | Test lulus |
-| Bisma | E8.7 halaman Profil | Profil dapat diedit |
-| Abim | E5.4 unit test warna | Test lulus |
-| Izza | E10.1 logbook minggu 5 + rekap | Logbook diperbarui |
-| Ahmad | Rekap QA + perbarui papan Notion | Status terisi |
+| Pras | Rekap penyimpanan | Status terisi |
+| Bisma | Uji akhir auth + rekap | Login, sesi, logout stabil |
+| Ahmad | Rekap + perbarui Notion | Status terisi |
+| Izza | Selesaikan E8.1 + logbook | Logbook minggu 5 |
+| Abim | Selesaikan E8.4 + uji alur | Home tanpa placeholder |
 
 ---
 
 ## 3. Target akhir minggu
 
-| Tugas | Kriteria diterima | Pemilik |
-|---|---|---|
-| E2.1–E2.3 | Item lemari bertahan setelah aplikasi ditutup; foto tampil dari folder dokumen | Pras |
-| E3.1–E3.3 | Login Google berhasil, profil terbentuk, sesi bertahan setelah restart | Bisma |
-| E5.1–E5.2 | Crop berjalan; warna dominan benar pada minimal 8 dari 10 gambar uji | Abim |
-| E8.6 | Master data kategori dan jenis dapat dikelola dari aplikasi | Izza |
-| E9.1 | Dokumen rencana uji berisi minimal 20 test case, termasuk kasus negatif | Ahmad |
-| E4.1–E4.2 | Dataset bersih, laporan EDA singkat, split 70/15/15 tersimpan | Ahmad |
-| PR #3 | Digabung ke `main` | Ahmad, Bisma |
+| Tugas | Kriteria diterima | Pemilik | Target |
+|---|---|---|---|
+| E2.1–E2.3 | Item lemari bertahan setelah aplikasi ditutup; foto tampil dari folder dokumen | Pras | Selesai |
+| E2.4–E2.6 | Outfit dan riwayat tersimpan; data muncul saat start; test DAO lulus | Ahmad | Selesai |
+| E3.1–E3.4 | Login Google, profil cloud, sesi bertahan, logout bersih | Bisma | Selesai |
+| E8.6 | Master data kategori dan jenis dapat dikelola | Izza | Selesai |
+| E8.1 | CRUD lemari penuh termasuk filter dan empty state | Izza | Selesai |
+| E8.7 | Halaman Profil menampilkan data pengguna dan sign out | Abim | Selesai |
+| E8.2 | Outfit tersimpan muncul di daftar | Abim | Berjalan |
+| E8.4 | Home memakai data lemari nyata | Abim | Berjalan |
 
 Semua PR wajib lulus `flutter analyze` dan `flutter test` sebelum digabung.
 
 ---
 
-## 4. Penghambat dan aksi
+## 4. Tugas yang tidak dikerjakan minggu ini
+
+| Tugas | Alasan |
+|---|---|
+| E4 Model 1 | ML, ditunda |
+| E5 modul warna | Pemrosesan gambar, ditunda |
+| E6 Model 3 | ML, ditunda |
+| E7 integrasi TFLite | Menunggu artefak model |
+| E8.3, E8.5 | Menunggu E7.4 |
+| E9 QA, E10 dokumentasi | Ditunda agar fokus mobile |
+
+---
+
+## 5. Penghambat dan aksi
 
 | Penghambat | Aksi | Penanggung | Batas |
 |---|---|---|---|
-| PR #3 belum direview | Review lalu gabung | Ahmad, Bisma | 28 Okt |
 | Firebase belum ada | Buat proyek dan berkas konfigurasi lokal | Bisma | 28 Okt |
-| Dataset belum diunduh | Unduh 3 zip dan taruh di `ml/data/raw/` | Ahmad | 29 Okt |
-| Branch `feat/sqflite-setup` usang | Buat ulang dari `main` sebelum E2.1 | Pras | 27 Okt |
+| Branch `feat/sqflite-setup` usang | Buat ulang dari `main` | Pras | 27 Okt |
+| Tampilan Home dan Profil menunggu data | Bangun UI shell lebih dulu, sambungkan setelah prasyarat selesai | Abim | 27 Okt |
 | `dev` perlu sinkron dengan `main` | Merge `main` ke `dev` | Bisma | 28 Okt |
 
 ---
 
-## 5. Aturan
+## 6. Aturan
 
 1. Maksimal 2 tugas aktif per orang.
 2. Satu tugas = satu branch = satu PR; PR mengarah ke `main`.
 3. `dev` hanya untuk uji integrasi, bukan tempat menyimpan hasil akhir.
 4. Tugas yang prasyaratnya belum selesai tidak diambil.
-5. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 1 November.
+5. Anggota yang selesai lebih cepat boleh mengambil tugas mobile lain yang belum
+   selesai, tetap maksimal 2 tugas aktif.
+6. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 1 November.
