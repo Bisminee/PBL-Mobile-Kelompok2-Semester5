@@ -1,0 +1,15 @@
+              precision    recall  f1-score   support
+
+       dress      0.593     0.728     0.653       180
+  long_pants      0.859     0.941     0.898       454
+ long_sleeve      0.687     0.548     0.609        84
+   outerwear      0.862     0.806     0.833       721
+       shirt      0.879     0.862     0.871       567
+       shoes      0.999     0.999     0.999      1334
+      shorts      0.912     0.728     0.810       184
+       skirt      0.409     0.748     0.529       111
+      tshirt      0.954     0.912     0.932      1415
+
+    accuracy                          0.894      5050
+   macro avg      0.795     0.808     0.793      5050
+weighted avg      0.905     0.894     0.897      5050
