@@ -59,12 +59,15 @@ Nama berkas layar berakhiran `_screen.dart`, widget `_card.dart`,
 | `test/` | Menambah test | `test/color-kmeans` |
 | `chore/` | Perawatan | `chore/update-deps` |
 
-- Branch dibuat dari `dev` terbaru, umur pendek (1-3 hari).
-- PR mengarah ke `dev`, bukan ke `main`. `main` hanya menerima penggabungan
+- Branch mobile dibuat dari `dev` terbaru, umur pendek (1-3 hari).
+- Branch ML dibuat dari `dev-ml` terbaru; PR ML mengarah ke `dev-ml`.
+- PR mobile mengarah ke `dev`, bukan ke `main`. `main` hanya menerima penggabungan
   `dev` pada akhir milestone.
+- `dev-ml` dibuat dari `dev` dan digabung kembali ke `dev` setelah blok ML stabil.
 - Tidak ada branch bernama orang.
 - Aturan lengkap dan daftar nama branch per tugas ada di
-  `Pembagian Tugas/pembagian-tugas-minggu-5.docx` bagian 6.
+  `Pembagian Tugas/pembagian-tugas-minggu-5.docx` bagian 6 dan
+  `Pembagian Tugas/pembagian-tugas-ml-minggu-5.docx` bagian 6.
 
 ### Commit
 

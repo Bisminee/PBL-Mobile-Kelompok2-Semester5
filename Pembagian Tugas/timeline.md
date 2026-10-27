@@ -39,14 +39,14 @@ Keterlambatan jalur ML: **sekitar 3 minggu** dari rencana awal.
 | 3 | 12 – 18 Okt | Pipeline ML dan kualitas UI | PR #3 pipeline Model 1, perbaikan layout responsif, keputusan lisensi dataset | — | Selesai |
 | 4 | 19 – 25 Okt | Laporan Milestone 1 | Penyusunan laporan Milestone 1, logbook minggu 1–8 | CP-2 Milestone 1 (24 Okt) | Selesai (laporan), jalur ML tertinggal |
 | 5 | 26 Okt – 1 Nov | Pondasi mobile | E2.1–E2.4, E3.1, E8.6 | — | Berjalan |
-| 6 | 2 – 8 Nov | Menyelesaikan mobile | E2.5–E2.6, E3.2–E3.4, E8.1, E8.2, E8.4, E8.7 | — | Rencana |
-| 7 | 9 – 15 Nov | Mulai ML dan pemrosesan gambar | E5.1–E5.2, E4.1–E4.3 | — | Rencana |
-| 8 | 16 – 22 Nov | Latih model | E4.4–E4.6, E6.1–E6.2, E5.3–E5.4 | CP-3 Milestone 2 (27 Nov) | Rencana |
-| 9 | 23 – 29 Nov | Integrasi dan QA awal | E6.3–E6.6, E7.1–E7.5, E8.3, E8.5, E9.2 | — | Rencana |
-| 10 | 30 Nov – 6 Des | Freeze, QA, laporan | E7.6, E9.3–E9.7, E10.3–E10.5, demo | CP-4 Final (4 Des) | Rencana |
+| 6 | 2 – 8 Nov | Blok ML, lalu integrasi awal | 2–4 Nov: ekstraksi dataset, split, latih ulang 12 epoch, E4.5–E4.6, E6.5, label dan aset. 5–8 Nov: E7.1–E7.3 | — | Rencana |
+| 7 | 9 – 15 Nov | Integrasi dan pemrosesan gambar | E7.4–E7.6, E5.1–E5.2, E8.3 | — | Rencana |
+| 8 | 16 – 22 Nov | Penyelesaian fitur dan Model 3 | E5.3–E5.4, E6.1–E6.3, E8.5 | CP-3 Milestone 2 (27 Nov) | Rencana |
+| 9 | 23 – 29 Nov | QA dan laporan | E9.2–E9.5, E10.3, E10.4 | — | Rencana |
+| 10 | 30 Nov – 6 Des | Freeze, QA, laporan | E9.6–E9.7, E10.5, demo | CP-4 Final (4 Des) | Rencana |
 
-Catatan: CP-3 Milestone 2 digeser dari 13 Nov ke **27 Nov** karena ML baru dimulai
-minggu 7. CP-4 tetap 4 Desember.
+Catatan: CP-3 Milestone 2 tetap **27 Nov**. Model 1 sudah tersedia dari blok ML
+2–4 November sehingga integrasi bisa mulai lebih awal. CP-4 tetap 4 Desember.
 
 ---
 
@@ -57,16 +57,27 @@ minggu 7. CP-4 tetap 4 Desember.
 | E2 Penyimpanan | E2.1–E2.6 (7,0 ho) | 5–6 | Pras (E2.1–E2.3), Ahmad (E2.4–E2.6) |
 | E3 Autentikasi | E3.1–E3.4 (5,0 ho) | 5–6 | Bisma Adhiaksa |
 | E8 Fitur aplikasi | E8.1, E8.2, E8.4, E8.6, E8.7 (8,5 ho) | 5–6 | Izza (E8.1, E8.6), Abim (E8.2, E8.4, E8.7) |
-| E4 Model 1 | E4.1–E4.6 (8,0 ho) | 7–8 | Ahmad |
-| E5 Modul warna | E5.1–E5.4 (5,0 ho) | 7–8 | Abim |
-| E6 Model 3 | E6.1–E6.3, E6.5–E6.6 (7,0 ho) | 8–9 | Pras (data), Ahmad (latih), Bisma (evaluasi) |
-| E7 Integrasi | E7.1–E7.6 (9,5 ho) | 9–10 | Ahmad, Izza, Abim |
-| E8 Fitur lanjutan | E8.3, E8.5 (3,0 ho) | 9 | Izza |
-| E9 QA | E9.1–E9.7 (11,0 ho) | 9–10 | Bisma dan seluruh tim |
+| E4 Model 1 | E4.1–E4.6 (8,0 ho) | 6 | Bisma (data + latih ulang), Ahmad (evaluasi) |
+| E5 Modul warna | E5.1–E5.4 (5,0 ho) | 7 | Abim |
+| E6 Model 3 | E6.1–E6.3, E6.5–E6.6 (7,0 ho) | 6–8 | Pras (metrik), Ahmad (latih), Bisma (data) |
+| E7 Integrasi | E7.1–E7.6 (9,5 ho) | 6–8 | Ahmad, Izza, Abim |
+| E8 Fitur lanjutan | E8.3, E8.5 (3,0 ho) | 7 | Izza |
+| E9 QA | E9.1–E9.7 (11,0 ho) | 9 | Bisma dan seluruh tim |
 | E10 Dokumentasi | E10.1–E10.5 (11,5 ho) | 9–10 | Izza |
 
 Penanggung sementara hanya berlaku untuk minggu berjalan dan boleh ditukar.
 Aturan tetap: maksimal 2 tugas aktif per orang.
+
+### 3.1 Dua jalur integrasi
+
+| Jalur | Branch | Isi |
+|---|---|---|
+| Mobile | `dev` | E2, E3, E8 |
+| ML | `dev-ml` (dari `dev`) | E4, E6, skrip dan artefak model |
+
+Alur: `dev → dev-ml → ml/... → dev-ml → dev`. Branch tugas ML tidak dibuat dari
+`dev` dan tidak langsung ke `main`. Pengecualian: perubahan `pubspec.yaml` dan
+aset model dikerjakan dari `dev` karena itu konfigurasi aplikasi.
 
 ---
 
@@ -106,8 +117,8 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 
 | Risiko | Dampak | Mitigasi |
 |---|---|---|
-| ML dan pemrosesan gambar dijeda sampai mobile selesai | E7, E8.3, E9.2, dan laporan bergeser | Mobile diselesaikan 1 Nov, ML mulai 9 Nov; CP-3 digeser ke 27 Nov |
-| PR #3 belum direview | Kode pipeline tidak bisa dipakai saat ML dimulai | Review sebelum 9 Nov, tidak perlu minggu ini |
+| ML dan pemrosesan gambar dijeda sampai mobile selesai | E7, E8.3, E9.2, dan laporan bergeser | Mobile selesai 1 Nov, blok ML 2–4 Nov, integrasi mulai 5 Nov |
+| PR #3 dan PR #5 tidak dipakai | Kode pipeline tetap terpisah dari jalur kerja | Pekerjaan dibuat ulang di branch `ml/...` dari `dev-ml` |
 | Akurasi model di bawah 80 persen | Target laporan tidak tercapai | Siapkan baseline MobileNetV2 dan fine-tune; catat hasil apa adanya |
 | Integrasi TFLite mepet | E7 dan E8.3 tidak selesai | Mulai E7.1 segera setelah artefak pertama ada, jangan menunggu model sempurna |
 | Beban QA menumpuk di akhir | Bug tidak tertangani | E9.1 disusun minggu 5, uji fungsional bertahap sejak minggu 9 |
@@ -117,8 +128,9 @@ Jalur kritis: **E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3 → E
 
 ## 7. Aturan pelaksanaan
 
-1. Satu tugas = satu branch = satu PR; branch dibuat dari `dev` dan PR mengarah
-   ke `dev`. `main` hanya menerima penggabungan `dev` pada akhir milestone.
+1. Satu tugas = satu branch = satu PR. Mobile: branch dari `dev`, PR ke `dev`.
+   ML: branch dari `dev-ml`, PR ke `dev-ml`. `main` hanya menerima penggabungan
+   `dev` pada akhir milestone.
 2. Maksimal 2 tugas aktif per orang.
 3. Tugas yang tertahan prasyarat tidak diambil; pindah ke tugas independen.
 4. Setiap Jumat: perbarui status di papan Notion dan logbook.
@@ -144,12 +156,10 @@ pembangunan aplikasi.
 | P1 | E8.6, E8.1 | Fitur lemari dan admin | 29 Okt–1 Nov |
 | P1 | E8.7, E8.2, E8.4 | Profil, outfit, Home | 31 Okt–1 Nov |
 | P2 | E5 modul warna | Pemrosesan gambar, menyusul | Minggu 7 |
-| P2 | E4 Model 1 | ML, menyusul | Minggu 7 |
-| P3 | E6 Model 3 | ML, menyusul | Minggu 8 |
-| P3 | E7 integrasi TFLite | Menunggu artefak model | Minggu 9 |
-| P3 | E8.3, E8.5 | Menunggu E7.4 | Minggu 9 |
+| P2 | Blok ML: E4.1, E4.2, latih ulang, E4.5, E4.6, E6.5, label dan aset | Dijalankan terpisah di `dev-ml` | 2–4 Nov |
+| P3 | E7 integrasi TFLite | Menunggu artefak model | 5 Nov |
+| P3 | E8.3, E8.5 | Menunggu E7.4 | Minggu 7–8 |
 | P3 | E9 QA, E10 dokumentasi | Menyusul setelah fitur stabil | Minggu 9–10 |
 
-Konsekuensi: menghentikan ML sampai mobile selesai menggeser seluruh jalur
-integrasi. CP-3 Milestone 2 dijadwalkan ulang ke **27 November** dan scope freeze
-tetap 30 November.
+Konsekuensi: memisahkan ML ke blok 2–4 November membuat integrasi bisa mulai
+5 November. CP-3 Milestone 2 tetap **27 November** dan scope freeze 30 November.

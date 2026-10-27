@@ -178,24 +178,38 @@ Bug     = fix/...                 (perbaiki warna salah)
 
 ### 3.5 Alur branch: fitur → `dev` → `main`
 
-Ada dua branch tetap di proyek ini:
+Ada tiga branch tetap di proyek ini:
 
 | Branch | Fungsi |
 |---|---|
-| `dev` | Tempat semua fitur digabung dan diuji bersama |
+| `dev` | Tempat semua fitur mobile digabung dan diuji bersama |
+| `dev-ml` | Tempat pekerjaan ML digabung, dibuat dari `dev` |
 | `main` | Versi rilis yang stabil, hasil penggabungan `dev` pada akhir milestone |
 
-Alur yang benar:
+Alur mobile:
 
 ```
 dev ──► feat/nama-fitur ──PR──► dev ──► (uji bersama) ──PR──► main
 ```
 
-- Branch fitur **dibuat dari `dev`**, bukan dari `main`.
-- Pull Request **mengarah ke `dev`**, bukan ke `main`.
-- `dev` menjadi tempat integrasi: kalau dua fitur bentrok, ketahuan di sini.
+Alur ML:
+
+```
+dev ──► dev-ml ──► ml/nama-tugas ──PR──► dev-ml ──► (stabil) PR ke dev
+```
+
+- Branch fitur mobile **dibuat dari `dev`**, bukan dari `main`.
+- Branch tugas ML **dibuat dari `dev-ml`**, bukan dari `dev` atau `main`.
+- Pull Request mobile **mengarah ke `dev`**; Pull Request ML **mengarah ke
+  `dev-ml`**.
+- `dev` menjadi tempat integrasi mobile: kalau dua fitur bentrok, ketahuan di sini.
+- `dev-ml` menjadi tempat integrasi ML: skrip, dataset ringkas, laporan, dan
+  artefak model diuji di sini sebelum masuk `dev`.
 - Setelah `dev` stabil dan satu milestone selesai, buka PR **`dev` → `main`**.
-- Jangan mengerjakan langsung di `dev`; `dev` hanya menerima hasil PR.
+- Penyesuaian `pubspec.yaml` dan aset model dikerjakan dari `dev`, karena itu
+  konfigurasi aplikasi, bukan kode ML.
+- Jangan mengerjakan langsung di `dev` atau `dev-ml`; keduanya hanya menerima
+  hasil PR.
 - `dev` juga memuat **konteks proyek untuk AI** (`AGENTS.md` dan `ai-context/`)
   agar semua anggota memakai aturan dan gambaran proyek yang sama.
 

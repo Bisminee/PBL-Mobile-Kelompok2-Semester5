@@ -196,11 +196,38 @@ sudah tergabung ke `main` atau hanya berisi commit kosong.
 ## 7. Aturan kerja
 
 1. Maksimal 2 tugas aktif per orang.
-2. Satu tugas = satu branch = satu PR; branch dibuat dari `dev`, PR mengarah ke
-   `dev`.
+2. Satu tugas = satu branch = satu PR; untuk mobile, branch dibuat dari `dev`
+   dan PR mengarah ke `dev`.
 3. `main` hanya menerima penggabungan `dev` pada akhir milestone.
 4. Tugas yang prasyaratnya belum selesai tidak diambil.
 5. Anggota yang selesai lebih cepat boleh mengambil tugas mobile lain yang belum
    selesai, tetap maksimal 2 tugas aktif.
 6. `flutter analyze` dan `flutter test` wajib lulus sebelum PR dibuka.
 7. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 1 November.
+
+## 8. Blok ML terpisah (2 – 4 November 2026)
+
+ML tidak dicampur dengan mobile. Setelah mobile selesai 1 November, pekerjaan ML
+dijalankan sendiri selama tiga hari memakai branch integrasi `dev-ml`.
+
+| Anggota | Tugas ML | ho |
+|---|---|---:|
+| Bisma | E4.1 ekstrak dataset, E4.2 split, latih ulang 12 epoch untuk `best.pt` | 3,0 |
+| Ahmad | E4.5 evaluasi Model 1, E4.6 verifikasi ekspor + model card | 1,5 |
+| Pras | E6.5 metrik Model 3 + review PR | 1,0 |
+| Abim | Label 9 kelas + aset model + smoke test | 1,0 |
+| Izza | Dokumentasi metode ML | 1,0 |
+| **Total** | | **7,5** |
+
+Alur branch ML:
+
+```
+dev ──► dev-ml ──► ml/... ──PR──► dev-ml ──► (stabil) PR ke dev
+```
+
+- `dev-ml` dibuat sekali dari `dev`.
+- Branch tugas ML dibuat dari `dev-ml`, PR ke `dev-ml`.
+- Pengecualian: `chore/model-assets` dari `dev`, PR ke `dev`.
+- PR #5 (`data-training`) tidak dipakai; pekerjaan dibuat ulang di branch tugas.
+
+Rincian lengkap: `Pembagian Tugas/pembagian-tugas-ml-minggu-5.docx`.

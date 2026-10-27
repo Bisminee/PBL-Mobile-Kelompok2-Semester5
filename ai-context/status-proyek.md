@@ -52,16 +52,19 @@ Diperbarui: 27 Oktober 2026 (branch `dev`)
 
 ## 5. Langkah berikut
 
-Fokus minggu 5-6: **pembangunan mobile saja**. ML dan pemrosesan gambar dijeda.
+Fokus minggu 5: **mobile saja** (27 Okt - 1 Nov). ML dikerjakan terpisah pada
+blok 2-4 November.
 
 1. E2.1 lalu E2.2 (Pras) - membuka E8.1 dan E8.6.
 2. E3.1 (Bisma) - membuka E3.2-E3.4 dan E8.7.
 3. E2.4-E2.6 (Ahmad) - membuka E8.2 dan E8.4.
 4. E8.6 dan E8.1 (Izza), E8.7/E8.2/E8.4 (Abim).
-5. Setelah mobile stabil (1 Nov): mulai E5, E4, lalu E6 dan E7.
+5. Blok ML 2-4 November: ekstraksi dataset, split, latih ulang 12 epoch,
+   evaluasi, metrik Model 3, label dan aset.
+6. Integrasi E7 mulai 5 November.
 
-Rincian per orang ada di `Pembagian Tugas/jobdesk-per-anggota.md`.
-Daftar kerja harian ada di `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
+Rincian mobile ada di `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
+Rincian ML ada di `Pembagian Tugas/pembagian-tugas-ml-minggu-5.md`.
 Jadwal 10 minggu ada di `Pembagian Tugas/timeline.md`.
 
 ## 6. Catatan branch
@@ -69,8 +72,10 @@ Jadwal 10 minggu ada di `Pembagian Tugas/timeline.md`.
 | Branch | Isi |
 |---|---|
 | `main` | Versi stabil, `2e33e55` (README instruksi unduh aplikasi) |
-| `dev` | Branch kerja bersama: tempat branch fitur dibuat dan tujuan PR |
-| `ml/model1-pipeline` | PR #3, pipeline Model 1, dapat digabung |
+| `dev` | Integrasi mobile: tempat branch fitur dibuat dan tujuan PR mobile |
+| `dev-ml` | Integrasi ML, dibuat dari `dev`; tujuan PR tugas ML |
+| `data-training` | Referensi pipeline ML dari Falah (PR #5); pekerjaan dibuat ulang di branch `ml/...` |
+| `ml/model1-pipeline` | PR #3, tidak dipakai lagi |
 | `feat/color-harmony-rules` | Sudah digabung lewat PR #2 |
 | `feat/app-foundation` | Sudah digabung lewat PR #4 |
-| `docs/*`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`, `data-training`, `feat/sqflite-setup` | Tidak berisi commit baru, isinya sudah ada di `main`; aman dihapus |
+| `docs/*`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`, `feat/sqflite-setup` | Tidak berisi commit baru, isinya sudah ada di `main`; aman dihapus |

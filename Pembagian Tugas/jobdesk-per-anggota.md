@@ -130,28 +130,50 @@ E2.4-E2.6 semuanya ikut mundur.
 
 ---
 
-## 8. Setelah mobile selesai
+## 8. Blok ML terpisah (2 – 4 November 2026)
 
-Baru dimulai setelah E2, E3, dan E8.1-E8.7 (yang tidak menunggu ML) lulus uji:
+ML dikerjakan setelah mobile selesai, memakai branch integrasi `dev-ml` yang
+dibuat dari `dev`.
+
+| Anggota | Tugas ML | ho | Branch | PR ke |
+|---|---|---:|---|---|
+| Bisma | E4.1 ekstrak 3 ZIP + verifikasi, E4.2 split, latih ulang 12 epoch | 3,0 | `ml/dataset-eda`, `ml/train-model1` | `dev-ml` |
+| Ahmad | E4.5 evaluasi Model 1, E4.6 verifikasi ekspor + model card | 1,5 | `ml/eval-model1` | `dev-ml` |
+| Pras | E6.5 metrik Model 3 + review PR | 1,0 | `ml/model3-metrics` | `dev-ml` |
+| Abim | Label 9 kelas, aset model, smoke test | 1,0 | `chore/model-assets` | `dev` |
+| Izza | Dokumentasi metode ML | 1,0 | `docs/ml-methods` | `dev-ml` |
+| **Total** | | **7,5** | | |
+
+Alur branch:
+
+```
+dev ──► dev-ml ──► ml/... ──PR──► dev-ml ──► (stabil) PR ke dev
+```
+
+Rincian langkah: `Pembagian Tugas/pembagian-tugas-ml-minggu-5.docx`.
+
+---
+
+## 9. Setelah blok ML selesai
 
 | Urutan | Pekerjaan | Mulai |
 |---|---|---|
-| 1 | E5 modul warna (pemrosesan gambar) | Minggu 7 |
-| 2 | E4.1-E4.6 Model 1 | Minggu 7 |
-| 3 | E6.1-E6.6 Model 3 | Minggu 8 |
-| 4 | E7.1-E7.6 integrasi TFLite | Minggu 9 |
-| 5 | E8.3, E8.5 | Minggu 9 |
+| 1 | E7.1-E7.3 integrasi Model 1 dan modul warna | 5 November |
+| 2 | E6.1-E6.6 penyempurnaan Model 3 | Minggu 7 |
+| 3 | E7.4-E7.6 skor Model 3, fallback, latensi | Minggu 7-8 |
+| 4 | E8.3, E8.5 | Minggu 8 |
+| 5 | E5 modul warna | Minggu 8 |
 | 6 | E9 QA dan E10 dokumentasi | Minggu 9-10 |
 
 ---
 
-## 9. Aturan
+## 10. Aturan
 
 1. Maksimal 2 tugas aktif per orang.
-2. Satu tugas = satu branch = satu PR. Nama branch per tugas ada di
-   `Pembagian Tugas/pembagian-tugas-minggu-5.docx` bagian 6.
+2. Satu tugas = satu branch = satu PR. Untuk mobile, branch dari `dev` dan PR ke
+   `dev`. Untuk ML, branch dari `dev-ml` dan PR ke `dev-ml`.
 3. Tugas yang prasyaratnya belum selesai tidak diambil.
 4. Kalau tertahan lebih dari satu hari, lepas tugas dan tulis catatan.
-5. Anggota yang selesai lebih cepat boleh mengambil tugas mobile lain yang
-   belum selesai, dengan tetap maksimal 2 tugas aktif.
+5. Anggota yang selesai lebih cepat boleh mengambil tugas lain yang belum
+   selesai, dengan tetap maksimal 2 tugas aktif.
 6. Status Notion dan logbook diperbarui setiap hari.
