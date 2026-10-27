@@ -51,3 +51,11 @@ app.*.map.json
 context
 proposal
 reference
+# ML - dataset, hasil training, venv jangan di-commit
+ml/.venv/
+ml/data/
+ml/runs/
+ml/_cache/
+__pycache__/
+*.pt
+*.zip

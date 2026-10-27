@@ -1,0 +1,53 @@
+{
+  "weights": "ml\\runs\\model1_smoke\\weights\\best.pt",
+  "n_test": 5051,
+  "accuracy": 0.8824,
+  "macro_f1": 0.7734,
+  "per_source": [
+    {
+      "source": "carousell",
+      "n": 1114,
+      "accuracy": 0.7567,
+      "macro_f1": 0.5602
+    },
+    {
+      "source": "clothing_full",
+      "n": 560,
+      "accuracy": 0.7857,
+      "macro_f1": 0.7235
+    },
+    {
+      "source": "fashion_products",
+      "n": 3377,
+      "accuracy": 0.9399,
+      "macro_f1": 0.7673
+    }
+  ],
+  "top_confusions": [
+    {
+      "count": 101,
+      "true": "shirt",
+      "pred": "outerwear"
+    },
+    {
+      "count": 71,
+      "true": "outerwear",
+      "pred": "tshirt"
+    },
+    {
+      "count": 38,
+      "true": "dress",
+      "pred": "outerwear"
+    },
+    {
+      "count": 37,
+      "true": "shirt",
+      "pred": "tshirt"
+    },
+    {
+      "count": 28,
+      "true": "skirt",
+      "pred": "outerwear"
+    }
+  ]
+}
