@@ -1,0 +1,9 @@
+dress
+jacket
+jeans
+pants
+shirt
+shoes
+shorts
+skirt
+t-shirt

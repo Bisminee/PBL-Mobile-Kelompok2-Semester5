@@ -51,3 +51,19 @@ app.*.map.json
 context
 proposal
 reference
+
+# Machine Learning & Datasets
+ml/data/raw/*
+ml/data/processed/*
+ml/runs/*
+runs/*
+datasets/
+*.zip
+.ipynb_checkpoints/
+.venv/
+.venv-tf/
+
+*.pt
+*.onnx
+
+
