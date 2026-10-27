@@ -1,0 +1,46 @@
+{
+  "model_name": "model3_compatibility.tflite",
+  "input_dim": 20,
+  "top_categories": [
+    "t-shirt",
+    "shirt",
+    "jacket",
+    "dress"
+  ],
+  "bottom_categories": [
+    "pants",
+    "jeans",
+    "shorts",
+    "skirt",
+    "shoes"
+  ],
+  "color_palette": [
+    "black",
+    "white",
+    "gray",
+    "navy",
+    "blue",
+    "denim",
+    "brown",
+    "beige",
+    "cream",
+    "green",
+    "sage",
+    "red",
+    "maroon",
+    "yellow",
+    "pink",
+    "orange"
+  ],
+  "feature_layout": [
+    "top_cat_one_hot (4)",
+    "bot_cat_one_hot (5)",
+    "top_hsv_normalized (3)",
+    "bot_hsv_normalized (3)",
+    "delta_hue_normalized (1)",
+    "delta_saturation (1)",
+    "delta_value (1)",
+    "color_harmony_score (1)",
+    "is_neutral_flag (1)"
+  ]
+}
