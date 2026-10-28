@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,17 +7,76 @@ import '../../config/app_assets.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/auth_service.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_text_field.dart';
 import '../../widgets/common/responsive.dart';
 
-/// Halaman masuk. Saat ini belum memvalidasi akun (placeholder).
-class LoginScreen extends ConsumerWidget {
+/// Halaman masuk dengan Google.
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final AuthService _authService = AuthService();
+  bool _loading = false;
+  String? _error;
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final credential = await _authService.signInWithGoogle();
+      final user = credential.user;
+      if (user != null) {
+        ref.read(authProvider.notifier).setUser(
+              AppUser(
+                name: user.displayName ??
+                    user.email?.split('@').first ??
+                    'Pengguna',
+                email: user.email ?? '',
+              ),
+            );
+      }
+      if (!mounted) return;
+      context.go(AppRoutes.home);
+    } on AuthCancelledException {
+      if (!mounted) return;
+      setState(() => _error = null);
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      setState(() => _error = _pesanError(error));
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _error = 'Gagal masuk. Periksa koneksi lalu coba lagi.');
+      debugPrint('Login gagal: $error');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _pesanError(FirebaseAuthException error) {
+    switch (error.code) {
+      case 'network-request-failed':
+        return 'Tidak ada koneksi internet.';
+      case 'missing-id-token':
+        return 'Konfigurasi Firebase belum benar. Periksa SHA-1 aplikasi.';
+      case 'account-exists-with-different-credential':
+        return 'Email ini sudah terdaftar dengan metode login lain.';
+      default:
+        return 'Gagal masuk: ${error.message ?? error.code}';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -56,11 +116,23 @@ class LoginScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 28),
                 AppButton(
-                  label: 'Masuk',
-                  onPressed: () {
-                    ref.read(authProvider.notifier).signIn();
-                    context.go(AppRoutes.home);
-                  },
+                  label: _loading ? 'Memproses...' : 'Masuk dengan Google',
+                  onPressed: _loading ? null : _signInWithGoogle,
+                ),
+                if (_error != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    _error!,
+                    style: AppTextStyles.label.copyWith(
+                      color: AppColors.accent,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
+                Text(
+                  'Sementara hanya login Google yang aktif.',
+                  style: AppTextStyles.label.copyWith(fontSize: 11),
                 ),
                 const SizedBox(height: 20),
                 Row(children: [
