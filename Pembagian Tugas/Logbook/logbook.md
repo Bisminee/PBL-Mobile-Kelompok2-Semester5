@@ -119,21 +119,28 @@ Tidak ada perubahan kode pada minggu ini.
 ## Minggu 5 — 26 Okt s.d. 1 Nov 2026
 
 **Status:** Berjalan
-**Fokus:** Menutup PR #3, mengunduh dataset, dan menjalankan pekerjaan yang tidak bergantung dataset.
+**Fokus:** Menyiapkan dataset dan Model 1, lalu menyelesaikan autentikasi mobile.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
 | 26 Okt | Konteks tim | Menambahkan branch `dev` untuk uji integrasi, `AGENTS.md`, dan folder `ai-context/` (arsitektur, konvensi kode, peta tugas, status proyek) agar anggota dan agen AI memakai konteks yang sama; memperbarui README bagian branch `dev` | `main` sudah bergerak satu commit (`2e33e55`), `dev` perlu disinkronkan | Sinkronkan `dev` dengan `main` | commit `017b787` |
-| 27 Okt | Perencanaan | Menyusun ulang timeline 10 minggu sesuai kondisi nyata (jalur ML tertinggal sekitar 3 minggu), membuat pembagian tugas minggu 5, dan memperbarui status pada daftar jobdesk | — | — | `Pembagian Tugas/timeline.md`, `pembagian-tugas-minggu-5.md` |
-| 28–1 Nov | Target W5 | Review dan gabung PR #3; unduh dataset + EDA (E4.1) dan split (E4.2); crop warna (E5.1) dan K-Means (E5.2); setup sqflite (E2.1) dan CRUD lemari (E2.2); login Google (E3.1); rencana uji (E9.1); 50 foto lapangan (E10.2) | Dataset dan Firebase belum siap | Baseline dan pelatihan Model 1 (E4.3–E4.4) | — |
+| 27 Okt | Perencanaan | Menyusun ulang timeline 10 minggu sesuai kondisi nyata, membuat pembagian tugas minggu 5 dan blok ML terpisah dengan branch `dev-ml`, serta memperbarui status pada daftar jobdesk | — | — | `Pembagian Tugas/timeline.md`, `pembagian-tugas-minggu-5.md` |
+| 27 Okt | Dataset Model 1 | Mengekstrak tiga dataset berlisensi bebas dari `D:\Kuliah\Semester5\DatasetPBL`: Clothing Full, Fashion Products, Carousell. Menjalankan `01_prepare_model1.py`: 34.077 gambar terfilter, 33.667 setelah deduplikasi MD5, split 70/15/15 (train 23.566, val 5.050, test 5.051) | Tanpa GPU, pelatihan berjalan di CPU | Latih Model 1 | PR #6, `ml/reports/dataset_summary.md` |
+| 27–28 Okt | Latihan Model 1 | Melatih YOLOv11n-cls enam epoch di CPU selama 5 jam 5 menit. Akurasi validasi 94,06 persen; evaluasi test 94,34 persen dengan macro F1 89,48 persen. Menyusun laporan evaluasi, confusion matrix, akurasi per sumber, dan model card | Satu epoch memakan 41 menit; akurasi carousell paling rendah (87,79 persen) | Ekspor TFLite dan integrasi | PR #7, `ml/reports/model1-card.md` |
+| 28 Okt | Autentikasi mobile | Menyiapkan Firebase (plugin Gradle, `google-services.json` diabaikan Git), membuat `AuthService` login Google, `UserRepository` untuk `users` dan `profiles`, sesi persisten dengan redirect rute, logout, dan hapus akun. Lima PR digabung ke `dev`; `flutter analyze` bersih dan 18 test lulus | Uji login di perangkat belum dilakukan; ekspor TFLite terhambat di Windows | Uji login, lanjut E2 dan E5 | PR #8–#12, commit `0d671cc` |
+| 29 Okt–1 Nov | Target sisa W5 | Menyelesaikan E2 penyimpanan, E5 modul warna, label dan aset model, metrik Model 3, serta ekspor TFLite lewat Colab | Ekspor TFLite belum berhasil di Windows | Integrasi E7 | — |
 
-**Ringkasan capaian:** Branch `dev` dan konteks AI tersedia; timeline dan pembagian
-tugas minggu 5 diperbarui. (diperbarui saat minggu berjalan)
+**Ringkasan capaian:** Dataset Model 1 siap dan terbagi rapi; Model 1 mencapai
+akurasi test 94,34 persen; autentikasi mobile lengkap dari login sampai hapus
+akun dan sudah tergabung di `dev`; enam PR digabung dan integrasi `dev` lulus
+`flutter analyze` serta 18 test.
 
 **Kendala terbuka:**
-1. Dataset E4.1 belum diunduh.
-2. PR #3 belum direview.
-3. Firebase dan `google-services.json` belum disiapkan.
+1. Ekspor TFLite gagal di Windows karena Ultralytics 8.4 menghapus dukungan
+   TFLite dan jalur `onnx2tf` pada 8.3 melewati batas waktu.
+2. `dev-ml` belum digabung ke `dev`.
+3. Uji login dan hapus akun di perangkat belum dilakukan.
+4. E2 penyimpanan, E5 modul warna, E8 fitur, dan E6 Model 3 belum dikerjakan.
 
 ---
 
