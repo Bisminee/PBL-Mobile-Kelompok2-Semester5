@@ -49,4 +49,12 @@ class UserRepository {
       'last_login_at': FieldValue.serverTimestamp(),
     });
   }
+
+  /// Menghapus dokumen pengguna dan profil dari Firestore.
+  Future<void> deleteProfile(String uid) async {
+    final batch = _firestore.batch();
+    batch.delete(_firestore.collection('users').doc(uid));
+    batch.delete(_firestore.collection('profiles').doc(uid));
+    await batch.commit();
+  }
 }

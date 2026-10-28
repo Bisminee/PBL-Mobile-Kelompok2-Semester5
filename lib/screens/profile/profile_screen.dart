@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/auth_service.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -20,7 +21,75 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final AuthService _authService = AuthService();
   bool _notif = true;
+  bool _busy = false;
+
+  Future<void> _signOut() async {
+    setState(() => _busy = true);
+    try {
+      await _authService.signOut();
+      ref.read(authProvider.notifier).signOut();
+      ref.read(wardrobeProvider.notifier).clear();
+      if (mounted) context.go(AppRoutes.login);
+    } catch (error) {
+      _showMessage('Gagal keluar. Coba lagi.');
+      debugPrint('Logout gagal: $error');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _deleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Hapus akun?'),
+        content: const Text(
+          'Profil, lemari, dan riwayat akan dihapus permanen. '
+          'Tindakan ini tidak bisa dibatalkan.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              'Hapus',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    setState(() => _busy = true);
+
+    try {
+      await _authService.deleteAccount();
+      ref.read(authProvider.notifier).signOut();
+      ref.read(wardrobeProvider.notifier).clear();
+      if (mounted) context.go(AppRoutes.login);
+    } on AuthReauthRequiredException {
+      _showMessage(
+        'Sesi sudah lama. Silakan login ulang, lalu hapus akun dari halaman ini.',
+      );
+    } catch (error) {
+      _showMessage('Gagal menghapus akun. Coba lagi.');
+      debugPrint('Hapus akun gagal: $error');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,14 +171,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ]),
                 const SizedBox(height: 24),
                 AppButton(
-                  label: 'Logout',
+                  label: _busy ? 'Memproses...' : 'Logout',
                   icon: Icons.logout,
                   style: AppButtonStyle.outlined,
                   height: 52,
-                  onPressed: () {
-                    ref.read(authProvider.notifier).signOut();
-                    context.go(AppRoutes.login);
-                  },
+                  onPressed: _busy ? null : _signOut,
+                ),
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  onPressed: _busy ? null : _deleteAccount,
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  label: Text(
+                    'Hapus Akun',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text('SERA-Z · VERSI 1.0.0', style: AppTextStyles.mono(10)),
