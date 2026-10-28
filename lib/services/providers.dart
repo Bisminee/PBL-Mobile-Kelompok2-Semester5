@@ -64,6 +64,9 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
   void remove(String id) =>
       state = state.where((g) => g.id != id).toList();
 
+  /// Mengosongkan lemari, dipakai saat pengguna keluar atau menghapus akun.
+  void clear() => state = const <Garment>[];
+
   Garment? get latest => state.isEmpty ? null : state.last;
 }
 

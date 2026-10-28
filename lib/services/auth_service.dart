@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'user_repository.dart';
+
 /// Login pengguna dibatalkan sendiri oleh pengguna.
 class AuthCancelledException implements Exception {
   const AuthCancelledException();
@@ -9,15 +11,34 @@ class AuthCancelledException implements Exception {
   String toString() => 'Login dibatalkan';
 }
 
+/// Penghapusan akun membutuhkan login ulang karena sesi sudah lama.
+class AuthReauthRequiredException implements Exception {
+  const AuthReauthRequiredException();
+
+  @override
+  String toString() => 'Silakan login ulang sebelum menghapus akun';
+}
+
+/// Tidak ada pengguna yang sedang login.
+class AuthNotSignedInException implements Exception {
+  const AuthNotSignedInException();
+
+  @override
+  String toString() => 'Belum ada pengguna yang login';
+}
+
 /// Layanan autentikasi Firebase dengan Google Sign-In.
 ///
 /// Alur: Google Sign-In menghasilkan ID token, lalu token itu ditukar menjadi
 /// sesi Firebase. Sesi Firebase disimpan otomatis oleh SDK, sehingga pemanggilan
 /// ulang tidak diperlukan selama pengguna belum keluar.
 class AuthService {
-  AuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  AuthService({FirebaseAuth? auth, UserRepository? userRepository})
+      : _auth = auth ?? FirebaseAuth.instance,
+        _userRepository = userRepository ?? UserRepository();
 
   final FirebaseAuth _auth;
+  final UserRepository _userRepository;
   static bool _googleInitialized = false;
 
   /// Google Sign-In versi 7 wajib diinisialisasi sekali sebelum dipakai.
@@ -62,5 +83,28 @@ class AuthService {
   Future<void> signOut() async {
     await GoogleSignIn.instance.signOut();
     await _auth.signOut();
+  }
+
+  /// Menghapus profil di Firestore lalu menghapus akun Firebase.
+  ///
+  /// Firebase mewajibkan login ulang bila sesi sudah lama. Kondisi itu
+  /// dilempar sebagai [AuthReauthRequiredException] agar UI bisa memberi tahu
+  /// pengguna, bukan menampilkan error mentah.
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw const AuthNotSignedInException();
+    }
+
+    await _userRepository.deleteProfile(user.uid);
+
+    try {
+      await user.delete();
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'requires-recent-login') {
+        throw const AuthReauthRequiredException();
+      }
+      rethrow;
+    }
   }
 }
