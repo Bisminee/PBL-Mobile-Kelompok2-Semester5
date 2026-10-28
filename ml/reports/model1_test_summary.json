@@ -1,53 +1,53 @@
 {
-  "weights": "ml\\runs\\model1_smoke\\weights\\best.pt",
+  "weights": "ml\\runs\\model1_yolo11n\\weights\\best.pt",
   "n_test": 5051,
-  "accuracy": 0.8824,
-  "macro_f1": 0.7734,
+  "accuracy": 0.9434,
+  "macro_f1": 0.8948,
   "per_source": [
     {
       "source": "carousell",
       "n": 1114,
-      "accuracy": 0.7567,
-      "macro_f1": 0.5602
+      "accuracy": 0.8779,
+      "macro_f1": 0.839
     },
     {
       "source": "clothing_full",
       "n": 560,
-      "accuracy": 0.7857,
-      "macro_f1": 0.7235
+      "accuracy": 0.9071,
+      "macro_f1": 0.8846
     },
     {
       "source": "fashion_products",
       "n": 3377,
-      "accuracy": 0.9399,
-      "macro_f1": 0.7673
+      "accuracy": 0.971,
+      "macro_f1": 0.916
     }
   ],
   "top_confusions": [
     {
-      "count": 101,
-      "true": "shirt",
-      "pred": "outerwear"
+      "count": 29,
+      "true": "tshirt",
+      "pred": "dress"
     },
     {
-      "count": 71,
+      "count": 24,
       "true": "outerwear",
       "pred": "tshirt"
     },
     {
-      "count": 38,
-      "true": "dress",
-      "pred": "outerwear"
-    },
-    {
-      "count": 37,
+      "count": 23,
       "true": "shirt",
-      "pred": "tshirt"
+      "pred": "outerwear"
     },
     {
-      "count": 28,
-      "true": "skirt",
-      "pred": "outerwear"
+      "count": 19,
+      "true": "tshirt",
+      "pred": "shirt"
+    },
+    {
+      "count": 19,
+      "true": "outerwear",
+      "pred": "shirt"
     }
   ]
 }
