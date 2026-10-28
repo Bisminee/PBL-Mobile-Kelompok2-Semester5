@@ -9,6 +9,7 @@ import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../services/auth_service.dart';
 import '../../services/providers.dart';
+import '../../services/user_repository.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_text_field.dart';
 import '../../widgets/common/responsive.dart';
@@ -23,6 +24,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final AuthService _authService = AuthService();
+  final UserRepository _userRepository = UserRepository();
   bool _loading = false;
   String? _error;
 
@@ -36,6 +38,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final credential = await _authService.signInWithGoogle();
       final user = credential.user;
       if (user != null) {
+        try {
+          await _userRepository.ensureProfile(user);
+        } catch (error) {
+          // Login tetap dilanjutkan walau penulisan profil gagal, misalnya
+          // karena aturan Firestore belum diatur.
+          debugPrint('Gagal menyimpan profil pengguna: $error');
+        }
         ref.read(authProvider.notifier).setUser(
               AppUser(
                 name: user.displayName ??
