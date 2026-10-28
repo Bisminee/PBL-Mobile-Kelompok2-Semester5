@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/garment.dart';
@@ -21,12 +22,34 @@ class AppUser {
 
 class AuthNotifier extends Notifier<AppUser?> {
   @override
-  AppUser? build() => null;
+  AppUser? build() {
+    try {
+      final subscription =
+          FirebaseAuth.instance.authStateChanges().listen((user) {
+        state = _fromFirebase(user);
+      });
+      ref.onDispose(subscription.cancel);
+      return _fromFirebase(FirebaseAuth.instance.currentUser);
+    } catch (error) {
+      // Firebase belum dikonfigurasi; aplikasi tetap bisa dibuka.
+      return null;
+    }
+  }
 
   /// Dipanggil setelah Firebase berhasil mengautentikasi pengguna.
   void setUser(AppUser? user) => state = user;
 
   void signOut() => state = null;
+
+  static AppUser? _fromFirebase(User? user) {
+    if (user == null) return null;
+    final email = user.email ?? '';
+    return AppUser(
+      name: user.displayName ??
+          (email.contains('@') ? email.split('@').first : 'Pengguna'),
+      email: email,
+    );
+  }
 }
 
 final authProvider = NotifierProvider<AuthNotifier, AppUser?>(AuthNotifier.new);
