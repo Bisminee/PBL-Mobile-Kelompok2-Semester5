@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
-import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_text_field.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -59,8 +57,13 @@ class SignUpScreen extends ConsumerWidget {
                 AppButton(
                   label: 'Daftar',
                   onPressed: () {
-                    ref.read(authProvider.notifier).signIn();
-                    context.go(AppRoutes.home);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Pendaftaran email belum aktif. Gunakan login Google.',
+                        ),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 28),

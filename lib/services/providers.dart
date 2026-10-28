@@ -23,9 +23,8 @@ class AuthNotifier extends Notifier<AppUser?> {
   @override
   AppUser? build() => null;
 
-  void signIn({String name = 'Bisma Adhiaksa', String email = 'bisma@example.com'}) {
-    state = AppUser(name: name, email: email);
-  }
+  /// Dipanggil setelah Firebase berhasil mengautentikasi pengguna.
+  void setUser(AppUser? user) => state = user;
 
   void signOut() => state = null;
 }
