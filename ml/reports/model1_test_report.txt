@@ -1,19 +1,19 @@
-weights: ml\runs\model1_smoke\weights\best.pt
-accuracy: 0.8824
-macro_f1: 0.7734
+weights: ml\runs\model1_yolo11n\weights\best.pt
+accuracy: 0.9434
+macro_f1: 0.8948
 
               precision    recall  f1-score   support
 
-       dress      0.646     0.581     0.612       179
-  long_pants      0.900     0.934     0.917       453
- long_sleeve      0.585     0.647     0.615        85
-   outerwear      0.720     0.853     0.781       721
-       shirt      0.923     0.739     0.820       566
+       dress      0.734     0.877     0.799       179
+  long_pants      0.954     0.954     0.954       453
+ long_sleeve      0.750     0.776     0.763        85
+   outerwear      0.899     0.906     0.903       721
+       shirt      0.921     0.929     0.925       566
        shoes      0.999     0.999     0.999      1336
-      shorts      0.828     0.765     0.795       183
-       skirt      0.774     0.369     0.500       111
-      tshirt      0.908     0.936     0.922      1417
+      shorts      0.924     0.929     0.926       183
+       skirt      0.887     0.775     0.827       111
+      tshirt      0.970     0.946     0.958      1417
 
-    accuracy                          0.882      5051
-   macro avg      0.809     0.758     0.773      5051
-weighted avg      0.886     0.882     0.880      5051
+    accuracy                          0.943      5051
+   macro avg      0.893     0.899     0.895      5051
+weighted avg      0.945     0.943     0.944      5051
