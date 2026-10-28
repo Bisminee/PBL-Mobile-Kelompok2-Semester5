@@ -17,6 +17,7 @@ import '../screens/wardrobe/clothing_detail_screen.dart';
 import '../screens/wardrobe/wardrobe_screen.dart';
 import '../widgets/layout/main_shell.dart';
 import 'app_routes.dart';
+import '../services/auth_listenable.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -25,6 +26,23 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: AppRoutes.splash,
+  refreshListenable: authListenable,
+  redirect: (context, state) {
+    final signedIn = authListenable.isSignedIn;
+    final location = state.matchedLocation;
+    final onAuthScreen =
+        location == AppRoutes.login || location == AppRoutes.signup;
+    final onPublicScreen =
+        location == AppRoutes.splash || location == AppRoutes.onboarding;
+
+    if (!signedIn && !onAuthScreen && !onPublicScreen) {
+      return AppRoutes.login;
+    }
+    if (signedIn && onAuthScreen) {
+      return AppRoutes.home;
+    }
+    return null;
+  },
   routes: [
     GoRoute(
       path: AppRoutes.splash,
