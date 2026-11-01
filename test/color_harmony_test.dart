@@ -65,13 +65,16 @@ void main() {
       expect(r.rule, HarmonyRule.neutral);
     });
 
-    test('kedua akromatik dengan kontras terang → monokromatik skor tinggi', () {
-      const black = LchColor(0, 0, 0);
-      const white = LchColor(100, 0, 0);
-      final r = ColorHarmony.evaluateLch(black, white);
-      expect(r.rule, HarmonyRule.monochromatic);
-      expect(r.score, greaterThanOrEqualTo(0.99));
-    });
+    test(
+      'kedua akromatik dengan kontras terang → monokromatik skor tinggi',
+      () {
+        const black = LchColor(0, 0, 0);
+        const white = LchColor(100, 0, 0);
+        final r = ColorHarmony.evaluateLch(black, white);
+        expect(r.rule, HarmonyRule.monochromatic);
+        expect(r.score, greaterThanOrEqualTo(0.99));
+      },
+    );
 
     test('tanpa aturan saat selisih hue 60°', () {
       const a = LchColor(50, 40, 0);
@@ -128,10 +131,7 @@ void main() {
     test('memperketat ambang analog membuat selisih 25° tidak lagi analog', () {
       const a = LchColor(50, 40, 0);
       const b = LchColor(50, 40, 25);
-      expect(
-        ColorHarmony.evaluateLch(a, b).rule,
-        HarmonyRule.analogous,
-      );
+      expect(ColorHarmony.evaluateLch(a, b).rule, HarmonyRule.analogous);
       final strict = ColorHarmony.evaluateLch(
         a,
         b,

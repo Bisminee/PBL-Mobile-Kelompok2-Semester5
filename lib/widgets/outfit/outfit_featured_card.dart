@@ -33,47 +33,76 @@ class _OutfitFeaturedCardState extends State<OutfitFeaturedCard> {
         children: [
           SizedBox(
             height: 230,
-            child: Row(children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    const Positioned.fill(
-                        child: ClothingThumb(kind: ClothingKind.top, iconSize: 64)),
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Row(children: [
-                          const Icon(Icons.auto_awesome, size: 12, color: Colors.white),
-                          const SizedBox(width: 5),
-                          Text('Paling Cocok',
-                              style: AppTextStyles.labelBold
-                                  .copyWith(color: Colors.white, fontSize: 11)),
-                        ]),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      const Positioned.fill(
+                        child: ClothingThumb(
+                          kind: ClothingKind.top,
+                          iconSize: 64,
+                        ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.auto_awesome,
+                                size: 12,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Paling Cocok',
+                                style: AppTextStyles.labelBold.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(children: const [
-                  Expanded(
-                      child: SizedBox(
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    children: const [
+                      Expanded(
+                        child: SizedBox(
                           width: double.infinity,
-                          child: ClothingThumb(kind: ClothingKind.bottom, dark: false))),
-                  SizedBox(height: 8),
-                  Expanded(
-                      child: SizedBox(
+                          child: ClothingThumb(
+                            kind: ClothingKind.bottom,
+                            dark: false,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Expanded(
+                        child: SizedBox(
                           width: double.infinity,
-                          child: ClothingThumb(kind: ClothingKind.shoes))),
-                ]),
-              ),
-            ]),
+                          child: ClothingThumb(kind: ClothingKind.shoes),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Padding(
@@ -81,29 +110,48 @@ class _OutfitFeaturedCardState extends State<OutfitFeaturedCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Monochrome Casual', style: AppTextStyles.h2),
-                        const SizedBox(height: 2),
-                        Text('94% MATCH', style: AppTextStyles.mono(10)),
-                      ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Monochrome Casual', style: AppTextStyles.h2),
+                          const SizedBox(height: 2),
+                          Text('94% MATCH', style: AppTextStyles.mono(10)),
+                        ],
+                      ),
                     ),
-                  ),
-                  const MatchRing(value: 94, size: 52, stroke: 4),
-                ]),
+                    const MatchRing(value: 94, size: 52, stroke: 4),
+                  ],
+                ),
                 const SizedBox(height: 10),
-                Text('Kaos · Celana · Sneakers', style: AppTextStyles.bodySecondary),
+                Text(
+                  'Kaos · Celana · Sneakers',
+                  style: AppTextStyles.bodySecondary,
+                ),
                 const SizedBox(height: 10),
-                Text('Perpaduan warna netral menciptakan tampilan yang clean dan seimbang.',
-                    style: AppTextStyles.body.copyWith(fontSize: 15)),
+                Text(
+                  'Perpaduan warna netral menciptakan tampilan yang clean dan seimbang.',
+                  style: AppTextStyles.body.copyWith(fontSize: 15),
+                ),
                 const SizedBox(height: 12),
-                Wrap(spacing: 8, runSpacing: 8, children: const [
-                  PillChip(label: 'Color Harmony', icon: Icons.water_drop_outlined, small: true),
-                  PillChip(label: 'Your Wardrobe', icon: Icons.checkroom_outlined, small: true),
-                ]),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: const [
+                    PillChip(
+                      label: 'Color Harmony',
+                      icon: Icons.water_drop_outlined,
+                      small: true,
+                    ),
+                    PillChip(
+                      label: 'Your Wardrobe',
+                      icon: Icons.checkroom_outlined,
+                      small: true,
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 14),
                 const Divider(color: AppColors.border, height: 1),
                 GestureDetector(
@@ -111,19 +159,39 @@ class _OutfitFeaturedCardState extends State<OutfitFeaturedCard> {
                   onTap: () => setState(() => _open = !_open),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: Row(children: [
-                      Expanded(child: Text('Kenapa cocok?', style: AppTextStyles.title)),
-                      Icon(_open ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
-                    ]),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Kenapa cocok?',
+                            style: AppTextStyles.title,
+                          ),
+                        ),
+                        Icon(
+                          _open
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 if (_open) ...const [
-                  _Metric('Kompatibilitas warna', 96,
-                      'Hitam dan putih membentuk kontras monokrom yang selalu seimbang.'),
-                  _Metric('Kategori pakaian', 92,
-                      'Kaos, celana panjang, dan sneakers membentuk outfit yang lengkap.'),
-                  _Metric('Kesesuaian style', 90,
-                      'Ketiganya bergaya casual, cocok untuk kampus dan aktivitas harian.'),
+                  _Metric(
+                    'Kompatibilitas warna',
+                    96,
+                    'Hitam dan putih membentuk kontras monokrom yang selalu seimbang.',
+                  ),
+                  _Metric(
+                    'Kategori pakaian',
+                    92,
+                    'Kaos, celana panjang, dan sneakers membentuk outfit yang lengkap.',
+                  ),
+                  _Metric(
+                    'Kesesuaian style',
+                    90,
+                    'Ketiganya bergaya casual, cocok untuk kampus dan aktivitas harian.',
+                  ),
                 ],
                 const SizedBox(height: 6),
                 AppButton(label: 'Lihat Detail', onPressed: widget.onDetail),
@@ -150,10 +218,20 @@ class _Metric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Expanded(child: Text(title, style: AppTextStyles.title.copyWith(fontSize: 14))),
-            Text('$value%', style: AppTextStyles.labelBold.copyWith(fontSize: 13)),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTextStyles.title.copyWith(fontSize: 14),
+                ),
+              ),
+              Text(
+                '$value%',
+                style: AppTextStyles.labelBold.copyWith(fontSize: 13),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(3),

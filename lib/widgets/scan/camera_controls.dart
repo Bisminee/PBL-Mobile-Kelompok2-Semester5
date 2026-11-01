@@ -39,11 +39,7 @@ class CameraControls extends StatelessWidget {
               maxWidth: 420,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _leftTile(),
-                  _shutter(),
-                  _switchButton(),
-                ],
+                children: [_leftTile(), _shutter(), _switchButton()],
               ),
             ),
             const SizedBox(height: 18),
@@ -86,8 +82,10 @@ class CameraControls extends StatelessWidget {
               border: Border.all(color: Colors.white, width: 4),
             ),
             child: const DecoratedBox(
-              decoration:
-                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
             ),
           ),
         ),

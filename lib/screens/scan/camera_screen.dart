@@ -109,9 +109,9 @@ class _CameraScreenState extends State<CameraScreen>
       context.push(AppRoutes.cameraPreview, extra: file.path);
     } on CameraException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_describeError(e))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_describeError(e))));
     }
   }
 
@@ -182,8 +182,10 @@ class _CameraScreenState extends State<CameraScreen>
                 TextButton.icon(
                   onPressed: () => _initializeCamera(_cameras[_cameraIndex]),
                   icon: const Icon(Icons.refresh, color: Colors.white),
-                  label: const Text('Refresh',
-                      style: TextStyle(color: Colors.white)),
+                  label: const Text(
+                    'Refresh',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ],
@@ -197,7 +199,8 @@ class _CameraScreenState extends State<CameraScreen>
         controller == null ||
         !controller.value.isInitialized) {
       return const Center(
-          child: CircularProgressIndicator(color: Colors.white));
+        child: CircularProgressIndicator(color: Colors.white),
+      );
     }
 
     // Read the real camera size (sensor preview size, in landscape
@@ -207,7 +210,9 @@ class _CameraScreenState extends State<CameraScreen>
     final bool isPortrait =
         MediaQuery.orientationOf(context) == Orientation.portrait;
     final double cameraAspect;
-    if (previewSize != null && previewSize.width > 0 && previewSize.height > 0) {
+    if (previewSize != null &&
+        previewSize.width > 0 &&
+        previewSize.height > 0) {
       cameraAspect = isPortrait
           ? previewSize.height / previewSize.width
           : previewSize.width / previewSize.height;

@@ -46,12 +46,23 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(AppAssets.logo, width: 72, height: 72, fit: BoxFit.cover),
+                  child: Image.asset(
+                    AppAssets.logo,
+                    width: 72,
+                    height: 72,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 const SizedBox(height: 20),
-                Text('Sera-Z', style: AppTextStyles.display.copyWith(fontSize: 40)),
+                Text(
+                  'Sera-Z',
+                  style: AppTextStyles.display.copyWith(fontSize: 40),
+                ),
                 const SizedBox(height: 10),
-                Text('FASHION INTELLIGENCE', style: AppTextStyles.mono(10, ls: 3)),
+                Text(
+                  'FASHION INTELLIGENCE',
+                  style: AppTextStyles.mono(10, ls: 3),
+                ),
               ],
             ),
           ),

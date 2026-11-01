@@ -39,37 +39,57 @@ class RecommendationCard extends StatelessWidget {
           children: [
             SizedBox(
               height: 170,
-              child: Row(children: [
-                const Expanded(child: ClothingThumb(kind: ClothingKind.top, iconSize: 48)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(children: const [
-                    Expanded(child: ClothingThumb(kind: ClothingKind.bottom, dark: false)),
-                    SizedBox(height: 8),
-                    Expanded(child: ClothingThumb(kind: ClothingKind.shoes)),
-                  ]),
-                ),
-              ]),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: ClothingThumb(kind: ClothingKind.top, iconSize: 48),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      children: const [
+                        Expanded(
+                          child: ClothingThumb(
+                            kind: ClothingKind.bottom,
+                            dark: false,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Expanded(
+                          child: ClothingThumb(kind: ClothingKind.shoes),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 14),
-            Row(children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: AppTextStyles.h3.copyWith(fontSize: 17)),
-                    const SizedBox(height: 2),
-                    Text(matchLabel, style: AppTextStyles.mono(10)),
-                  ],
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTextStyles.h3.copyWith(fontSize: 17),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(matchLabel, style: AppTextStyles.mono(10)),
+                    ],
+                  ),
                 ),
-              ),
-              MatchRing(value: score, size: 40),
-            ]),
+                MatchRing(value: score, size: 40),
+              ],
+            ),
             const SizedBox(height: 8),
-            Text(description,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.bodySecondary.copyWith(fontSize: 13)),
+            Text(
+              description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.bodySecondary.copyWith(fontSize: 13),
+            ),
           ],
         ),
       ),

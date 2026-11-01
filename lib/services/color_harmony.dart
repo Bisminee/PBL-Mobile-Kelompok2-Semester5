@@ -76,8 +76,7 @@ class HarmonyResult {
   }
 
   @override
-  String toString() =>
-      '$label (${(score * 100).round()}%) — $detail';
+  String toString() => '$label (${(score * 100).round()}%) — $detail';
 }
 
 /// Color-harmony rules for outfit compatibility (task E6.4).
@@ -132,7 +131,8 @@ class ColorHarmony {
     final delta = hueDistance(a.h, b.h);
 
     if (delta <= thresholds.monochromaticHue) {
-      final score = 0.85 +
+      final score =
+          0.85 +
           0.15 * (1 - delta / math.max(thresholds.monochromaticHue, 1e-6));
       return HarmonyResult(
         rule: HarmonyRule.monochromatic,
@@ -146,8 +146,14 @@ class ColorHarmony {
         thresholds.analogousHue - thresholds.monochromaticHue,
         1e-6,
       );
-      final score = 0.8 +
-          0.2 * (1 - ((delta - thresholds.monochromaticHue) / span).clamp(0.0, 1.0));
+      final score =
+          0.8 +
+          0.2 *
+              (1 -
+                  ((delta - thresholds.monochromaticHue) / span).clamp(
+                    0.0,
+                    1.0,
+                  ));
       return HarmonyResult(
         rule: HarmonyRule.analogous,
         score: _clamp01(score),

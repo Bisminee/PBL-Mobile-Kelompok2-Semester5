@@ -18,12 +18,7 @@ class CameraOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
-        _topBar(),
-        _detectionChip(),
-        _guideFrame(),
-        _hint(),
-      ],
+      children: [_topBar(), _detectionChip(), _guideFrame(), _hint()],
     );
   }
 
@@ -47,12 +42,16 @@ class CameraOverlay extends StatelessWidget {
               color: _dim,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Row(children: [
-              const CircleAvatar(radius: 3, backgroundColor: Colors.white),
-              const SizedBox(width: 8),
-              Text('AI SCAN',
-                  style: AppTextStyles.mono(10, color: Colors.white)),
-            ]),
+            child: Row(
+              children: [
+                const CircleAvatar(radius: 3, backgroundColor: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  'AI SCAN',
+                  style: AppTextStyles.mono(10, color: Colors.white),
+                ),
+              ],
+            ),
           ),
           // Flash: belum ada logikanya (sama seperti desain awal).
           const CircleIconButton(
@@ -81,11 +80,14 @@ class CameraOverlay extends StatelessWidget {
               BoxShadow(color: Color(0x22000000), blurRadius: 10),
             ],
           ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const CircleAvatar(radius: 3, backgroundColor: Colors.black),
-            const SizedBox(width: 8),
-            Text('Kaos terdeteksi', style: AppTextStyles.labelBold),
-          ]),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(radius: 3, backgroundColor: Colors.black),
+              const SizedBox(width: 8),
+              Text('Kaos terdeteksi', style: AppTextStyles.labelBold),
+            ],
+          ),
         ),
       ),
     );

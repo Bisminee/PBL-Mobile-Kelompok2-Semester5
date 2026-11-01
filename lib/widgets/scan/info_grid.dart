@@ -18,51 +18,62 @@ class InfoGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget cell(InfoCell c) => Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(c.label, style: AppTextStyles.label),
+            const SizedBox(height: 6),
+            Row(
               children: [
-                Text(c.label, style: AppTextStyles.label),
-                const SizedBox(height: 6),
-                Row(children: [
-                  if (c.dotColor != null) ...[
-                    Container(
-                        width: 14,
-                        height: 14,
-                        decoration:
-                            BoxDecoration(color: c.dotColor, shape: BoxShape.circle)),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(c.value, style: AppTextStyles.title),
-                ]),
+                if (c.dotColor != null) ...[
+                  Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: c.dotColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Text(c.value, style: AppTextStyles.title),
               ],
             ),
-          ),
-        );
+          ],
+        ),
+      ),
+    );
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.border),
       ),
-      child: Column(children: [
-        IntrinsicHeight(
-          child: Row(children: [
-            cell(cells[0]),
-            const VerticalDivider(width: 1, color: AppColors.border),
-            cell(cells[1]),
-          ]),
-        ),
-        const Divider(height: 1, color: AppColors.border),
-        IntrinsicHeight(
-          child: Row(children: [
-            cell(cells[2]),
-            const VerticalDivider(width: 1, color: AppColors.border),
-            cell(cells[3]),
-          ]),
-        ),
-      ]),
+      child: Column(
+        children: [
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                cell(cells[0]),
+                const VerticalDivider(width: 1, color: AppColors.border),
+                cell(cells[1]),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: AppColors.border),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                cell(cells[2]),
+                const VerticalDivider(width: 1, color: AppColors.border),
+                cell(cells[3]),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

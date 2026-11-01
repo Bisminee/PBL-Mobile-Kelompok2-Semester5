@@ -36,10 +36,12 @@ class SectionHeader extends StatelessWidget {
         if (actionLabel != null)
           GestureDetector(
             onTap: onAction,
-            child: Row(children: [
-              Text(actionLabel!, style: AppTextStyles.labelBold),
-              const Icon(Icons.chevron_right, size: 18),
-            ]),
+            child: Row(
+              children: [
+                Text(actionLabel!, style: AppTextStyles.labelBold),
+                const Icon(Icons.chevron_right, size: 18),
+              ],
+            ),
           ),
       ],
     );

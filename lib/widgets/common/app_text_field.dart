@@ -73,8 +73,10 @@ class _AppTextFieldState extends State<AppTextField> {
               border: InputBorder.none,
               isCollapsed: true,
               hintText: widget.hint,
-              hintStyle: AppTextStyles.body
-                  .copyWith(fontSize: 15, color: AppColors.textSecondary.withValues(alpha: 0.7)),
+              hintStyle: AppTextStyles.body.copyWith(
+                fontSize: 15,
+                color: AppColors.textSecondary.withValues(alpha: 0.7),
+              ),
               suffixIcon: widget.isPassword
                   ? GestureDetector(
                       onTap: () => setState(() => _obscure = !_obscure),
@@ -87,13 +89,19 @@ class _AppTextFieldState extends State<AppTextField> {
                       ),
                     )
                   : null,
-              suffixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 24,
+                minHeight: 24,
+              ),
             ),
           ),
         ),
         if (widget.helper != null) ...[
           const SizedBox(height: 8),
-          Text(widget.helper!, style: AppTextStyles.label.copyWith(fontSize: 11)),
+          Text(
+            widget.helper!,
+            style: AppTextStyles.label.copyWith(fontSize: 11),
+          ),
         ],
       ],
     );

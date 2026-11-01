@@ -23,24 +23,38 @@ class ColorCompositionBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: SizedBox(
             height: 10,
-            child: Row(children: [
-              for (final s in segments)
-                Expanded(flex: s.percent, child: Container(color: s.color)),
-            ]),
+            child: Row(
+              children: [
+                for (final s in segments)
+                  Expanded(
+                    flex: s.percent,
+                    child: Container(color: s.color),
+                  ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 10),
-        Row(children: [
-          for (final s in segments) ...[
-            Container(
+        Row(
+          children: [
+            for (final s in segments) ...[
+              Container(
                 width: 7,
                 height: 7,
-                decoration: BoxDecoration(color: s.color, shape: BoxShape.circle)),
-            const SizedBox(width: 5),
-            Text('${s.name} ${s.percent}%', style: AppTextStyles.label.copyWith(fontSize: 11)),
-            const SizedBox(width: 14),
+                decoration: BoxDecoration(
+                  color: s.color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                '${s.name} ${s.percent}%',
+                style: AppTextStyles.label.copyWith(fontSize: 11),
+              ),
+              const SizedBox(width: 14),
+            ],
           ],
-        ]),
+        ),
       ],
     );
   }

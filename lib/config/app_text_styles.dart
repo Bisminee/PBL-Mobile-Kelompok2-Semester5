@@ -8,21 +8,32 @@ import 'app_colors.dart';
 class AppTextStyles {
   AppTextStyles._();
 
-  static TextStyle _sans(double size, FontWeight w,
-          {Color color = AppColors.textPrimary, double? height, double? ls}) =>
-      GoogleFonts.inter(
-          fontSize: size,
-          fontWeight: w,
-          color: color,
-          height: height,
-          letterSpacing: ls);
+  static TextStyle _sans(
+    double size,
+    FontWeight w, {
+    Color color = AppColors.textPrimary,
+    double? height,
+    double? ls,
+  }) => GoogleFonts.inter(
+    fontSize: size,
+    fontWeight: w,
+    color: color,
+    height: height,
+    letterSpacing: ls,
+  );
 
-  static TextStyle mono(double size,
-          {Color color = AppColors.textSecondary, double ls = 1.2}) =>
-      GoogleFonts.jetBrainsMono(
-          fontSize: size, color: color, letterSpacing: ls);
+  static TextStyle mono(
+    double size, {
+    Color color = AppColors.textSecondary,
+    double ls = 1.2,
+  }) => GoogleFonts.jetBrainsMono(
+    fontSize: size,
+    color: color,
+    letterSpacing: ls,
+  );
 
-  static TextStyle get display => _sans(32, FontWeight.w800, height: 1.15, ls: -0.8);
+  static TextStyle get display =>
+      _sans(32, FontWeight.w800, height: 1.15, ls: -0.8);
   static TextStyle get h1 => _sans(28, FontWeight.w800, height: 1.15, ls: -0.6);
   static TextStyle get h2 => _sans(22, FontWeight.w800, ls: -0.4);
   static TextStyle get h3 => _sans(18, FontWeight.w700, ls: -0.2);
