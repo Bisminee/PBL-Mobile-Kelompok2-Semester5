@@ -54,5 +54,5 @@ Boleh dikerjakan kapan saja, siapa saja, dan paralel.
 - Branch untuk **tugas dependen** dibuat setelah prasyaratnya selesai
   (lihat `pembagian-tugas.md` untuk daftar ketergantungan).
 - Nama branch **tidak memakai nama orang**.
-- Setelah PR digabung ke `main`, branch fitur boleh dihapus.
+- Setelah PR digabung ke `dev`, branch fitur boleh dihapus.
 - Daftar tugas lengkap: `pembagian-tugas.md` · penjelasan epic: `Epics/`.

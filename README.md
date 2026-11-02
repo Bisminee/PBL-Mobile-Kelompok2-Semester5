@@ -3,6 +3,12 @@
 Aplikasi mobile Flutter yang mengenali jenis dan warna pakaian dari foto, lalu
 merekomendasikan kombinasi outfit.
 
+> **CATATAN DARI BISMA**
+>
+> **JANGAN TAKUT SALAH PUSH, JANGAN TAKUT BIKIN KESALAHAN**
+>
+> **TAKUT KALAU KALIAN NGGAK ADA KONTRIBUSI DI GITHUB**
+
 Panduan ini dibuat untuk **yang belum pernah pakai Git**. Ikuti dari atas ke
 bawah, cukup ketik perintah yang tertulis.
 
@@ -38,13 +44,14 @@ Bayangkan kode kita seperti **dokumen bersama**:
 | **Push** | **Upload** commit dari komputer ke GitHub. |
 | **Pull** | **Download** perubahan terbaru dari GitHub ke komputer. |
 | **Branch** | **Jalur kerja terpisah** untuk mengerjakan satu fitur tanpa mengganggu yang lain. |
-| **`main`** | Branch **utama** — versi yang harus selalu aman/stabil. |
-| **Pull Request (PR)** | Permintaan **"tolong gabungkan fitur saya ke `main`"**. Teman akan review dulu. |
+| **`main`** | Branch **utama** — versi rilis yang harus selalu aman/stabil. |
+| **`dev`** | Branch **kerja bersama** — semua fitur digabung di sini sebelum masuk `main`. |
+| **Pull Request (PR)** | Permintaan **"tolong gabungkan fitur saya ke `dev`"**. Teman akan review dulu. |
 
 **Aturan paling penting:**
 
-> 🚫 **Jangan pernah mengerjakan langsung di `main`.**
-> Buat **branch baru untuk setiap fitur**.
+> 🚫 **Jangan pernah mengerjakan langsung di `main` atau `dev`.**
+> Buat **branch baru dari `dev`** untuk setiap fitur, lalu ajukan PR ke `dev`.
 
 ---
 
@@ -108,8 +115,14 @@ flutter run
 ### 3.1 Aturan
 - **Tidak ada branch bernama orang.** Branch dinamai sesuai **fitur/pekerjaan**.
 - Setiap fitur punya **satu branch** dan **satu Pull Request**.
-- Branch dibuat dari `main` terbaru, umurnya pendek (1–3 hari).
-- Setelah PR digabung, branch dihapus.
+- Branch dibuat dari **`dev` terbaru**, umurnya pendek (1–3 hari).
+- **Pull Request mengarah ke `dev`**, bukan ke `main`.
+- Setelah PR digabung ke `dev`, branch fitur dihapus.
+- Setelah satu milestone selesai dan `dev` stabil, `dev` digabung ke `main`
+  lewat PR tersendiri.
+
+Daftar nama branch untuk setiap tugas minggu ini ada di
+**`Pembagian Tugas/pembagian-tugas-minggu-5.docx`** bagian 6.
 
 ### 3.2 Apa Itu "Fitur"?
 
@@ -163,15 +176,52 @@ Bug     = fix/...                 (perbaiki warna salah)
 > Jangan buat `feat/big-ml` (terlalu besar) atau `feat/login-dan-ubah-tema`
 > (dua hal sekaligus). Pecah menjadi beberapa branch.
 
+### 3.5 Alur branch: fitur → `dev` → `main`
+
+Ada tiga branch tetap di proyek ini:
+
+| Branch | Fungsi |
+|---|---|
+| `dev` | Tempat semua fitur mobile digabung dan diuji bersama |
+| `dev-ml` | Tempat pekerjaan ML digabung, dibuat dari `dev` |
+| `main` | Versi rilis yang stabil, hasil penggabungan `dev` pada akhir milestone |
+
+Alur mobile:
+
+```
+dev ──► feat/nama-fitur ──PR──► dev ──► (uji bersama) ──PR──► main
+```
+
+Alur ML:
+
+```
+dev ──► dev-ml ──► ml/nama-tugas ──PR──► dev-ml ──► (stabil) PR ke dev
+```
+
+- Branch fitur mobile **dibuat dari `dev`**, bukan dari `main`.
+- Branch tugas ML **dibuat dari `dev-ml`**, bukan dari `dev` atau `main`.
+- Pull Request mobile **mengarah ke `dev`**; Pull Request ML **mengarah ke
+  `dev-ml`**.
+- `dev` menjadi tempat integrasi mobile: kalau dua fitur bentrok, ketahuan di sini.
+- `dev-ml` menjadi tempat integrasi ML: skrip, dataset ringkas, laporan, dan
+  artefak model diuji di sini sebelum masuk `dev`.
+- Setelah `dev` stabil dan satu milestone selesai, buka PR **`dev` → `main`**.
+- Penyesuaian `pubspec.yaml` dan aset model dikerjakan dari `dev`, karena itu
+  konfigurasi aplikasi, bukan kode ML.
+- Jangan mengerjakan langsung di `dev` atau `dev-ml`; keduanya hanya menerima
+  hasil PR.
+- `dev` juga memuat **konteks proyek untuk AI** (`AGENTS.md` dan `ai-context/`)
+  agar semua anggota memakai aturan dan gambaran proyek yang sama.
+
 ---
 
 ## 4. Membuat Branch Fitur
 
-**Langkah 1 — Pastikan di `main` terbaru:**
+**Langkah 1 — Pastikan di `dev` terbaru:**
 
 ```bash
-git checkout main
-git pull origin main
+git checkout dev
+git pull origin dev
 ```
 
 **Langkah 2 — Buat branch fitur:**
@@ -223,43 +273,44 @@ git push
 
 ---
 
-## 6. Minta Gabung ke `main` (Pull Request)
+## 6. Minta Gabung ke `dev` (Pull Request)
 
 1. Buka repo di **GitHub** (browser).
 2. Klik **"Compare & pull request"** untuk branch kalian.
-3. Pastikan **base: `main`** dan **compare: `feat/...`** (branch kalian).
+3. Pastikan **base: `dev`** dan **compare: `feat/...`** (branch kalian).
 4. Isi deskripsi: **apa yang diubah** dan **cara mengetesnya**.
 5. Klik **Create pull request**.
 6. Minta teman **review**. Setelah setuju, klik
    **Merge pull request** → **Confirm merge**.
-7. Hapus branch fitur setelah digabung (opsional).
+7. Hapus branch fitur setelah digabung.
 
-**Penjelasan:** PR adalah cara sopan meminta izin menggabungkan fitur. `main`
-tetap aman karena ada pengecekan teman.
+**Penjelasan:** PR adalah cara sopan meminta izin menggabungkan fitur. `dev`
+tetap aman karena ada pengecekan teman. Setelah semua fitur satu milestone
+selesai dan diuji, `dev` digabung ke `main` lewat PR terpisah.
 
 ---
 
-## 7. Cek Update di `main` (Agar Tidak Ketinggalan)
+## 7. Cek Update di `dev` (Agar Tidak Ketinggalan)
 
-**Langkah 1 — Lihat apa yang baru di `main`:**
+**Langkah 1 — Lihat apa yang baru di `dev`:**
 
 ```bash
 git fetch origin
-git log HEAD..origin/main --oneline
+git log HEAD..origin/dev --oneline
 ```
 
-**Langkah 2 — Update `main` di laptop:**
+**Langkah 2 — Update `dev` di laptop:**
 
 ```bash
-git checkout main
-git pull origin main
+git checkout dev
+git pull origin dev
 ```
 
 **Langkah 3 — Bawa update itu ke branch fitur kalian:**
 
 ```bash
 git checkout feat/wardrobe-crud
-git merge main
+git merge dev
 ```
 
 ---
@@ -274,7 +325,7 @@ menandai file itu seperti ini:
 kode kalian
 =======
 kode teman
->>>>>>> main
+>>>>>>> dev
 ```
 
 **Cara menyelesaikan:**
@@ -286,7 +337,7 @@ kode teman
 
 ```bash
 git add .
-git commit -m "merge: selesaikan konflik dengan main"
+git commit -m "merge: selesaikan konflik dengan dev"
 git push
 ```
 
@@ -303,8 +354,8 @@ cd PBL
 flutter pub get
 
 # ---- SETIAP FITUR BARU ----
-git checkout main
-git pull origin main
+git checkout dev
+git pull origin dev
 git checkout -b feat/nama-fitur
 # ... kerjakan fitur ...
 git status
@@ -313,7 +364,7 @@ git commit -m "feat: deskripsi singkat"
 git push -u origin feat/nama-fitur
 
 # ---- SAAT SIAP GABUNG ----
-# buka GitHub -> Compare & pull request -> Create pull request
+# buka GitHub -> Compare & pull request -> base: dev -> Create pull request
 ```
 
 ---
@@ -337,7 +388,7 @@ git push -u origin feat/nama-fitur
 | `git clone <url>` | Download proyek dari GitHub. |
 | `git checkout <branch>` | Pindah ke branch lain. |
 | `git checkout -b <branch>` | Bikin branch baru + pindah ke sana. |
-| `git pull origin main` | Download + gabungkan versi terbaru `main`. |
+| `git pull origin dev` | Download + gabungkan versi terbaru `dev`. |
 | `git fetch origin` | Cek update dari GitHub (belum mengubah file kalian). |
 | `git status` | Lihat file apa yang berubah. |
 | `git diff` | Lihat detail perubahan baris per baris. |
@@ -348,7 +399,7 @@ git push -u origin feat/nama-fitur
 | `git branch` | Lihat daftar branch. `*` = branch aktif. |
 | `git branch -d <branch>` | Hapus branch lokal yang sudah digabung. |
 | `git log --oneline -10` | Lihat 10 riwayat commit terakhir. |
-| `git merge main` | Gabungkan versi `main` ke branch kalian. |
+| `git merge dev` | Gabungkan versi `dev` ke branch kalian. |
 | `git remote -v` | Lihat link GitHub yang terhubung. |
 
 ### Flutter

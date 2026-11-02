@@ -1,6 +1,7 @@
 import 'dart:async' show unawaited;
 import 'dart:io' show Directory, File;
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -28,16 +29,34 @@ class AppUser {
 
 class AuthNotifier extends Notifier<AppUser?> {
   @override
-  AppUser? build() => null;
-
-  void signIn({
-    String name = 'Bisma Adhiaksa',
-    String email = 'bisma@example.com',
-  }) {
-    state = AppUser(name: name, email: email);
+  AppUser? build() {
+    try {
+      final subscription =
+          FirebaseAuth.instance.authStateChanges().listen((user) {
+        state = _fromFirebase(user);
+      });
+      ref.onDispose(subscription.cancel);
+      return _fromFirebase(FirebaseAuth.instance.currentUser);
+    } catch (error) {
+      // Firebase belum dikonfigurasi; aplikasi tetap bisa dibuka.
+      return null;
+    }
   }
 
+  /// Dipanggil setelah Firebase berhasil mengautentikasi pengguna.
+  void setUser(AppUser? user) => state = user;
+
   void signOut() => state = null;
+
+  static AppUser? _fromFirebase(User? user) {
+    if (user == null) return null;
+    final email = user.email ?? '';
+    return AppUser(
+      name: user.displayName ??
+          (email.contains('@') ? email.split('@').first : 'Pengguna'),
+      email: email,
+    );
+  }
 }
 
 final authProvider = NotifierProvider<AuthNotifier, AppUser?>(AuthNotifier.new);
@@ -246,6 +265,9 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
     }
     state = state.where((g) => g.id != id).toList();
   }
+
+  /// Mengosongkan lemari, dipakai saat pengguna keluar atau menghapus akun.
+  void clear() => state = const <Garment>[];
 
   Garment? get latest => state.isEmpty ? null : state.last;
 }

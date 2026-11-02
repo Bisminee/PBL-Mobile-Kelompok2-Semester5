@@ -51,3 +51,5 @@ app.*.map.json
 context
 proposal
 reference
+# Firebase credentials - jangan di-commit
+android/app/google-services.json

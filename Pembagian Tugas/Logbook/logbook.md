@@ -100,31 +100,47 @@
 
 ## Minggu 4 — 19 s.d. 25 Okt 2026
 
-**Status:** Rencana (diperbarui saat minggu berjalan)
-**Fokus:** Menyusul jalur ML (dataset + EDA + split) dan memulai pekerjaan paralel: warna, penyimpanan, autentikasi.
+**Status:** Selesai (dokumen)
+**Fokus:** Menyusun laporan kemajuan Milestone 1 dan merapikan dokumen pendukung.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 19–25 Okt | Susulan & target W4 | Menyusul: unduh dataset + EDA (E4.1), merge/split (E4.2), baseline (E4.3). Target: evaluasi & ekspor TFLite (E4.5–E4.6), K-Means warna (E5.2), pasangan Model 3 (E6.1), penyimpanan (E2.5–E2.6), login (E3.1) | Jalur ML masih mengejar ketertinggalan | Latih YOLOv11n-cls (E4.4); palet warna (E5.3–E5.4); fitur + MLP (E6.2–E6.3); profil & sesi (E3.2–E3.3); UI lemari (E8.1–E8.2) | — |
+| 19–25 Okt | Laporan Milestone 1 | Menyusun laporan kemajuan Milestone 1 memakai template resmi (isi saja, tata letak tetap), melengkapi logbook minggu 1–8, membuat lampiran PDF logbook, dan merapikan dokumen pembagian tugas | Tidak ada commit kode pada rentang ini; dataset belum diunduh dan PR #3 belum direview | Membuka jalur data pada minggu 5 | `docs/`, `Pembagian Tugas/Logbook/logbook.md` (lokal) |
 
-**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
+**Ringkasan capaian:** Laporan Milestone 1 selesai dan logbook minggu 1–8 lengkap.
+Tidak ada perubahan kode pada minggu ini.
 
-**Kendala terbuka:** —
+**Kendala terbuka:**
+1. Dataset E4.1 belum diunduh (jalur kritis).
+2. PR #3 belum direview.
 
 ---
 
 ## Minggu 5 — 26 Okt s.d. 1 Nov 2026
 
-**Status:** Rencana (diperbarui saat minggu berjalan)
-**Fokus:** Pelatihan model utama (YOLOv11n-cls), modul warna, Model 3, dan fitur aplikasi.
+**Status:** Berjalan
+**Fokus:** Menyiapkan dataset dan Model 1, lalu menyelesaikan autentikasi mobile.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 26 Okt–1 Nov | Pelatihan & fitur | Latih YOLOv11n-cls + fine-tune (E4.4); palet 14 warna + unit test (E5.3–E5.4); feature builder + MLP (E6.2–E6.3); record cloud & sesi (E3.2–E3.3); UI lemari + outfit tersimpan (E8.1–E8.2) | — | Evaluasi + ekspor MLP (E6.5–E6.6); loader TFLite (E7.1–E7.3); konten Home (E8.4) | — |
+| 26 Okt | Konteks tim | Menambahkan branch `dev` untuk uji integrasi, `AGENTS.md`, dan folder `ai-context/` (arsitektur, konvensi kode, peta tugas, status proyek) agar anggota dan agen AI memakai konteks yang sama; memperbarui README bagian branch `dev` | `main` sudah bergerak satu commit (`2e33e55`), `dev` perlu disinkronkan | Sinkronkan `dev` dengan `main` | commit `017b787` |
+| 27 Okt | Perencanaan | Menyusun ulang timeline 10 minggu sesuai kondisi nyata, membuat pembagian tugas minggu 5 dan blok ML terpisah dengan branch `dev-ml`, serta memperbarui status pada daftar jobdesk | — | — | `Pembagian Tugas/timeline.md`, `pembagian-tugas-minggu-5.md` |
+| 27 Okt | Dataset Model 1 | Mengekstrak tiga dataset berlisensi bebas dari `D:\Kuliah\Semester5\DatasetPBL`: Clothing Full, Fashion Products, Carousell. Menjalankan `01_prepare_model1.py`: 34.077 gambar terfilter, 33.667 setelah deduplikasi MD5, split 70/15/15 (train 23.566, val 5.050, test 5.051) | Tanpa GPU, pelatihan berjalan di CPU | Latih Model 1 | PR #6, `ml/reports/dataset_summary.md` |
+| 27–28 Okt | Latihan Model 1 | Melatih YOLOv11n-cls enam epoch di CPU selama 5 jam 5 menit. Akurasi validasi 94,06 persen; evaluasi test 94,34 persen dengan macro F1 89,48 persen. Menyusun laporan evaluasi, confusion matrix, akurasi per sumber, dan model card | Satu epoch memakan 41 menit; akurasi carousell paling rendah (87,79 persen) | Ekspor TFLite dan integrasi | PR #7, `ml/reports/model1-card.md` |
+| 28 Okt | Autentikasi mobile | Menyiapkan Firebase (plugin Gradle, `google-services.json` diabaikan Git), membuat `AuthService` login Google, `UserRepository` untuk `users` dan `profiles`, sesi persisten dengan redirect rute, logout, dan hapus akun. Lima PR digabung ke `dev`; `flutter analyze` bersih dan 18 test lulus | Uji login di perangkat belum dilakukan; ekspor TFLite terhambat di Windows | Uji login, lanjut E2 dan E5 | PR #8–#12, commit `0d671cc` |
+| 29 Okt–1 Nov | Target sisa W5 | Menyelesaikan E2 penyimpanan, E5 modul warna, label dan aset model, metrik Model 3, serta ekspor TFLite lewat Colab | Ekspor TFLite belum berhasil di Windows | Integrasi E7 | — |
 
-**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
+**Ringkasan capaian:** Dataset Model 1 siap dan terbagi rapi; Model 1 mencapai
+akurasi test 94,34 persen; autentikasi mobile lengkap dari login sampai hapus
+akun dan sudah tergabung di `dev`; enam PR digabung dan integrasi `dev` lulus
+`flutter analyze` serta 18 test.
 
-**Kendala terbuka:** —
+**Kendala terbuka:**
+1. Ekspor TFLite gagal di Windows karena Ultralytics 8.4 menghapus dukungan
+   TFLite dan jalur `onnx2tf` pada 8.3 melewati batas waktu.
+2. `dev-ml` belum digabung ke `dev`.
+3. Uji login dan hapus akun di perangkat belum dilakukan.
+4. E2 penyimpanan, E5 modul warna, E8 fitur, dan E6 Model 3 belum dikerjakan.
 
 ---
 
