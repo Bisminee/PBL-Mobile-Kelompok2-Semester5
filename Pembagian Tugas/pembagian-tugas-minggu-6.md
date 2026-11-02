@@ -12,9 +12,6 @@ Disusun: 2 November 2026
 
 Fokus minggu ini: menuntaskan sisa minggu 5 dan menyiapkan QA.
 
-**Perubahan penting:** seluruh sisa tugas Faatihurrizki (Pras) dan Ahmad (Falah) dialihkan ke
-Bisma. Keduanya tidak memegang tugas minggu ini. Abim dan Izza tetap pada tugasnya.
-
 Total **18,5 ho**, terdiri dari 9,5 ho mobile, 6,5 ho ML, dan 2,5 ho QA serta dokumentasi.
 
 ---
@@ -23,25 +20,25 @@ Total **18,5 ho**, terdiri dari 9,5 ho mobile, 6,5 ho ML, dan 2,5 ho QA serta do
 
 ### 1.1 Sisa pekerjaan mobile
 
-| Tugas | PIC baru | Asal | Target minggu 6 |
-|---|---|---|---|
-| E2.4 Riwayat rekomendasi (`recommendation_history`) | Bisma | Ahmad | Selesai |
-| E2.6 Unit test DAO | Bisma | Ahmad | Selesai |
-| E8.6 Halaman Admin master data | Izza | Izza | Selesai |
-| E8.1 CRUD UI Lemari: tambah manual dan hapus | Izza | Izza | Selesai |
-| Uji login, logout, dan hapus akun di perangkat | Bisma | Bisma | Selesai |
+| Tugas | PIC | Target minggu 6 |
+|---|---|---|
+| E2.4 Riwayat rekomendasi (`recommendation_history`) | Bisma | Selesai |
+| E2.6 Unit test DAO | Bisma | Selesai |
+| E8.6 Halaman Admin master data | Izza | Selesai |
+| E8.1 CRUD UI Lemari: tambah manual dan hapus | Izza | Selesai |
+| Uji login, logout, dan hapus akun di perangkat | Bisma | Selesai |
 
 ### 1.2 Sisa pekerjaan ML
 
-| Tugas | PIC baru | Asal | Target minggu 6 |
-|---|---|---|---|
-| E4.6 Ekspor TFLite model sendiri | Bisma | Ahmad | Selesai lewat Colab atau Linux |
-| E6.5 Metrik Model 3 (AUC, precision@3) | Bisma | Faatihurrizki | Selesai |
-| E5.3 Palet 14 warna | Bisma | Faatihurrizki | Selesai |
-| E5.4 Unit test warna | Bisma | Faatihurrizki | Selesai |
-| Dokumentasi metode ML | Bisma | Faatihurrizki | Selesai |
-| Label 9 kelas pada `assets/models/labels.txt` | Abim | Abim | Selesai |
-| E7.6 Ukur latensi dan ukuran model | Abim | Abim | Selesai |
+| Tugas | PIC | Target minggu 6 |
+|---|---|---|
+| E4.6 Ekspor TFLite model sendiri | Bisma | Selesai lewat Colab atau Linux |
+| E6.5 Metrik Model 3 (AUC, precision@3) | Bisma | Selesai |
+| E5.3 Palet 14 warna | Bisma | Selesai |
+| E5.4 Unit test warna | Bisma | Selesai |
+| Dokumentasi metode ML | Bisma | Selesai |
+| Label 9 kelas pada `assets/models/labels.txt` | Abim | Selesai |
+| E7.6 Ukur latensi dan ukuran model | Abim | Selesai |
 
 ### 1.3 Sisa pekerjaan QA
 
@@ -123,8 +120,6 @@ Catatan:
 | Jum 6 | E4.6 ekspor di Colab + E6.5 metrik | Review PR | Review PR |
 | Sab 7 | Dokumentasi ML + uji perangkat | Uji muat model | Uji CRUD |
 | Min 8 | Rekap dan logbook | Rekap | Rekap |
-
-Ahmad dan Faatihurrizki tidak mendapat jadwal tugas minggu ini.
 
 ---
 

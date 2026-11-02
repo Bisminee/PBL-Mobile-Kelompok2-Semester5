@@ -6,8 +6,8 @@ Total beban: **12,0 ho** (4,5 mobile, 5,0 ML, 2,5 QA)
 
 > **CATATAN**
 >
-> Beban minggu ini besar karena sisa tugas Pras dan Falah dialihkan ke Bisma.
-> Kerjakan berurutan, maksimal 2 tugas aktif, dan jangan menunggu sempurna.
+> Beban minggu ini besar. Kerjakan berurutan, maksimal 2 tugas aktif,
+> dan jangan menunggu sempurna.
 
 ---
 
