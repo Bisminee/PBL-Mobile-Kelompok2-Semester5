@@ -13,7 +13,7 @@ Disusun: 2 November 2026
 Fokus minggu ini: menuntaskan sisa minggu 5, menyelesaikan integrasi, dan menyiapkan QA.
 Pekerjaan yang belum selesai dikembalikan ke orang yang sama.
 
-Total **17,0 ho**, terdiri dari 7,0 ho mobile, 6,5 ho ML, dan 3,5 ho QA serta dokumentasi.
+Total **17,0 ho**, terdiri dari 8,0 ho mobile, 6,5 ho ML, dan 2,5 ho QA serta dokumentasi.
 
 ---
 
@@ -27,6 +27,7 @@ Total **17,0 ho**, terdiri dari 7,0 ho mobile, 6,5 ho ML, dan 3,5 ho QA serta do
 | E2.6 Unit test DAO | Ahmad | Belum | Selesai |
 | E8.6 Halaman Admin master data | Izza | Belum | Selesai |
 | E8.1 CRUD UI Lemari: tambah manual dan hapus | Izza | Sebagian, baru baca dan filter | Selesai |
+| Uji login, logout, dan hapus akun di perangkat (verifikasi E3) | Bisma | Belum | Selesai |
 
 ### 1.2 Sisa pekerjaan ML
 
@@ -39,9 +40,7 @@ Total **17,0 ho**, terdiri dari 7,0 ho mobile, 6,5 ho ML, dan 3,5 ho QA serta do
 
 ### 1.3 Sisa pekerjaan QA
 
-| Tugas | PIC | Status minggu 5 | Target minggu 6 |
-|---|---|---|---|
-| Uji login, logout, dan hapus akun di perangkat | Bisma | Belum | Selesai |
+Tidak ada. Uji perangkat dipindahkan ke pekerjaan mobile karena merupakan verifikasi alur E3.
 
 ---
 
@@ -54,9 +53,9 @@ Total **17,0 ho**, terdiri dari 7,0 ho mobile, 6,5 ho ML, dan 3,5 ho QA serta do
 | Ahmad Falahi | E2.4 Riwayat rekomendasi, E2.6 Unit test DAO | 2,0 | `feat/recommendation-history`, `test/local-db` | `dev` |
 | Izza Dhafira Fanani | E8.6 Halaman Admin, E8.1 CRUD UI Lemari | 3,5 | `feat/admin-master-data`, `feat/wardrobe-crud-ui` | `dev` |
 | Abim Mustawa | E8.7 Lengkapi edit profil dan preferensi | 1,5 | `feat/profile-edit` | `dev` |
-| Bisma Adhiaksa | Tidak ada tugas mobile | 0 | - | - |
+| Bisma Adhiaksa | Uji login, logout, dan hapus akun di perangkat (verifikasi E3) | 1,0 | `test/device-check` | `dev` |
 | Faatihurrizki Prasojo | Tidak ada tugas mobile | 0 | - | - |
-| **Total** | | **7,0** | | |
+| **Total** | | **8,0** | | |
 
 ### 2.2 Pekerjaan Machine Learning
 
@@ -80,8 +79,8 @@ Catatan:
 
 | Anggota | Tugas | ho | Branch | PR ke |
 |---|---|---:|---|---|
-| Bisma Adhiaksa | E9.1 Rencana uji dan 20 test case, uji perangkat, rekap logbook | 3,5 | `test/qa-plan`, `test/device-check`, `docs/logbook-minggu-6` | `dev` |
-| **Total** | | **3,5** | | |
+| Bisma Adhiaksa | E9.1 Rencana uji dan 20 test case, rekap logbook | 2,5 | `test/qa-plan`, `docs/logbook-minggu-6` | `dev` |
+| **Total** | | **2,5** | | |
 
 ---
 
@@ -89,12 +88,12 @@ Catatan:
 
 | Anggota | Mobile | ML | QA dan dokumen | Total |
 |---|---:|---:|---:|---:|
-| Bisma Adhiaksa | 0 | 0 | 3,5 | 3,5 |
+| Bisma Adhiaksa | 1,0 | 0 | 2,5 | 3,5 |
 | Ahmad Falahi | 2,0 | 1,0 | 0 | 3,0 |
 | Faatihurrizki Prasojo | 0 | 4,0 | 0 | 4,0 |
 | Abim Mustawa | 1,5 | 1,5 | 0 | 3,0 |
 | Izza Dhafira Fanani | 3,5 | 0 | 0 | 3,5 |
-| **Total** | **7,0** | **6,5** | **3,5** | **17,0** |
+| **Total** | **8,0** | **6,5** | **2,5** | **17,0** |
 
 ---
 
@@ -127,7 +126,7 @@ Catatan:
 | ML | Label model | 9 kelas sesuai urutan training | Abim |
 | ML | Latensi | Tercatat, target di bawah 3 detik per foto | Abim |
 | QA | QA plan | 20 test case terdokumentasi | Bisma |
-| QA | Uji perangkat | Login, logout, hapus akun berhasil | Bisma |
+| Mobile | Uji perangkat | Login, logout, hapus akun berhasil | Bisma |
 
 ---
 
