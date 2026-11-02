@@ -53,3 +53,12 @@ proposal
 reference
 # Firebase credentials - jangan di-commit
 android/app/google-services.json
+
+# ML - dataset, hasil training, venv jangan di-commit
+ml/.venv/
+ml/data/
+ml/runs/
+ml/_cache/
+__pycache__/
+*.pt
+*.zip

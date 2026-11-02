@@ -1,0 +1,22 @@
+source_label,target
+Tshirts,tshirt
+Tops,tshirt
+Shirts,shirt
+Sweatshirts,outerwear
+Sweaters,outerwear
+Jackets,outerwear
+Blazers,outerwear
+Rain Jacket,outerwear
+Trousers,long_pants
+Jeans,long_pants
+Track Pants,long_pants
+Jeggings,long_pants
+Shorts,shorts
+Skirts,skirt
+Dresses,dress
+Sandals,shoes
+Casual Shoes,shoes
+Formal Shoes,shoes
+Flip Flops,shoes
+Heels,shoes
+Sports Shoes,shoes

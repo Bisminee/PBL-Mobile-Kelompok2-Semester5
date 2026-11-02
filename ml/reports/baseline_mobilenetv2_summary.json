@@ -1,0 +1,15 @@
+{
+  "val_acc": 0.8936633663366337,
+  "macro_f1": 0.7926799670100131,
+  "classes": [
+    "dress",
+    "long_pants",
+    "long_sleeve",
+    "outerwear",
+    "shirt",
+    "shoes",
+    "shorts",
+    "skirt",
+    "tshirt"
+  ]
+}

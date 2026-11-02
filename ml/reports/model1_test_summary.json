@@ -1,0 +1,53 @@
+{
+  "weights": "ml\\runs\\model1_yolo11n\\weights\\best.pt",
+  "n_test": 5051,
+  "accuracy": 0.9434,
+  "macro_f1": 0.8948,
+  "per_source": [
+    {
+      "source": "carousell",
+      "n": 1114,
+      "accuracy": 0.8779,
+      "macro_f1": 0.839
+    },
+    {
+      "source": "clothing_full",
+      "n": 560,
+      "accuracy": 0.9071,
+      "macro_f1": 0.8846
+    },
+    {
+      "source": "fashion_products",
+      "n": 3377,
+      "accuracy": 0.971,
+      "macro_f1": 0.916
+    }
+  ],
+  "top_confusions": [
+    {
+      "count": 29,
+      "true": "tshirt",
+      "pred": "dress"
+    },
+    {
+      "count": 24,
+      "true": "outerwear",
+      "pred": "tshirt"
+    },
+    {
+      "count": 23,
+      "true": "shirt",
+      "pred": "outerwear"
+    },
+    {
+      "count": 19,
+      "true": "tshirt",
+      "pred": "shirt"
+    },
+    {
+      "count": 19,
+      "true": "outerwear",
+      "pred": "shirt"
+    }
+  ]
+}

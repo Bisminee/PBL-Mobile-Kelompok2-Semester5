@@ -1,0 +1,15 @@
+source_label,target
+T-Shirt,tshirt
+Top,tshirt
+Shirt,shirt
+Blouse,shirt
+Long Sleeve,long_sleeve
+Polo,long_sleeve
+Outwear,outerwear
+Blazer,outerwear
+Hoodie,outerwear
+Pants,long_pants
+Shorts,shorts
+Skirt,skirt
+Dress,dress
+Shoes,shoes
