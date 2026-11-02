@@ -1,424 +1,163 @@
 # Sera-Z
 
-Aplikasi mobile Flutter yang mengenali jenis dan warna pakaian dari foto, lalu
-merekomendasikan kombinasi outfit.
+Aplikasi mobile Flutter yang mengenali **jenis dan warna pakaian** dari foto,
+lalu merekomendasikan kombinasi outfit yang serasi. Seluruh model berjalan
+on-device dengan TensorFlow Lite, tanpa mengirim foto pengguna ke server.
 
-> **CATATAN DARI BISMA**
->
-> **JANGAN TAKUT SALAH PUSH, JANGAN TAKUT BIKIN KESALAHAN**
->
-> **TAKUT KALAU KALIAN NGGAK ADA KONTRIBUSI DI GITHUB**
-
-Panduan ini dibuat untuk **yang belum pernah pakai Git**. Ikuti dari atas ke
-bawah, cukup ketik perintah yang tertulis.
-
-> **Aturan utama proyek ini:** branch **dinamai sesuai fitur**, bukan sesuai nama
-> orang. Tidak ada branch `bisma`, `abim`, dan seterusnya. Semua tugas bersifat
-> terbuka — siapa pun boleh mengerjakannya (lihat folder **`Pembagian Tugas/`**).
-
-## Unduh Aplikasi
-
-[![Download APK](https://img.shields.io/badge/Download-APK-green?logo=android)](https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/releases/latest/download/sera-z.apk)
-
-Atau lihat semua versi di halaman [Releases](https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/releases).
-
-### Cara pasang
-1. Unduh `sera-z.apk` dari HP Android.
-2. Buka file tersebut, lalu izinkan **Install dari sumber tidak dikenal** bila diminta.
-3. Jika muncul peringatan Google Play Protect, pilih **Tetap instal**.
-4. Buka aplikasi dan izinkan akses kamera saat diminta.
-
-> Persyaratan: Android 7.0 (API 24) ke atas.
----
-
-## 0. Git Itu Apa? (Baca Dulu, 2 Menit)
-
-Bayangkan kode kita seperti **dokumen bersama**:
-
-| Istilah | Artinya yang gampang |
-|---------|----------------------|
-| **Git** | "Mesin waktu" yang menyimpan setiap perubahan kode. |
-| **GitHub** | Tempat penyimpanan online (seperti Google Drive) untuk kode kita. |
-| **Repository (repo)** | Folder proyek yang disimpan di GitHub. |
-| **Commit** | Seperti **"Save"** di game. Menyimpan perubahan di komputer kalian. |
-| **Push** | **Upload** commit dari komputer ke GitHub. |
-| **Pull** | **Download** perubahan terbaru dari GitHub ke komputer. |
-| **Branch** | **Jalur kerja terpisah** untuk mengerjakan satu fitur tanpa mengganggu yang lain. |
-| **`main`** | Branch **utama** — versi rilis yang harus selalu aman/stabil. |
-| **`dev`** | Branch **kerja bersama** — semua fitur digabung di sini sebelum masuk `main`. |
-| **Pull Request (PR)** | Permintaan **"tolong gabungkan fitur saya ke `dev`"**. Teman akan review dulu. |
-
-**Aturan paling penting:**
-
-> 🚫 **Jangan pernah mengerjakan langsung di `main` atau `dev`.**
-> Buat **branch baru dari `dev`** untuk setiap fitur, lalu ajukan PR ke `dev`.
+Proyek ini dikerjakan sebagai tugas Project-Based Learning (PBL), Program Studi
+Teknik Informatika, Jurusan Teknologi Informasi, Politeknik Negeri Malang,
+Kelas TI-3D Semester 5, Tahun Akademik 2026/2027.
 
 ---
 
-## 1. Pasang Alat (Sekali Saja)
+## 1. Latar belakang
 
-1. **Git** — https://git-scm.com/downloads
-2. **Flutter** (pilih *stable*) — https://docs.flutter.dev/get-started/install
-3. **Android Studio** — https://developer.android.com/studio
-4. Editor: **VS Code** (disarankan) atau Android Studio
+Banyak orang kesulitan memadukan atasan dan bawahan, terutama saat warna dan
+jenis pakaian terbatas. Sera-Z membantu dengan tiga langkah:
 
-Cek sudah terpasang atau belum:
+1. Mengenali **jenis pakaian** dari foto (Model 1).
+2. Mengekstrak **warna dominan** pakaian (Modul 2).
+3. Memberi **skor kecocokan** atasan dan bawahan, lalu menyusun rekomendasi outfit (Model 3).
 
-```bash
-flutter doctor
+## 2. Fitur utama
+
+- Login dengan akun Google dan profil yang tersimpan di cloud.
+- Lemari pakaian digital: tambah, lihat, filter, dan hapus item.
+- Pemindaian foto pakaian dengan kamera, lengkap dengan pratinjau.
+- Klasifikasi jenis pakaian di perangkat.
+- Ekstraksi warna dominan dan palet warna.
+- Rekomendasi outfit dengan skor dan alasan kecocokan.
+- Simpan outfit dan lihat detail item.
+- Data lemari tersimpan lokal di SQLite.
+- Tampilan responsif untuk layar kecil dan lebar.
+
+## 3. Teknologi
+
+| Bagian | Teknologi |
+|---|---|
+| Aplikasi | Flutter, Dart |
+| State management | Riverpod |
+| Navigasi | go_router |
+| Autentikasi dan cloud | Firebase Authentication, Cloud Firestore, Google Sign-In |
+| Basis data lokal | SQLite melalui `sqflite` |
+| Model on-device | `tflite_flutter` |
+| Pengolahan citra | `camera`, `image` |
+| Model 1 | YOLOv11n-cls, transfer learning ImageNet |
+| Model 3 | MLP Keras dan aturan harmoni warna CIELCh |
+| Pipeline ML | Python, Ultralytics, PyTorch, scikit-learn, TensorFlow |
+
+## 4. Arsitektur aplikasi
+
+```
+lib/
+  main.dart            Titik masuk aplikasi, inisialisasi Firebase dan model
+  config/              Rute, tema, warna, ukuran, gaya teks, aset
+  models/              Garment, Outfit, label pakaian
+  screens/             Layar per alur: auth, home, scan, wardrobe, outfit, profile
+  services/            Auth, database lokal, klasifikasi, ekstraksi warna, rekomendasi
+  widgets/             Widget reusable per layar dan common
 ```
 
-**Penjelasan:** perintah ini memeriksa kelengkapan alat. Jika ada tanda silang
-merah, ikuti sarannya sampai semua centang hijau.
+Alur utama:
 
----
-
-## 2. Ambil Proyek ke Laptop (Clone)
-
-**Langkah 1 — Download (clone) proyek:**
-
-```bash
-git clone <repo-url>
+```
+Splash -> Onboarding -> Login Google -> Home
+Home -> Kamera -> Pratinjau -> Analisis -> Hasil Deteksi -> Rekomendasi -> Detail
+Home -> Lemari -> Detail Pakaian
+Home -> Profil
 ```
 
-**Penjelasan:** menyalin seluruh proyek dari GitHub ke laptop kalian.
+## 5. Machine learning
 
-**Langkah 2 — Masuk ke folder proyek:**
+| Komponen | Model | Hasil |
+|---|---|---|
+| Model 1 | YOLOv11n-cls, 9 kelas | Akurasi test 94,34 persen, macro F1 89,48 persen |
+| Baseline | MobileNetV2 | Akurasi validasi 89,37 persen, macro F1 79,27 persen |
+| Modul 2 | K-Means dan palet 14 warna | Berjalan di aplikasi |
+| Model 3 | MLP dan aturan harmoni | Data latih masih sintetis, metrik AUC menyusul |
 
-```bash
-cd PBL
-```
+Dataset Model 1 memakai tiga sumber berlisensi bebas: Clothing Dataset Full
+(CC0), Fashion Product Images Small (MIT), dan Clothes Dataset Carousell (MIT).
+Total 33.667 gambar setelah deduplikasi, dibagi 70/15/15.
 
-**Penjelasan:** `cd` = *change directory*, artinya "masuk ke dalam folder".
+Rincian lengkap ada di `ml/README.md` dan `ml/reports/model1-card.md`.
 
-**Langkah 3 — Unduh paket yang dibutuhkan:**
+## 6. Status proyek
+
+Diperbarui: 3 November 2026.
+
+| Area | Status |
+|---|---|
+| Fondasi aplikasi dan UI | Selesai |
+| Autentikasi Firebase | Selesai |
+| Model 1 dan evaluasi | Selesai, ekspor model sendiri masih tertunda |
+| Penyimpanan SQLite | Selesai sebagian |
+| Integrasi TFLite | Selesai sebagian |
+| Fitur aplikasi | Selesai sebagian |
+| QA dan dokumentasi | Berjalan |
+
+Status terperinci ada di `ai-context/status-proyek.md` dan
+`Pembagian Tugas/pembagian-tugas.md`.
+
+## 7. Menjalankan proyek
+
+Prasyarat: Flutter stable, Android Studio, dan perangkat atau emulator Android.
 
 ```bash
 flutter pub get
-```
-
-**Penjelasan:** mengunduh semua "bahan" yang dipakai proyek. Wajib dilakukan
-setelah clone, dan setiap kali file `pubspec.yaml` berubah.
-
-**Langkah 4 — Jalankan aplikasi:**
-
-```bash
+flutter test
 flutter run
 ```
 
-**Penjelasan:** menjalankan aplikasi di HP/emulator yang terdeteksi.
+Autentikasi memerlukan konfigurasi Firebase:
 
----
+1. Buat proyek Firebase dan daftarkan aplikasi Android dengan package
+   `com.example.sera_z`.
+2. Unduh `google-services.json` dan letakkan di `android/app/`.
+3. Daftarkan SHA-1 debug di Firebase Console.
+4. Aktifkan Google Sign-In dan Cloud Firestore.
 
-## 3. Model Branch: Satu Branch per Fitur (Bukan per Orang)
+Berkas `google-services.json` tidak di-commit. Tanpa berkas itu, aplikasi masih
+bisa dibuka, tetapi login Google tidak berfungsi.
 
-### 3.1 Aturan
-- **Tidak ada branch bernama orang.** Branch dinamai sesuai **fitur/pekerjaan**.
-- Setiap fitur punya **satu branch** dan **satu Pull Request**.
-- Branch dibuat dari **`dev` terbaru**, umurnya pendek (1–3 hari).
-- **Pull Request mengarah ke `dev`**, bukan ke `main`.
-- Setelah PR digabung ke `dev`, branch fitur dihapus.
-- Setelah satu milestone selesai dan `dev` stabil, `dev` digabung ke `main`
-  lewat PR tersendiri.
+Pipeline ML dijalankan dari folder `ml/` sesuai `ml/README.md`. Dataset dan
+hasil latihan tidak disimpan di repositori.
 
-Daftar nama branch untuk setiap tugas minggu ini ada di
-**`Pembagian Tugas/pembagian-tugas-minggu-5.docx`** bagian 6.
+## 8. Struktur repositori
 
-### 3.2 Apa Itu "Fitur"?
-
-**Fitur** = pekerjaan yang *utuh, bisa diuji sendiri, dan bisa digabung lewat
-satu PR*. Cek dengan pertanyaan ini — kalau **semua "ya"**, berarti satu fitur:
-
-| Pertanyaan | Contoh |
-|------------|--------|
-| Bisa dijelaskan dalam **satu kalimat**? | "Pengguna bisa login dengan Google." |
-| Memberi **nilai** ke pengguna? | Login membuka aplikasi |
-| Bisa **diuji sendiri**? | Login bisa dites tanpa fitur lain |
-| Bisa digabung **tanpa merusak `main`**? | Ya |
-| Punya **kriteria penerimaan**? | "Login berhasil, sesi tersimpan" |
-| Cukup **kecil** untuk satu review? | Idealnya < ~400 baris |
-| Hanya melakukan **satu hal**? | Bukan "login + ubah tema" |
-
-Kalau gagal salah satu → itu **Epic** atau **Tugas**, bukan fitur.
-
-### 3.3 Hierarki
-```
-Epic    = kelompok besar          (E4: Model 1)
-Fitur   = unit siap rilis         (E4.4: latih YOLOv11n-cls)
-Tugas   = langkah di dalam fitur  (siapkan data, latih, evaluasi)
-Bug     = fix/...                 (perbaiki warna salah)
-```
-
-### 3.4 Penamaan Branch
-
-| Awalan | Untuk |
-|--------|-------|
-| `feat/` | Fitur baru |
-| `fix/` | Perbaikan bug |
-| `ml/` | Pekerjaan model/dataset (Python) |
-| `docs/` | Dokumentasi |
-| `test/` | Menambah/memperbaiki test |
-| `chore/` | Tugas kecil (update paket, dll.) |
-
-**Contoh untuk proyek kita:**
-
-| Tugas | Nama branch |
-|-------|-------------|
-| E2.1 Setup `sqflite` | `feat/sqflite-setup` |
-| E2.2 CRUD Lemari | `feat/wardrobe-crud` |
-| E3.1 Login Google | `feat/google-login` |
-| E4.4 Latih YOLOv11n-cls | `ml/yolov11n-cls` |
-| E5.2 K-Means warna | `feat/color-kmeans` |
-| E6.3 Latih MLP | `ml/compat-mlp` |
-| E8.1 UI Lemari | `feat/wardrobe-ui` |
-| E9.1 Rencana uji | `docs/test-plan` |
-
-> Jangan buat `feat/big-ml` (terlalu besar) atau `feat/login-dan-ubah-tema`
-> (dua hal sekaligus). Pecah menjadi beberapa branch.
-
-### 3.5 Alur branch: fitur → `dev` → `main`
-
-Ada tiga branch tetap di proyek ini:
-
-| Branch | Fungsi |
+| Folder | Isi |
 |---|---|
-| `dev` | Tempat semua fitur mobile digabung dan diuji bersama |
-| `dev-ml` | Tempat pekerjaan ML digabung, dibuat dari `dev` |
-| `main` | Versi rilis yang stabil, hasil penggabungan `dev` pada akhir milestone |
+| `lib/` | Kode aplikasi Flutter |
+| `test/` | Unit test dan widget test |
+| `android/`, `ios/`, `web/`, `windows/`, `macos/`, `linux/` | Konfigurasi platform |
+| `ml/` | Skrip pelatihan, label map, laporan, dan model card |
+| `assets/` | Basis data awal dan aset model TFLite |
+| `Pembagian Tugas/` | EPIC, jobdesk, timeline, logbook, panduan kerja |
+| `ai-context/` | Konteks proyek untuk agen AI |
 
-Alur mobile:
+## 9. Dokumentasi
 
-```
-dev ──► feat/nama-fitur ──PR──► dev ──► (uji bersama) ──PR──► main
-```
+| Dokumen | Isi |
+|---|---|
+| `Pembagian Tugas/panduan-git-dan-branch.md` | Tutorial Git dan alur branch untuk anggota baru |
+| `Pembagian Tugas/pembagian-tugas.md` | Daftar jobdesk dan ketergantungan |
+| `Pembagian Tugas/pembagian-tugas-minggu-6.md` | Pembagian tugas minggu berjalan |
+| `Pembagian Tugas/timeline.md` | Jadwal 10 minggu dan milestone |
+| `Pembagian Tugas/Logbook/logbook.md` | Logbook mingguan |
+| `ml/README.md` | Cara menjalankan pipeline ML |
+| `ai-context/README.md` | Konteks proyek untuk agen AI |
 
-Alur ML:
+## 10. Tim
 
-```
-dev ──► dev-ml ──► ml/nama-tugas ──PR──► dev-ml ──► (stabil) PR ke dev
-```
+| Nama | Peran |
+|---|---|
+| Bisma Adhiaksa | Project Manager dan QA |
+| Abim Mustawa | Mobile Developer |
+| Ahmad Falahi | ML Engineer |
+| Faatihurrizki Prasojo | ML Engineer |
+| Izza Dhafira Fanani | Sekretaris dan Dokumentator |
 
-- Branch fitur mobile **dibuat dari `dev`**, bukan dari `main`.
-- Branch tugas ML **dibuat dari `dev-ml`**, bukan dari `dev` atau `main`.
-- Pull Request mobile **mengarah ke `dev`**; Pull Request ML **mengarah ke
-  `dev-ml`**.
-- `dev` menjadi tempat integrasi mobile: kalau dua fitur bentrok, ketahuan di sini.
-- `dev-ml` menjadi tempat integrasi ML: skrip, dataset ringkas, laporan, dan
-  artefak model diuji di sini sebelum masuk `dev`.
-- Setelah `dev` stabil dan satu milestone selesai, buka PR **`dev` → `main`**.
-- Penyesuaian `pubspec.yaml` dan aset model dikerjakan dari `dev`, karena itu
-  konfigurasi aplikasi, bukan kode ML.
-- Jangan mengerjakan langsung di `dev` atau `dev-ml`; keduanya hanya menerima
-  hasil PR.
-- `dev` juga memuat **konteks proyek untuk AI** (`AGENTS.md` dan `ai-context/`)
-  agar semua anggota memakai aturan dan gambaran proyek yang sama.
+## 11. Lisensi data
 
----
-
-## 4. Membuat Branch Fitur
-
-**Langkah 1 — Pastikan di `dev` terbaru:**
-
-```bash
-git checkout dev
-git pull origin dev
-```
-
-**Langkah 2 — Buat branch fitur:**
-
-```bash
-git checkout -b feat/wardrobe-crud
-```
-
-**Penjelasan:** `git checkout -b` = membuat branch baru **dan** langsung pindah
-ke sana. Ganti `feat/wardrobe-crud` dengan nama fitur kalian.
-
-**Langkah 3 — Upload branch ke GitHub (sekali saja):**
-
-```bash
-git push -u origin feat/wardrobe-crud
-```
-
----
-
-## 5. Kerja Harian (Commit & Push)
-
-**Langkah 1 — Lihat file yang berubah:**
-
-```bash
-git status
-```
-
-**Langkah 2 — Tandai semua perubahan:**
-
-```bash
-git add .
-```
-
-**Langkah 3 — Simpan (commit):**
-
-```bash
-git commit -m "feat: tambah CRUD lemari baju"
-```
-
-**Langkah 4 — Upload (push):**
-
-```bash
-git push
-```
-
-> **Ulangi setiap menyelesaikan satu bagian pekerjaan.**
-
-**Awalan pesan commit:** `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`.
-
----
-
-## 6. Minta Gabung ke `dev` (Pull Request)
-
-1. Buka repo di **GitHub** (browser).
-2. Klik **"Compare & pull request"** untuk branch kalian.
-3. Pastikan **base: `dev`** dan **compare: `feat/...`** (branch kalian).
-4. Isi deskripsi: **apa yang diubah** dan **cara mengetesnya**.
-5. Klik **Create pull request**.
-6. Minta teman **review**. Setelah setuju, klik
-   **Merge pull request** → **Confirm merge**.
-7. Hapus branch fitur setelah digabung.
-
-**Penjelasan:** PR adalah cara sopan meminta izin menggabungkan fitur. `dev`
-tetap aman karena ada pengecekan teman. Setelah semua fitur satu milestone
-selesai dan diuji, `dev` digabung ke `main` lewat PR terpisah.
-
----
-
-## 7. Cek Update di `dev` (Agar Tidak Ketinggalan)
-
-**Langkah 1 — Lihat apa yang baru di `dev`:**
-
-```bash
-git fetch origin
-git log HEAD..origin/dev --oneline
-```
-
-**Langkah 2 — Update `dev` di laptop:**
-
-```bash
-git checkout dev
-git pull origin dev
-```
-
-**Langkah 3 — Bawa update itu ke branch fitur kalian:**
-
-```bash
-git checkout feat/wardrobe-crud
-git merge dev
-```
-
----
-
-## 8. Kalau Muncul Konflik
-
-Konflik terjadi kalau kalian dan teman mengubah **baris yang sama**. Git akan
-menandai file itu seperti ini:
-
-```
-<<<<<<< HEAD
-kode kalian
-=======
-kode teman
->>>>>>> dev
-```
-
-**Cara menyelesaikan:**
-
-1. Buka file tersebut di editor.
-2. Pilih kode yang benar (hapus kode yang tidak dipakai beserta tanda
-   `<<<<<<<`, `=======`, `>>>>>>>`).
-3. Simpan, lalu:
-
-```bash
-git add .
-git commit -m "merge: selesaikan konflik dengan dev"
-git push
-```
-
-> Konflik itu **normal** dan bukan tanda kesalahan.
-
----
-
-## 9. Ringkasan Cepat
-
-```bash
-# ---- SEKALI SAJA ----
-git clone <repo-url>
-cd PBL
-flutter pub get
-
-# ---- SETIAP FITUR BARU ----
-git checkout dev
-git pull origin dev
-git checkout -b feat/nama-fitur
-# ... kerjakan fitur ...
-git status
-git add .
-git commit -m "feat: deskripsi singkat"
-git push -u origin feat/nama-fitur
-
-# ---- SAAT SIAP GABUNG ----
-# buka GitHub -> Compare & pull request -> base: dev -> Create pull request
-```
-
----
-
-## 10. Jangan Di-commit (Sudah Otomatis Diabaikan)
-
-- `build/`, `.dart_tool/`, `.idea/`, `*.iml`
-- `.flutter-plugins-dependencies`
-- `android/local.properties`, `android/.gradle/`, `ios/Pods/`
-- **Rahasia/kunci** (API key, `google-services.json`) — jangan pernah di-upload
-- Folder `context/` (dokumentasi internal, sengaja diabaikan)
-
----
-
-## 11. Arti Semua Perintah (Kamus Kilat)
-
-### Git
-
-| Perintah | Artinya yang gampang |
-|----------|----------------------|
-| `git clone <url>` | Download proyek dari GitHub. |
-| `git checkout <branch>` | Pindah ke branch lain. |
-| `git checkout -b <branch>` | Bikin branch baru + pindah ke sana. |
-| `git pull origin dev` | Download + gabungkan versi terbaru `dev`. |
-| `git fetch origin` | Cek update dari GitHub (belum mengubah file kalian). |
-| `git status` | Lihat file apa yang berubah. |
-| `git diff` | Lihat detail perubahan baris per baris. |
-| `git add .` | Tandai semua perubahan untuk disimpan. |
-| `git commit -m "pesan"` | Simpan perubahan (seperti "Save"). |
-| `git push` | Upload commit ke GitHub. |
-| `git push -u origin <branch>` | Upload branch baru (cukup sekali, `-u` menghubungkan). |
-| `git branch` | Lihat daftar branch. `*` = branch aktif. |
-| `git branch -d <branch>` | Hapus branch lokal yang sudah digabung. |
-| `git log --oneline -10` | Lihat 10 riwayat commit terakhir. |
-| `git merge dev` | Gabungkan versi `dev` ke branch kalian. |
-| `git remote -v` | Lihat link GitHub yang terhubung. |
-
-### Flutter
-
-| Perintah | Artinya yang gampang |
-|----------|----------------------|
-| `flutter doctor` | Cek alat sudah lengkap atau belum. |
-| `flutter pub get` | Unduh paket/bahan yang dibutuhkan proyek. |
-| `flutter devices` | Lihat HP/emulator yang siap dipakai. |
-| `flutter run` | Jalankan aplikasi. |
-| `flutter clean` | Hapus file build sementara (kalau error aneh). |
-| `flutter test` | Jalankan test. |
-
----
-
-## 12. Butuh Bantuan?
-
-- Baca pesan error dari atas ke bawah — biasanya ada petunjuknya.
-- Coba `git status` dulu untuk melihat kondisi kalian.
-- Kalau bingung, tanya di grup tim dan sebutkan perintah yang barusan dijalankan
-  beserta pesan errornya.
-- Referensi resmi: https://docs.flutter.dev dan https://git-scm.com/doc
+Dataset yang dipakai berlisensi CC0 dan MIT, sehingga aman untuk keperluan
+akademik. Kode proyek dibuat untuk kebutuhan tugas perkuliahan.
