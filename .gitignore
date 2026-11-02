@@ -62,3 +62,6 @@ ml/_cache/
 __pycache__/
 *.pt
 *.zip
+
+# Ultralytics run di root (artefak sementara)
+/runs/
