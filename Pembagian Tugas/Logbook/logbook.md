@@ -147,15 +147,23 @@ akun dan sudah tergabung di `dev`; enam PR digabung dan integrasi `dev` lulus
 ## Minggu 6 — 2 s.d. 8 Nov 2026
 
 **Status:** Rencana (diperbarui saat minggu berjalan)
-**Fokus:** Integrasi model ke aplikasi (TFLite) dan penyelesaian fitur.
+**Status:** Berjalan
+**Fokus:** Integrasi model ke aplikasi, penyelesaian fitur, dan persiapan QA.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 2–8 Nov | Integrasi | Evaluasi MLP (E6.5); ekspor TFLite MLP (E6.6); loader + inferensi Model 1 (E7.1–E7.3); konten Home (E8.4) | — | Sign out & hapus akun (E3.4); ranking + fallback + latensi (E7.4–E7.6); halaman Admin & Profil (E8.6–E8.7); uji usability (E9.6) | — |
+| 2 Nov | Integrasi dan pembersihan | Menggabungkan `dev-ml` ke `dev` (laporan evaluasi Model 1 dan dataset summary); menghapus branch `dev-ml`; memindahkan aturan harmoni ke alasan rekomendasi dan menghapus widget tak terpakai (PR #14); membersihkan 16 branch merged, 23 README lokal, dokumen minggu 4, dan folder `runs` | Ekspor TFLite model sendiri masih gagal di Windows | Kerjakan sisa tugas minggu 6 | commit `88a9e22`, `bbbf8c3`, `ac1b8e1`, PR #14 |
+| 2 Nov | Perencanaan | Memisahkan tabel mobile dan ML pada pembagian tugas minggu 6; menetapkan beban Bisma 12,0 ho, Abim 3,0 ho, Izza 3,5 ho; membuat panduan kerja khusus Bisma; menyelaraskan status di `pembagian-tugas.md`, `feature-breakdown-id.md`, `branches.md`, `timeline.md`, dan `jobdesk-per-anggota.md` | Beban Bisma tinggi | Kerjakan berurutan, maksimal 2 tugas aktif | commit `6d95688`, `67681c0` |
+| 3–8 Nov | Target W6 | Riwayat rekomendasi (E2.4), unit test DAO (E2.6), fallback aturan (E7.5), rapikan UI auth, ekspor TFLite (E4.6), metrik Model 3 (E6.5), palet warna (E5.3–E5.4), dokumentasi ML, QA plan (E9.1), uji perangkat; Admin dan CRUD lemari (Izza); edit profil, label, latensi (Abim) | — | Perbaikan temuan dan uji regresi | — |
 
-**Ringkasan capaian:** (rencana — diperbarui saat minggu berjalan)
+**Ringkasan capaian:** `dev-ml` selesai digabung ke `dev` sehingga seluruh
+pekerjaan ML dan mobile berada di satu jalur; kode mati dibersihkan; repository
+dirapikan; status dokumen diselaraskan dengan kondisi 2 November 2026.
 
-**Kendala terbuka:** —
+**Kendala terbuka:**
+1. Ekspor TFLite model sendiri gagal di Windows.
+2. Model 3 masih memakai data sintetis.
+3. Uji perangkat dan rencana QA formal belum.
 
 ---
 

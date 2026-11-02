@@ -24,12 +24,12 @@ Untuk cara mengambil tugas dan ketergantungan, lihat `context/pembagian-tugas.md
 | Epic | Nama | Status |
 |------|------|--------|
 | E1 | Fondasi Aplikasi | ✅ Selesai |
-| E2 | Penyimpanan & Data | ⬜ Belum |
-| E3 | Autentikasi & Cloud | ⬜ Belum |
-| E4 | Model 1 — Klasifikasi jenis pakaian | ⬜ Belum |
-| E5 | Modul 2 — Ekstraksi warna | ⬜ Belum |
+| E2 | Penyimpanan & Data | 🟡 Sebagian (E2.4, E2.6 tersisa) |
+| E3 | Autentikasi & Cloud | ✅ Selesai |
+| E4 | Model 1 — Klasifikasi jenis pakaian | 🟡 Sebagian (E4.6 tersisa) |
+| E5 | Modul 2 — Ekstraksi warna | 🟡 Sebagian |
 | E6 | Model 3 — Skor kecocokan | 🟡 Sebagian (E6.4 selesai) |
-| E7 | Integrasi On-device | ⬜ Belum |
+| E7 | Integrasi On-device | 🟡 Sebagian |
 | E8 | Penyelesaian Fitur | 🟡 Sebagian |
 | E9 | QA & Pengujian | 🟡 Sebagian |
 | E10 | Dokumentasi | 🟡 Sebagian |

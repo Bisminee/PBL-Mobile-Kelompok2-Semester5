@@ -215,60 +215,63 @@ menentukan siapa mengambil apa.
 
 ---
 
-## 10. Status per 27 Oktober 2026
+## 10. Status per 2 November 2026
 
-Dokumen ini tetap tanpa pemilik tetap. Tabel di bawah hanya mencatat **kondisi
-terkini**, bukan penugasan permanen. Pembagian per orang untuk minggu berjalan
-ada di `pembagian-tugas-minggu-5.md`.
+Dokumen ini tetap tanpa pemilik tetap. Tabel di bawah mencatat kondisi terkini,
+bukan penugasan permanen. Pembagian per orang untuk minggu berjalan ada di
+`pembagian-tugas-minggu-6.md`.
 
 ### 10.1 Status epic
 
 | Epic | Kondisi | Keterangan |
 |---|---|---|
-| E1 Fondasi Aplikasi | Selesai | Digabung lewat PR #4 |
-| E2 Penyimpanan | Belum mulai | Belum ada kode sqflite |
-| E3 Autentikasi | Belum mulai | Login masih palsu in-memory |
-| E4 Model 1 | Pipeline siap, belum dilatih | PR #3 terbuka, dataset belum diunduh |
-| E5 Modul warna | Belum mulai | Tidak bergantung dataset, bisa jalan |
-| E6 Model 3 | Sebagian | E6.4 selesai; E6.1 dst. menunggu E4.2 |
-| E7 Integrasi | Belum bisa mulai | Menunggu E4.6 dan E6.6 |
-| E8 Fitur aplikasi | Sebagian | UI dasar ada; data masih placeholder |
-| E9 QA | Belum mulai | Rencana uji belum disusun |
-| E10 Dokumentasi | Berjalan | Logbook 1–8 dan laporan M1 ada |
+| E1 Fondasi Aplikasi | Selesai | Digabung lewat PR #1 dan #4 |
+| E2 Penyimpanan | Selesai sebagian | SQLite, CRUD lemari, simpan outfit, muat saat start (PR #13); riwayat rekomendasi dan test DAO menyusul |
+| E3 Autentikasi | Selesai | Login Google, profil Firestore, sesi, logout, hapus akun (PR #8–#12) |
+| E4 Model 1 | Selesai sebagian | Dataset 33.667 gambar, baseline 89,37 persen, YOLOv11n-cls 94,34 persen test (PR #6, #7); ekspor model sendiri belum |
+| E5 Modul warna | Sebagian | Ekstraksi warna dan unit test ada (PR #13); palet 14 warna dan test menyusul |
+| E6 Model 3 | Sebagian | E6.4 selesai; MLP dilatih pada data sintetis; metrik AUC belum dilaporkan |
+| E7 Integrasi | Sebagian | Loader TFLite, inferensi, dan mesin rekomendasi jalan (PR #13); fallback aturan dan latensi menyusul |
+| E8 Fitur aplikasi | Sebagian | Lemari, Home, Profil, Detail, simpan outfit jalan; Admin dan CRUD lengkap menyusul |
+| E9 QA | Sebagian | 39 test otomatis lulus; rencana uji formal belum disusun |
+| E10 Dokumentasi | Berjalan | Logbook minggu 1–5, laporan Milestone 1, model card |
 
-### 10.2 Tugas yang bisa dikerjakan sekarang
+### 10.2 Sudah selesai dan terbukti
 
-| ID | Tugas | Alasan siap |
-|---|---|---|
-| E2.1 | Setup `sqflite` + helper DB | Tanpa prasyarat |
-| E3.1 | Login Google + Firebase Auth | Tanpa prasyarat (butuh `google-services.json` lokal) |
-| E4.1 | Unduh dataset + EDA | Tanpa prasyarat; penghambat utama proyek |
-| E5.1 | Crop + thresholding latar | Tanpa prasyarat |
-| E9.1 | Rencana uji + 20 test case | Tanpa prasyarat |
-| E10.1 | Logbook mingguan | Rutin |
-| E10.2 | 150 foto lapangan | Tanpa prasyarat |
-
-### 10.3 Tugas yang tertahan
-
-| Tugas | Tertahan oleh |
+| Tugas | Bukti |
 |---|---|
-| E4.2–E4.6, E6.1–E6.6 | E4.1 (dataset belum ada) |
-| E7.1–E7.6 | E4.6 dan E6.6 (artefak `.tflite` belum ada) |
-| E8.1, E8.2, E8.4, E8.6 | E2.1/E2.2/E2.4/E2.5 |
-| E8.3, E8.5 | E7.4 |
-| E8.7, E3.2–E3.4 | E3.1 |
-| E9.2–E9.7 | Fitur E8 dan artefak model |
+| E1, E1 lanjutan | PR #1, PR #4, commit `5bbe1ac` |
+| E2.1–E2.3, E2.5 | PR #13, `local_db.dart`, `fashion_app.db` |
+| E3.1–E3.4 | PR #8–#12 |
+| E4.1–E4.5 | PR #6, PR #7, akurasi test 94,34 persen |
+| E6.4 | PR #2, 17 unit test |
+| E7.1–E7.4 | PR #13, `garment_classifier.dart`, `outfit_engine.dart` |
+| E8.2, E8.4, E8.7 | PR #13 dan layar Profil |
+
+### 10.3 Tugas tersisa
+
+| Tugas | Keterangan |
+|---|---|
+| E2.4 | Riwayat rekomendasi belum dicatat |
+| E2.6 | Unit test DAO belum ada |
+| E4.6 | Ekspor TFLite model sendiri gagal di Windows |
+| E5.3–E5.4 | Palet 14 warna dan test belum lengkap |
+| E6.5 | AUC dan precision@3 belum dilaporkan |
+| E7.5–E7.6 | Fallback aturan dan latensi belum |
+| E8.1, E8.6 | CRUD lemari belum lengkap, halaman Admin belum ada |
+| E9.1–E9.7 | Rencana uji dan eksekusi formal belum |
+| E10.2–E10.5 | Foto lapangan, kuesioner, laporan akhir, dokumentasi fitur |
 
 ### 10.4 Kondisi branch dan PR
 
 | Branch | Kondisi |
 |---|---|
-| `main` | Stabil, `2e33e55` (README instruksi unduh aplikasi) |
-| `dev` | Integrasi dan uji, `017b787` (konteks AI) |
-| `ml/model1-pipeline` | PR #3 terbuka, 1.317 baris, 14 berkas, tanpa review |
-| `feat/color-harmony-rules` | Sudah digabung (PR #2) |
-| `feat/app-foundation` | Sudah digabung (PR #4) |
-| Branch `docs/*`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`, `data-training`, `feat/sqflite-setup` | Tidak berisi commit baru; isinya sudah ada di `main`. Aman dihapus. |
+| `main` | Stabil, `4082938`; tertinggal dari `origin/main` satu commit |
+| `dev` | Aktif, berisi seluruh pekerjaan sampai PR #14 |
+| `ml/model1-pipeline` | Branch lama, PR #3 ditutup |
+| `data-training` | Branch lama, PR #5 ditutup |
+| `pras` | Branch sampah, tidak berisi pekerjaan |
 
-**Jalur kritis saat ini:** `E4.1 → E4.2 → E4.4 → E4.6 → E7.1 → E7.4 → E8.3
-→ E9.2 → E10.4`. Setiap hari keterlambatan E4.1 menunda seluruh integrasi.
+Dua belas PR sudah digabung: #1, #2, #4, #6, #7, #8, #9, #10, #11, #12, #13, #14.
+
+**Jalur kritis saat ini:** `E4.6 → E7.5 → E8.1 → E9.1 → E9.2 → E10.4`.

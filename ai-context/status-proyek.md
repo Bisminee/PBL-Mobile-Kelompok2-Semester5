@@ -1,81 +1,80 @@
 # Status Proyek
 
-Diperbarui: 27 Oktober 2026 (branch `dev`)
+Diperbarui: 2 November 2026 (branch `dev`)
 
 ## 1. Ringkasan
 
 | Area | Kondisi |
 |---|---|
-| Aplikasi (UI) | Fondasi selesai, semua layar wireframe ada dan responsif |
-| Penyimpanan (E2) | Belum mulai; data lemari masih in-memory |
-| Autentikasi (E3) | Belum mulai; login masih palsu in-memory |
-| Model 1 (E4) | Pipeline 6 skrip siap di PR #3, belum dilatih karena dataset belum ada |
-| Modul warna (E5) | Belum mulai |
-| Model 3 (E6) | Aturan harmoni selesai dan sudah digabung; MLP belum |
-| Integrasi (E7) | Belum bisa mulai, menunggu E4.6 dan E6.6 |
-| QA (E9) | Test warna dan smoke test berjalan; rencana uji belum disusun |
-| Dokumentasi (E10) | Logbook minggu 1-8 dan laporan milestone 1 selesai |
+| Aplikasi (UI) | Fondasi selesai, seluruh layar utama ada dan responsif |
+| Penyimpanan (E2) | SQLite aktif; riwayat rekomendasi dan test DAO tersisa |
+| Autentikasi (E3) | Selesai: login Google, profil Firestore, sesi, logout, hapus akun |
+| Model 1 (E4) | Dataset 33.667 gambar, baseline 89,37 persen, YOLOv11n-cls 94,34 persen test |
+| Modul warna (E5) | Ekstraksi warna ada; palet 14 warna dan test tersisa |
+| Model 3 (E6) | Aturan harmoni selesai; MLP data sintetis; metrik AUC belum |
+| Integrasi (E7) | Loader TFLite, inferensi, dan mesin rekomendasi jalan; fallback dan latensi tersisa |
+| Fitur aplikasi (E8) | Lemari, Home, Profil, Detail, simpan outfit jalan; Admin dan CRUD lengkap tersisa |
+| QA (E9) | 39 test otomatis lulus; rencana uji formal belum |
+| Dokumentasi (E10) | Logbook minggu 1-6, laporan Milestone 1, model card |
 
 ## 2. Yang sudah selesai
 
-- E1 fondasi aplikasi: tema, 14 rute, `StatefulShellRoute` Home/Lemari,
-  tangkap kamera.
-- PR #4 (UI Figma dan fondasi) digabung ke `main` pada `4082938`.
-- Perbaikan layout responsif: overflow dihapus, `NestedScrollView` pada Detail,
-  batas lebar konten, navigasi adaptif.
-- Aturan harmoni warna (`lib/services/color_harmony.dart`) beserta 17 test,
-  digabung lewat PR #2.
-- PR #3 (pipeline Model 1): enam skrip ML, label map tiga dataset, panduan
-  Model 1 versi Bahasa Indonesia. Status GitHub: dapat digabung (tanpa konflik),
-  tetapi belum ada review.
-- Dokumen: logbook minggu 1-8, laporan milestone 1, keputusan lisensi dataset
-  bebas (Clothing Full CC0, Fashion Product Images MIT, Carousell MIT).
-- `AGENTS.md` dan `ai-context/` ditambahkan di branch `dev`.
-- Timeline 10 minggu disusun ulang (jalur ML tertinggal sekitar 3 minggu) dan
-  pembagian tugas minggu 5 dibuat.
+- E1 fondasi aplikasi: tema, 14 rute, `StatefulShellRoute` Home/Lemari, kamera.
+- UI Figma dan layout responsif (PR #4), termasuk 26 widget test.
+- Aturan harmoni warna CIELCh dan 17 unit test (PR #2).
+- E3 autentikasi Firebase (PR #8-#12): login Google, profil `users` dan
+  `profiles`, sesi persisten, logout, hapus akun.
+- E4 Model 1 (PR #6 dan #7): dataset 33.667 gambar dari tiga sumber bebas,
+  split 70/15/15, baseline MobileNetV2 89,37 persen, YOLOv11n-cls 94,34 persen
+  pada test dengan macro F1 89,48 persen, laporan evaluasi, dan model card.
+- Integrasi SQLite dan TFLite (PR #13): aset `fashion_app.db`, CRUD lemari,
+  simpan outfit, pemuat TFLite, klasifikasi jenis, ekstraksi warna, mesin
+  rekomendasi.
+- Pembersihan kode mati (PR #14): aturan harmoni dipakai pada alasan rekomendasi,
+  widget tak terpakai dihapus.
+- Dokumen: logbook minggu 1-6, laporan Milestone 1, timeline, pembagian tugas
+  minggu 6.
 
 ## 3. Test
 
-- `test/color_harmony_test.dart`: 17 test.
-- `test/widget_test.dart`: 1 smoke test splash.
-- Total 18 test lulus, `flutter analyze` bersih.
+- 39 test lulus.
+- Cakupan: harmoni warna, garment, label, color extractor, recommender, widget.
+- `flutter analyze` bersih.
 
 ## 4. Penghambat
 
-1. **Dataset belum terunduh (E4.1).** Tiga zip Kaggle harus masuk ke
-   `ml/data/raw/`. Tanpa ini, E4.2-E4.6 dan seluruh E7 tertahan.
-2. **PR #3 belum direview.** Jalur ML menunggu penggabungan pipeline.
-3. **E7 menunggu artefak model.** Integrasi baru bisa mulai setelah E4.6 dan
-   E6.6 menghasilkan `.tflite`.
-4. **Firebase belum dikonfigurasi.** `google-services.json` belum ada, sehingga
-   E3.1 akan memerlukan setup proyek Firebase dan berkas kunci (jangan commit).
+1. **Ekspor TFLite model sendiri gagal di Windows.** Ultralytics 8.4 menghapus
+   dukungan TFLite di Windows; jalur `onnx2tf` pada 8.3 melewati batas waktu.
+   Solusi: ekspor lewat Colab atau Linux.
+2. **Model 3 masih memakai data sintetis.** AUC tinggi bukan bukti generalisasi;
+   tulis sebagai keterbatasan.
+3. **Uji perangkat belum.** Login, logout, dan hapus akun belum diuji di HP.
+4. **Rencana QA formal belum disusun.**
+5. **Label aplikasi belum sesuai model.** `labels.txt` masih 15 label lama,
+   sedangkan model punya 9 kelas.
 
 ## 5. Langkah berikut
 
-Fokus minggu 5: **mobile saja** (27 Okt - 1 Nov). ML dikerjakan terpisah pada
-blok 2-4 November.
+Fokus minggu 6 (2-8 November 2026):
 
-1. E2.1 lalu E2.2 (Pras) - membuka E8.1 dan E8.6.
-2. E3.1 (Bisma) - membuka E3.2-E3.4 dan E8.7.
-3. E2.4-E2.6 (Ahmad) - membuka E8.2 dan E8.4.
-4. E8.6 dan E8.1 (Izza), E8.7/E8.2/E8.4 (Abim).
-5. Blok ML 2-4 November: ekstraksi dataset, split, latih ulang 12 epoch,
-   evaluasi, metrik Model 3, label dan aset.
-6. Integrasi E7 mulai 5 November.
+1. Riwayat rekomendasi dan unit test DAO (Bisma).
+2. Fallback aturan dan rapikan UI autentikasi (Bisma).
+3. Ekspor TFLite, metrik Model 3, palet warna, dan dokumentasi ML (Bisma).
+4. Rencana QA dan uji perangkat (Bisma).
+5. Halaman Admin dan CRUD lemari lengkap (Izza).
+6. Edit profil, label 9 kelas, dan latensi (Abim).
 
-Rincian mobile ada di `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
-Rincian ML ada di `Pembagian Tugas/pembagian-tugas-ml-minggu-5.md`.
-Jadwal 10 minggu ada di `Pembagian Tugas/timeline.md`.
+Rincian ada di `Pembagian Tugas/pembagian-tugas-minggu-6.md` dan
+`Pembagian Tugas/panduan-kerja-bisma-minggu-6.md`.
 
 ## 6. Catatan branch
 
 | Branch | Isi |
 |---|---|
-| `main` | Versi stabil, `2e33e55` (README instruksi unduh aplikasi) |
-| `dev` | Integrasi mobile: tempat branch fitur dibuat dan tujuan PR mobile |
-| `dev-ml` | Integrasi ML, dibuat dari `dev`; tujuan PR tugas ML |
-| `data-training` | Referensi pipeline ML dari Falah (PR #5); pekerjaan dibuat ulang di branch `ml/...` |
-| `ml/model1-pipeline` | PR #3, tidak dipakai lagi |
-| `feat/color-harmony-rules` | Sudah digabung lewat PR #2 |
-| `feat/app-foundation` | Sudah digabung lewat PR #4 |
-| `docs/*`, `feat/color-crop`, `feat/google-login`, `ml/dataset-eda`, `feat/sqflite-setup` | Tidak berisi commit baru, isinya sudah ada di `main`; aman dihapus |
+| `main` | Versi stabil, `4082938` |
+| `dev` | Satu-satunya jalur integrasi, berisi seluruh pekerjaan sampai PR #14 |
+| `data-training` | Branch lama, PR #5 ditutup; boleh dihapus |
+| `ml/model1-pipeline` | Branch lama, PR #3 ditutup; boleh dihapus |
+| `pras` | Branch sampah; boleh dihapus |
+
+`dev-ml` sudah digabung ke `dev` dan dihapus pada 2 November 2026.

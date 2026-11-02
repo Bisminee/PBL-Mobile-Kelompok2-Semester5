@@ -1,179 +1,94 @@
-# Jobdesk per Anggota — Sera-Z
+# Jobdesk per Anggota — Minggu 6
 
-Diperbarui: 27 Oktober 2026
-Prinsip: **pembangunan mobile dulu**. ML dan pemrosesan gambar dijeda.
+Diperbarui: 2 November 2026
+Periode: **2 – 8 November 2026**
 
-## Ruang lingkup
-
-| Dikerjakan sekarang | Dijeda |
-|---|---|
-| E2 Penyimpanan (7,0 ho) | E4 Model 1 (Python) |
-| E3 Autentikasi (5,0 ho) | E5 Modul warna (pemrosesan gambar) |
-| E8.1, E8.2, E8.4, E8.6, E8.7 (8,5 ho) | E6 Model 3 (Python) |
-| | E7 Integrasi TFLite |
-| | E8.3 dan E8.5 (menunggu E7.4) |
-| | E9 QA dan E10 dokumentasi |
-
-Total pekerjaan mobile: **20,5 ho**, dibagi ke 5 orang, rata-rata 4,1 ho.
-
-Estimasi dalam jam-orang (ho). Prasyarat mengikuti
-`feature-breakdown-id.md`.
-
----
+Dokumen ini menggantikan pembagian minggu 5. Seluruh pekerjaan dikerjakan dari
+branch `dev` dan PR diarahkan ke `dev`. Branch `dev-ml` sudah dihapus dan
+isinya sudah digabung ke `dev`.
 
 ## 1. Ringkasan beban
 
-| Anggota | Tugas | ho | Porsi |
-|---|---|---:|---:|
-| Faatihurrizki Prasojo | E2.1, E2.2, E2.3 | 3,5 | 17 persen |
-| Ahmad Falahi | E2.4, E2.5, E2.6 | 3,5 | 17 persen |
-| Bisma Adhiaksa | E3.1, E3.2, E3.3, E3.4 | 5,0 | 24 persen |
-| Izza Dhafira Fanani | E8.1, E8.6 | 4,0 | 20 persen |
-| Abim Mustawa | E8.2, E8.4, E8.7 | 4,5 | 22 persen |
-| **Total** | | **20,5** | **100** |
+| Anggota | Mobile | ML | QA dan dokumen | Total |
+|---|---:|---:|---:|---:|
+| Bisma Adhiaksa | 4,5 | 5,0 | 2,5 | **12,0** |
+| Abim Mustawa | 1,5 | 1,5 | 0 | **3,0** |
+| Izza Dhafira Fanani | 3,5 | 0 | 0 | **3,5** |
+| Ahmad Falahi | 0 | 0 | 0 | **0** |
+| Faatihurrizki Prasojo | 0 | 0 | 0 | **0** |
 
-Rentang 3,5-5,0 ho. Selisih ini muncul karena ukuran tugas tidak bisa dibelah
-lebih kecil lagi tanpa memutus rantai kerja. Pras dan Ahmad memegang rantai
-penyimpanan yang harus berurutan; Bisma memegang rantai autentikasi utuh.
+## 2. Ahmad Falahi
 
----
+Tidak ada tugas minggu ini.
 
-## 2. Faatihurrizki Prasojo — pondasi penyimpanan (3,5 ho)
+## 3. Faatihurrizki Prasojo
 
-| Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
-|---:|---|---|---:|---|---|---|
-| 1 | E2.1 | Setup `sqflite` + `path_provider`, helper DB + migrasi versi | 1,0 | — | 28 Okt | DB terbuka, skema v1 berjalan |
-| 2 | E2.2 | CRUD `wardrobe_items` (tambah, ambil, ubah, hapus) | 1,5 | E2.1 | 29 Okt | Item tetap ada setelah restart |
-| 3 | E2.3 | Simpan foto ke folder dokumen, simpan hanya path | 1,0 | E2.1 | 30 Okt | Foto tampil, DB tidak membengkak |
+Tidak ada tugas minggu ini.
 
-Branch: `feat/sqflite-setup` (buat ulang dari `dev`, branch lama usang).
+## 4. Bisma Adhiaksa — 12,0 ho
 
-Yang dibuka: E8.6 (butuh E2.1) dan E8.1 (butuh E2.2). Karena itu E2.1 adalah
-tugas pertama yang harus selesai di seluruh tim.
+Rincian langkah ada di `panduan-kerja-bisma-minggu-6.md`.
 
----
+### 4.1 Mobile (4,5 ho)
 
-## 3. Ahmad Falahi — lanjutan penyimpanan (3,5 ho)
-
-| Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
-|---:|---|---|---:|---|---|---|
-| 1 | E2.4 | Tabel `outfits` + `recommendation_history` + DAO | 1,5 | E2.1 | 30 Okt | Simpan/daftar outfit dan riwayat berhasil |
-| 2 | E2.5 | Muat lemari dan riwayat saat start (provider async) | 1,0 | E2.2, E2.4 | 31 Okt | Data muncul setelah cold start |
-| 3 | E2.6 | Unit test DAO | 1,0 | E2.2, E2.4 | 1 Nov | Test lulus |
-
-Ahmad mulai setelah E2.1 selesai (28 Okt), bukan menunggu E2.3.
-
-Yang dibuka: E8.2 (butuh E2.4) dan E8.4 (butuh E2.5).
-
----
-
-## 4. Bisma Adhiaksa — autentikasi (5,0 ho)
-
-| Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
-|---:|---|---|---:|---|---|---|
-| 1 | E3.1 | `google_sign_in` + Firebase Auth | 2,0 | — | 29 Okt | Login Google berhasil di perangkat |
-| 2 | E3.2 | Record cloud `users` + `profiles` saat login pertama | 1,0 | E3.1 | 30 Okt | Profil terbentuk di cloud |
-| 3 | E3.3 | Sesi persisten (`flutter_secure_storage`) | 1,0 | E3.1 | 31 Okt | Masih login setelah restart |
-| 4 | E3.4 | Sign out + jalur hapus akun | 1,0 | E3.1 | 1 Nov | Logout bersih, data terhapus |
-
-Prasyarat teknis: proyek Firebase dan `google-services.json` dibuat 28 Okt.
-Berkas kunci tidak boleh di-commit.
-
-Yang dibuka: E8.7 (butuh E3.4).
-
----
-
-## 5. Izza Dhafira Fanani — fitur lemari dan admin (4,0 ho)
-
-| Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
-|---:|---|---|---:|---|---|---|
-| 1 | E8.6 | Halaman Admin: master data kategori warna dan jenis | 2,0 | E2.1 | 29-30 Okt | Master data dapat dikelola |
-| 2 | E8.1 | CRUD UI Lemari: tambah/hapus, filter, empty state | 2,0 | E2.2 | 31 Okt-1 Nov | CRUD penuh berjalan |
-
-Boleh mulai dengan rancangan layar dan skema master data sebelum E2.1 selesai,
-lalu menyambungkan ke database setelah Pras menyelesaikan E2.1/E2.2.
-
----
-
-## 6. Abim Mustawa — outfit, home, dan profil (4,5 ho)
-
-| Urutan | ID | Tugas | ho | Prasyarat | Target | Kriteria selesai |
-|---:|---|---|---:|---|---|---|
-| 1 | E8.7 | Halaman Profil: nama, avatar, sign out, preferensi | 1,5 | E3.4 | 31 Okt-1 Nov | Profil dapat diedit |
-| 2 | E8.2 | Simpan outfit ke "Outfit Tersimpan" | 1,5 | E2.4 | 31 Okt | Outfit tersimpan terdaftar |
-| 3 | E8.4 | Konten Home: banner, kategori cepat, item terbaru | 1,5 | E2.5 | 1 Nov | Tanpa placeholder |
-
-Semua tugas Abim bergantung pada pekerjaan orang lain. Mulai dengan membangun
-tampilan statis (UI shell) sejak 27 Okt, lalu menyambungkan data saat prasyarat
-selesai. Jangan menunggu diam.
-
----
-
-## 7. Ketergantungan yang harus dijaga
-
-```
-E2.1 (Pras) ─┬─► E2.2 (Pras) ─┬─► E2.5 (Ahmad) ─► E8.4 (Abim)
-             │                └─► E8.1 (Izza)
-             ├─► E2.3 (Pras)
-             └─► E2.4 (Ahmad) ─┬─► E2.5 (Ahmad)
-                                ├─► E2.6 (Ahmad)
-                                └─► E8.2 (Abim)
-E2.1 ─► E8.6 (Izza)
-
-E3.1 (Bisma) ─┬─► E3.2 (Bisma)
-              ├─► E3.3 (Bisma)
-              └─► E3.4 (Bisma) ─► E8.7 (Abim)
-```
-
-Titik kritis: **E2.1 (Pras)**. Kalau E2.1 mundur, E8.1, E8.2, E8.4, E8.6, dan
-E2.4-E2.6 semuanya ikut mundur.
-
----
-
-## 8. Blok ML terpisah (2 – 4 November 2026)
-
-ML dikerjakan setelah mobile selesai, memakai branch integrasi `dev-ml` yang
-dibuat dari `dev`.
-
-| Anggota | Tugas ML | ho | Branch | PR ke |
+| ID | Tugas | ho | Branch | Selesai bila |
 |---|---|---:|---|---|
-| Bisma | E4.1 ekstrak 3 ZIP + verifikasi, E4.2 split, latih ulang 12 epoch | 3,0 | `ml/dataset-eda`, `ml/train-model1` | `dev-ml` |
-| Ahmad | E4.5 evaluasi Model 1, E4.6 verifikasi ekspor + model card | 1,5 | `ml/eval-model1` | `dev-ml` |
-| Pras | E6.5 metrik Model 3 + review PR | 1,0 | `ml/model3-metrics` | `dev-ml` |
-| Abim | Label 9 kelas, aset model, smoke test | 1,0 | `chore/model-assets` | `dev` |
-| Izza | Dokumentasi metode ML | 1,0 | `docs/ml-methods` | `dev-ml` |
-| **Total** | | **7,5** | | |
+| - | Uji login, logout, hapus akun di perangkat | 1,0 | `test/device-check` | Ketiga alur berhasil di HP |
+| E2.4 | Riwayat rekomendasi | 1,0 | `feat/recommendation-history` | Riwayat tersimpan dan tampil setelah restart |
+| E2.6 | Unit test DAO | 1,0 | `test/local-db` | Minimal 6 test lulus |
+| E7.5 | Fallback aturan | 1,0 | `feat/rule-fallback` | Rekomendasi muncul saat model gagal |
+| - | Rapikan UI login dan signup | 0,5 | `fix/auth-ui` | Tidak ada kolom yang menyesatkan |
 
-Alur branch:
+### 4.2 ML (5,0 ho)
 
-```
-dev ──► dev-ml ──► ml/... ──PR──► dev-ml ──► (stabil) PR ke dev
-```
+| ID | Tugas | ho | Branch | Selesai bila |
+|---|---|---:|---|---|
+| E4.6 | Ekspor TFLite model sendiri | 1,0 | `ml/export-tflite` | `.tflite` ada dan bisa dimuat |
+| E6.5 | Metrik Model 3 | 1,0 | `ml/model3-metrics` | AUC dan precision@3 di JSON |
+| E5.3 | Palet 14 warna | 1,0 | `feat/color-palette` | 14 nama konsisten |
+| E5.4 | Unit test warna | 1,0 | `test/color-palette` | Test palet lulus |
+| - | Dokumentasi metode ML | 1,0 | `docs/ml-methods` | Dokumen metode dan keterbatasan |
 
-Rincian langkah: `Pembagian Tugas/pembagian-tugas-ml-minggu-5.docx`.
+### 4.3 QA dan dokumentasi (2,5 ho)
 
----
+| ID | Tugas | ho | Branch | Selesai bila |
+|---|---|---:|---|---|
+| E9.1 | Rencana uji dan 20 test case | 2,0 | `test/qa-plan` | 20 test case terdokumentasi |
+| E10.1 | Rekap logbook minggu 6 | 0,5 | `docs/logbook-minggu-6` | Logbook terisi |
 
-## 9. Setelah blok ML selesai
+## 5. Abim Mustawa — 3,0 ho
 
-| Urutan | Pekerjaan | Mulai |
-|---|---|---|
-| 1 | E7.1-E7.3 integrasi Model 1 dan modul warna | 5 November |
-| 2 | E6.1-E6.6 penyempurnaan Model 3 | Minggu 7 |
-| 3 | E7.4-E7.6 skor Model 3, fallback, latensi | Minggu 7-8 |
-| 4 | E8.3, E8.5 | Minggu 8 |
-| 5 | E5 modul warna | Minggu 8 |
-| 6 | E9 QA dan E10 dokumentasi | Minggu 9-10 |
+| ID | Tugas | ho | Branch | Selesai bila |
+|---|---|---:|---|---|
+| - | Label 9 kelas dan aset model | 0,5 | `chore/model-assets` | `labels.txt` sesuai 9 kelas |
+| E7.6 | Ukur latensi dan ukuran model | 1,0 | `feat/latency-check` | Latensi di bawah 3 detik per foto |
+| E8.7 | Lengkapi edit profil dan preferensi | 1,5 | `feat/profile-edit` | Nama dan preferensi bisa diubah |
 
----
+## 6. Izza Dhafira Fanani — 3,5 ho
 
-## 10. Aturan
+| ID | Tugas | ho | Branch | Selesai bila |
+|---|---|---:|---|---|
+| E8.6 | Halaman Admin master data | 2,0 | `feat/admin-master-data` | Master data bisa ditambah, diubah, dihapus |
+| E8.1 | CRUD UI Lemari | 1,5 | `feat/wardrobe-crud-ui` | Tambah manual dan hapus berjalan |
+
+## 7. Dependensi
+
+| Tugas | Menunggu |
+|---|---|
+| E2.4 | Tabel outfit dan `local_db.dart` yang sudah ada |
+| E2.6 | `sqflite_common_ffi` |
+| E7.5 | `engineProvider`, `recommender.dart`, `color_harmony.dart` |
+| E4.6 | `best.pt` dan lingkungan Colab atau Linux |
+| E6.5 | Skrip `08_train_model3_mlp.py` dan TensorFlow |
+| E5.3, E5.4 | `color_extractor.dart` |
+| E8.6, E8.1 | Skema master data dan CRUD di `fashion_app.db` |
+| E9.1 | Tidak ada, bisa dimulai kapan saja |
+
+## 8. Aturan
 
 1. Maksimal 2 tugas aktif per orang.
-2. Satu tugas = satu branch = satu PR. Untuk mobile, branch dari `dev` dan PR ke
-   `dev`. Untuk ML, branch dari `dev-ml` dan PR ke `dev-ml`.
-3. Tugas yang prasyaratnya belum selesai tidak diambil.
-4. Kalau tertahan lebih dari satu hari, lepas tugas dan tulis catatan.
-5. Anggota yang selesai lebih cepat boleh mengambil tugas lain yang belum
-   selesai, dengan tetap maksimal 2 tugas aktif.
-6. Status Notion dan logbook diperbarui setiap hari.
+2. Satu tugas = satu branch = satu PR; branch dari `dev`, PR ke `dev`.
+3. Jangan commit dataset, `ml/data`, `ml/runs`, `ml/.venv`, `*.pt`, atau
+   `google-services.json`.
+4. `flutter analyze` dan `flutter test` wajib lulus sebelum PR.
+5. Perbarui papan Notion dan logbook setiap hari.
