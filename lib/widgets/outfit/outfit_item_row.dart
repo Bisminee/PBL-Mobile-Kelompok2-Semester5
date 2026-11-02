@@ -30,34 +30,49 @@ class OutfitItemRow extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
-      child: Row(children: [
-        SizedBox(
+      child: Row(
+        children: [
+          SizedBox(
             width: 52,
             height: 52,
-            child: ClothingThumb(kind: kind, dark: dark, radius: 12, iconSize: 24)),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(name, style: AppTextStyles.title.copyWith(fontSize: 15)),
-              const SizedBox(height: 2),
-              Text(meta, style: AppTextStyles.label),
-            ],
+            child: ClothingThumb(
+              kind: kind,
+              dark: dark,
+              radius: 12,
+              iconSize: 24,
+            ),
           ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: badgeFilled ? AppColors.accent : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: badgeFilled ? AppColors.accent : AppColors.border),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, style: AppTextStyles.title.copyWith(fontSize: 15)),
+                const SizedBox(height: 2),
+                Text(meta, style: AppTextStyles.label),
+              ],
+            ),
           ),
-          child: Text(badge,
-              style: AppTextStyles.mono(9,
-                  color: badgeFilled ? Colors.white : AppColors.textPrimary, ls: 0.8)),
-        ),
-      ]),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: badgeFilled ? AppColors.accent : Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: badgeFilled ? AppColors.accent : AppColors.border,
+              ),
+            ),
+            child: Text(
+              badge,
+              style: AppTextStyles.mono(
+                9,
+                color: badgeFilled ? Colors.white : AppColors.textPrimary,
+                ls: 0.8,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

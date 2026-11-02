@@ -7,14 +7,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
-import '../../models/garment.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/clothing_thumb.dart';
 import '../../widgets/common/responsive.dart';
 
-/// Pratinjau foto sebelum dipakai. "Gunakan Foto" menyimpannya ke lemari.
+/// Pratinjau foto sebelum dipakai. "Gunakan Foto" memulai analisis; foto baru masuk lemari
+/// setelah user menyimpan hasilnya di layar hasil deteksi.
 class CameraPreviewScreen extends ConsumerWidget {
   const CameraPreviewScreen({super.key, this.imagePath});
 
@@ -23,18 +23,14 @@ class CameraPreviewScreen extends ConsumerWidget {
 
   void _usePhoto(BuildContext context, WidgetRef ref) {
     final path = imagePath;
-    if (path != null) {
-      // Placeholder attributes until Model 1 (type) and Module 2 (color) run.
-      ref.read(wardrobeProvider.notifier).add(
-            Garment(
-              id: DateTime.now().microsecondsSinceEpoch.toString(),
-              category: 'Atasan',
-              colorName: 'merah',
-              colorValue: const Color(0xFFB23A48),
-              imagePath: path,
-            ),
-          );
+    if (path == null) {
+      // Pemilih galeri belum ada; tanpa foto tidak ada yang bisa dianalisis.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ambil foto pakaian terlebih dahulu.')),
+      );
+      return;
     }
+    ref.read(scanSessionProvider.notifier).start(path);
     context.pushReplacement(AppRoutes.analyzing);
   }
 
@@ -49,8 +45,9 @@ class CameraPreviewScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final path = imagePath;
-    final fileName =
-        path == null ? 'IMG_0927 · 3024×4032' : path.split(RegExp(r'[\\/]')).last;
+    final fileName = path == null
+        ? 'IMG_0927 · 3024×4032'
+        : path.split(RegExp(r'[\\/]')).last;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -74,8 +71,10 @@ class CameraPreviewScreen extends ConsumerWidget {
                         onPressed: () => context.pop(),
                       ),
                     ),
-                    Text('Pratinjau',
-                        style: AppTextStyles.title.copyWith(color: Colors.white)),
+                    Text(
+                      'Pratinjau',
+                      style: AppTextStyles.title.copyWith(color: Colors.white),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 28),
@@ -106,12 +105,22 @@ class CameraPreviewScreen extends ConsumerWidget {
                       Positioned(
                         bottom: 16,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
-                              color: const Color(0xFF6E6E73),
-                              borderRadius: BorderRadius.circular(16)),
-                          child: Text(fileName,
-                              style: AppTextStyles.mono(10, color: Colors.white, ls: 0.8)),
+                            color: const Color(0xFF6E6E73),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            fileName,
+                            style: AppTextStyles.mono(
+                              10,
+                              color: Colors.white,
+                              ls: 0.8,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -129,23 +138,25 @@ class CameraPreviewScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 28),
-                Row(children: [
-                  Expanded(
-                    child: AppButton(
-                      label: 'Ambil Ulang',
-                      style: AppButtonStyle.outlined,
-                      onPressed: () => context.pop(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        label: 'Ambil Ulang',
+                        style: AppButtonStyle.outlined,
+                        onPressed: () => context.pop(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: AppButton(
-                      label: 'Gunakan Foto',
-                      style: AppButtonStyle.white,
-                      onPressed: () => _usePhoto(context, ref),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: AppButton(
+                        label: 'Gunakan Foto',
+                        style: AppButtonStyle.white,
+                        onPressed: () => _usePhoto(context, ref),
+                      ),
                     ),
-                  ),
-                ]),
+                  ],
+                ),
                 const SizedBox(height: 20),
               ],
             ),
@@ -162,15 +173,21 @@ class _Check extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1D1D1F),
-          borderRadius: BorderRadius.circular(20),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      color: const Color(0xFF1D1D1F),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.check, size: 14, color: Colors.white),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: AppTextStyles.labelBold.copyWith(color: Colors.white),
         ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.check, size: 14, color: Colors.white),
-          const SizedBox(width: 6),
-          Text(text, style: AppTextStyles.labelBold.copyWith(color: Colors.white)),
-        ]),
-      );
+      ],
+    ),
+  );
 }

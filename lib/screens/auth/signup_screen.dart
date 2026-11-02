@@ -32,15 +32,18 @@ class SignUpScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text('Buat akun', style: AppTextStyles.display),
                 const SizedBox(height: 10),
-                Text('Simpan lemarimu dan dapatkan\nrekomendasi yang personal.',
-                    style: AppTextStyles.bodySecondary),
+                Text(
+                  'Simpan lemarimu dan dapatkan\nrekomendasi yang personal.',
+                  style: AppTextStyles.bodySecondary,
+                ),
                 const SizedBox(height: 24),
                 const AppTextField(label: 'Nama', hint: 'Nama lengkap'),
                 const SizedBox(height: 18),
                 const AppTextField(
-                    label: 'Email',
-                    hint: 'fala@email.com',
-                    keyboardType: TextInputType.emailAddress),
+                  label: 'Email',
+                  hint: 'fala@email.com',
+                  keyboardType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 18),
                 const AppTextField(
                   label: 'Password',
@@ -50,9 +53,10 @@ class SignUpScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 18),
                 const AppTextField(
-                    label: 'Konfirmasi Password',
-                    hint: 'Ulangi password',
-                    isPassword: true),
+                  label: 'Konfirmasi Password',
+                  hint: 'Ulangi password',
+                  isPassword: true,
+                ),
                 const SizedBox(height: 40),
                 AppButton(
                   label: 'Daftar',
@@ -70,11 +74,19 @@ class SignUpScreen extends ConsumerWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () => context.pop(),
-                    child: Column(children: [
-                      Text('Sudah punya akun?', style: AppTextStyles.bodySecondary),
-                      const SizedBox(height: 2),
-                      Text('Masuk', style: AppTextStyles.labelBold.copyWith(fontSize: 14)),
-                    ]),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Sudah punya akun?',
+                          style: AppTextStyles.bodySecondary,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Masuk',
+                          style: AppTextStyles.labelBold.copyWith(fontSize: 14),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),

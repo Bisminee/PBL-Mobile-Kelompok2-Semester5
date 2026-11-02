@@ -1,20 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/garment.dart';
+import '../../models/garment_labels.dart';
+import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
-import '../../widgets/common/clothing_thumb.dart';
+import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/responsive.dart';
 
-/// Detail satu pakaian di lemari.
-class ClothingDetailScreen extends StatelessWidget {
-  const ClothingDetailScreen({super.key});
+/// Detail satu pakaian di lemari. Pakaian dikirim lewat `extra` dari go_router.
+class ClothingDetailScreen extends ConsumerWidget {
+  const ClothingDetailScreen({super.key, this.garment});
+
+  final Garment? garment;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final g = garment;
+    if (g == null) {
+      return Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Pakaian tidak ditemukan.', style: AppTextStyles.title),
+                  const SizedBox(height: 16),
+                  AppButton(label: 'Kembali', onPressed: () => context.pop()),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -28,11 +55,11 @@ class ClothingDetailScreen extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: _hero(context, wide: true)),
+                      Expanded(child: _hero(context, g, wide: true)),
                       const SizedBox(width: 32),
                       Expanded(
                         child: SingleChildScrollView(
-                          child: _details(context, wide: true),
+                          child: _details(context, ref, g, wide: true),
                         ),
                       ),
                     ],
@@ -48,8 +75,8 @@ class ClothingDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _hero(context, wide: false),
-                  _details(context, wide: false),
+                  _hero(context, g, wide: false),
+                  _details(context, ref, g, wide: false),
                 ],
               ),
             ),
@@ -59,14 +86,20 @@ class ClothingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _hero(BuildContext context, {required bool wide}) {
+  Widget _hero(BuildContext context, Garment g, {required bool wide}) {
     final stack = Stack(
       alignment: Alignment.center,
       children: [
-        const ClothingThumb(
-            kind: ClothingKind.top,
+        Positioned.fill(
+          child: GarmentPhoto(
+            imagePath: g.imagePath,
+            kind: clothingKindOf(g.garmentType, g.slot),
+            dark: g.isDark,
+            radius: 0,
+            iconSize: 170,
             background: Colors.transparent,
-            iconSize: 170),
+          ),
+        ),
         Positioned(
           top: 12,
           left: 20,
@@ -79,7 +112,10 @@ class ClothingDetailScreen extends StatelessWidget {
         const Positioned(
           top: 12,
           right: 20,
-          child: CircleIconButton(icon: Icons.edit_outlined, background: Colors.white),
+          child: CircleIconButton(
+            icon: Icons.edit_outlined,
+            background: Colors.white,
+          ),
         ),
       ],
     );
@@ -87,6 +123,8 @@ class ClothingDetailScreen extends StatelessWidget {
     return Container(
       height: wide ? 520 : 400,
       width: double.infinity,
+      // Foto persegi dipotong mengikuti sudut membulat.
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: AppColors.secondaryBg,
         borderRadius: wide
@@ -97,7 +135,43 @@ class ClothingDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _details(BuildContext context, {required bool wide}) {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    Garment g,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hapus dari lemari?'),
+        content: Text(
+          '${g.title} akan dihapus dari lemari dan tidak masuk rekomendasi lagi.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    ref.read(wardrobeProvider.notifier).remove(g.id);
+    if (context.mounted) context.pop();
+  }
+
+  Widget _details(
+    BuildContext context,
+    WidgetRef ref,
+    Garment g, {
+    required bool wide,
+  }) {
+    final conf = g.confidence;
+    final added = g.addedAt;
     return Padding(
       padding: wide
           ? const EdgeInsets.fromLTRB(0, 8, 0, 24)
@@ -105,12 +179,15 @@ class ClothingDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Atasan', style: AppTextStyles.mono(10)),
+          Text(g.category.toUpperCase(), style: AppTextStyles.mono(10)),
           const SizedBox(height: 4),
-          Text('Kaos Hitam Polos', style: AppTextStyles.h1),
+          Text(g.title, style: AppTextStyles.h1),
           const SizedBox(height: 4),
-          Text('Ditambahkan 27 September 2026',
-              style: AppTextStyles.label.copyWith(fontSize: 12)),
+          if (added != null)
+            Text(
+              'Ditambahkan ${formatDateId(added)}',
+              style: AppTextStyles.label.copyWith(fontSize: 12),
+            ),
           const SizedBox(height: 18),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -118,33 +195,68 @@ class ClothingDetailScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.border),
             ),
-            child: Column(children: [
-              const _Row('Kategori', Text('Kaos', style: TextStyle(fontWeight: FontWeight.w700))),
-              const Divider(height: 1, color: AppColors.border),
-              _Row(
-                'Warna',
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Container(
-                      width: 12,
-                      height: 12,
-                      decoration: const BoxDecoration(
-                          color: AppColors.darkSecondary, shape: BoxShape.circle)),
-                  const SizedBox(width: 8),
-                  Text('Hitam', style: AppTextStyles.title.copyWith(fontSize: 14)),
-                ]),
-              ),
-              const Divider(height: 1, color: AppColors.border),
-              const _Row('Style', Text('Casual', style: TextStyle(fontWeight: FontWeight.w700))),
-              const Divider(height: 1, color: AppColors.border),
-              _Row(
-                'Detection confidence',
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Container(width: 44, height: 3, color: AppColors.textPrimary),
-                  const SizedBox(width: 10),
-                  Text('94%', style: AppTextStyles.title.copyWith(fontSize: 14)),
-                ]),
-              ),
-            ]),
+            child: Column(
+              children: [
+                _Row('Jenis', Text(typeLabel(g.garmentType))),
+                const Divider(height: 1, color: AppColors.border),
+                _Row(
+                  'Warna',
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: g.colorValue,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        g.colorName,
+                        style: AppTextStyles.title.copyWith(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1, color: AppColors.border),
+                _Row('Formalitas', Text(formalityLabel(g.formality))),
+                const Divider(height: 1, color: AppColors.border),
+                _Row('Style', Text(styleLabel(g.style))),
+                const Divider(height: 1, color: AppColors.border),
+                _Row(
+                  'Detection confidence',
+                  conf == null
+                      ? const Text('-')
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 44,
+                              height: 3,
+                              child: Stack(
+                                children: [
+                                  Container(color: AppColors.border),
+                                  FractionallySizedBox(
+                                    widthFactor: conf.clamp(0.0, 1.0),
+                                    child: Container(
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '${(conf * 100).round()}%',
+                              style: AppTextStyles.title.copyWith(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 22),
           AppButton(
@@ -158,7 +270,7 @@ class ClothingDetailScreen extends StatelessWidget {
             icon: Icons.delete_outline,
             style: AppButtonStyle.outlined,
             height: 50,
-            onPressed: () => context.pop(),
+            onPressed: () => _confirmDelete(context, ref, g),
           ),
         ],
       ),
@@ -173,13 +285,16 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: AppTextStyles.bodySecondary),
-            DefaultTextStyle(style: AppTextStyles.title.copyWith(fontSize: 14), child: value),
-          ],
+    padding: const EdgeInsets.symmetric(vertical: 16),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: AppTextStyles.bodySecondary),
+        DefaultTextStyle(
+          style: AppTextStyles.title.copyWith(fontSize: 14),
+          child: value,
         ),
-      );
+      ],
+    ),
+  );
 }

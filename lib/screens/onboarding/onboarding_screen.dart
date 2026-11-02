@@ -38,7 +38,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       context.go(AppRoutes.login);
     } else {
       _controller.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -66,8 +68,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Text('0${_index + 1} / 03', style: AppTextStyles.mono(11)),
                     GestureDetector(
                       onTap: _skip,
-                      child: Text('Lewati',
-                          style: AppTextStyles.bodySecondary.copyWith(fontSize: 14)),
+                      child: Text(
+                        'Lewati',
+                        style: AppTextStyles.bodySecondary.copyWith(
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -77,11 +83,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: PageView(
                   controller: _controller,
                   onPageChanged: (i) => setState(() => _index = i),
-                  children: List.generate(3, (i) => _OnboardingSlide(
-                        index: i,
-                        title: _titles[i],
-                        desc: _descs[i],
-                      )),
+                  children: List.generate(
+                    3,
+                    (i) => _OnboardingSlide(
+                      index: i,
+                      title: _titles[i],
+                      desc: _descs[i],
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -108,7 +117,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 }
 
 class _OnboardingSlide extends StatelessWidget {
-  const _OnboardingSlide({required this.index, required this.title, required this.desc});
+  const _OnboardingSlide({
+    required this.index,
+    required this.title,
+    required this.desc,
+  });
 
   final int index;
   final String title;
@@ -144,7 +157,10 @@ class _OnboardingSlide extends StatelessWidget {
                 children: [
                   Text(title, style: AppTextStyles.h1),
                   const SizedBox(height: 12),
-                  Text(desc, style: AppTextStyles.bodySecondary.copyWith(fontSize: 15)),
+                  Text(
+                    desc,
+                    style: AppTextStyles.bodySecondary.copyWith(fontSize: 15),
+                  ),
                 ],
               ),
             ),

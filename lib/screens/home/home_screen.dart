@@ -1,47 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
-import '../../widgets/common/clothing_thumb.dart';
+import '../../models/garment.dart';
+import '../../models/garment_labels.dart';
+import '../../services/providers.dart';
+import '../../services/recommender.dart';
+import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/responsive.dart';
 import '../../widgets/common/section_header.dart';
 import '../../widgets/home/home_hero_banner.dart';
 import '../../widgets/home/recommendation_card.dart';
 
 /// Tab Home: sapaan, banner foto pakaian, ringkasan lemari, dan rekomendasi.
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Tablet / laptop: daftar horizontal diganti grid yang membungkus ke bawah,
     // karena mouse/trackpad kurang nyaman untuk scroll horizontal.
     final wide = context.isMediumUp;
+    final now = DateTime.now();
+    final user = ref.watch(authProvider);
+    final wardrobe = ref.watch(wardrobeProvider);
+    final outfits = ref.watch(recommendationsProvider).take(5).toList();
 
-    const miniItems = <Widget>[
-      _MiniItem('Kaos Hitam', ClothingKind.top, true),
-      _MiniItem('Kemeja Putih', ClothingKind.shirt, false),
-      _MiniItem('Chino Putih', ClothingKind.bottom, false),
+    final miniItems = <Widget>[
+      for (final g in wardrobe.reversed.take(6))
+        _MiniItem(
+          g,
+          onTap: () => context.push(AppRoutes.clothingDetail, extra: g),
+        ),
     ];
 
     final recommendations = <Widget>[
-      RecommendationCard(
-        title: 'Casual Monochrome',
-        matchLabel: '94% COCOK',
-        score: 94,
-        description:
-            'Kaos hitam dan celana putih memberi kontras tegas, tetap santai untuk kampus.',
-        onTap: () => context.push(AppRoutes.detail),
-      ),
-      RecommendationCard(
-        title: 'Soft Neutral',
-        matchLabel: '88% COCOK',
-        score: 88,
-        description: 'Tone lembut dengan sentuhan netral yang nyaman dipakai harian.',
-        onTap: () => context.push(AppRoutes.detail),
-      ),
+      for (final o in outfits)
+        RecommendationCard(
+          title: o.title,
+          matchLabel: 'SKOR ${(o.score * 100).round()}',
+          score: (o.score * 100).round(),
+          description: describeOutfit(o),
+          onTap: () => context.push(AppRoutes.detail, extra: o),
+        ),
     ];
 
     return SafeArea(
@@ -62,12 +66,20 @@ class HomeScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Minggu, 27 Sep', style: AppTextStyles.mono(11)),
+                          Text(
+                            formatDayDateId(now),
+                            style: AppTextStyles.mono(11),
+                          ),
                           const SizedBox(height: 10),
-                          Text('Good Morning,', style: AppTextStyles.label),
+                          Text(
+                            greetingId(now.hour),
+                            style: AppTextStyles.label,
+                          ),
                           const SizedBox(height: 4),
-                          Text('Siap menentukan\noutfit hari ini?',
-                              style: AppTextStyles.h1.copyWith(fontSize: 26)),
+                          Text(
+                            'Siap menentukan\noutfit hari ini?',
+                            style: AppTextStyles.h1.copyWith(fontSize: 26),
+                          ),
                         ],
                       ),
                     ),
@@ -77,9 +89,14 @@ class HomeScreen extends StatelessWidget {
                         width: 44,
                         height: 44,
                         decoration: const BoxDecoration(
-                            color: AppColors.secondaryBg, shape: BoxShape.circle),
+                          color: AppColors.secondaryBg,
+                          shape: BoxShape.circle,
+                        ),
                         alignment: Alignment.center,
-                        child: Text('F', style: AppTextStyles.title),
+                        child: Text(
+                          user?.initials ?? '?',
+                          style: AppTextStyles.title,
+                        ),
                       ),
                     ),
                   ],
@@ -99,15 +116,23 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SectionHeader(
                   title: 'Lemari Saya',
-                  subtitle: '12 item pakaian',
+                  subtitle: '${wardrobe.length} item pakaian',
                   actionLabel: 'Lihat Semua',
-                  onAction: () {},
+                  onAction: () => context.go(AppRoutes.wardrobe),
                 ),
               ),
               const SizedBox(height: 14),
-              if (wide)
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+              if (miniItems.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Lemari masih kosong. Foto pakaianmu lewat kamera.',
+                    style: AppTextStyles.bodySecondary,
+                  ),
+                )
+              else if (wide)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Wrap(runSpacing: 12, children: miniItems),
                 )
               else
@@ -130,7 +155,15 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              if (wide)
+              if (recommendations.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Butuh minimal satu atasan dan satu bawahan di lemari untuk membuat rekomendasi.',
+                    style: AppTextStyles.bodySecondary,
+                  ),
+                )
+              else if (wide)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Wrap(
@@ -162,28 +195,39 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _MiniItem extends StatelessWidget {
-  const _MiniItem(this.name, this.kind, this.dark);
-  final String name;
-  final ClothingKind kind;
-  final bool dark;
+  const _MiniItem(this.garment, {required this.onTap});
+  final Garment garment;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: SizedBox(
-        width: 96,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 96,
-              width: 96,
-              child: ClothingThumb(kind: kind, dark: dark, iconSize: 40),
-            ),
-            const SizedBox(height: 6),
-            Text(name, style: AppTextStyles.labelBold, maxLines: 1, overflow: TextOverflow.ellipsis),
-          ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: SizedBox(
+          width: 96,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 96,
+                width: 96,
+                child: GarmentPhoto(
+                  imagePath: garment.imagePath,
+                  kind: clothingKindOf(garment.garmentType, garment.slot),
+                  dark: garment.isDark,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                garment.title,
+                style: AppTextStyles.labelBold,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -44,43 +44,67 @@ class OutfitCompactCard extends StatelessWidget {
                 SizedBox(
                   width: 112,
                   height: 140,
-                  child: Row(children: [
-                    const Expanded(child: ClothingThumb(kind: ClothingKind.top, iconSize: 28)),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Column(children: const [
-                        Expanded(
-                            child: SizedBox(
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: ClothingThumb(
+                          kind: ClothingKind.top,
+                          iconSize: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Column(
+                          children: const [
+                            Expanded(
+                              child: SizedBox(
                                 width: double.infinity,
-                                child: ClothingThumb(kind: ClothingKind.bottom, dark: false))),
-                        SizedBox(height: 6),
-                        Expanded(
-                            child: SizedBox(
+                                child: ClothingThumb(
+                                  kind: ClothingKind.bottom,
+                                  dark: false,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            Expanded(
+                              child: SizedBox(
                                 width: double.infinity,
-                                child: ClothingThumb(kind: ClothingKind.shoes))),
-                      ]),
-                    ),
-                  ]),
+                                child: ClothingThumb(kind: ClothingKind.shoes),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(children: [
-                        Expanded(child: Text(title, style: AppTextStyles.h3)),
-                        MatchRing(value: score, size: 30, stroke: 3),
-                      ]),
+                      Row(
+                        children: [
+                          Expanded(child: Text(title, style: AppTextStyles.h3)),
+                          MatchRing(value: score, size: 30, stroke: 3),
+                        ],
+                      ),
                       Text('$score% MATCH', style: AppTextStyles.mono(10)),
                       const SizedBox(height: 6),
                       Text(items, style: AppTextStyles.label),
                       const SizedBox(height: 6),
-                      Text(description,
-                          style: AppTextStyles.body.copyWith(fontSize: 13)),
+                      Text(
+                        description,
+                        style: AppTextStyles.body.copyWith(fontSize: 13),
+                      ),
                       const SizedBox(height: 8),
-                      Wrap(spacing: 6, runSpacing: 6, children: [
-                        for (final t in tags) PillChip(label: t, small: true),
-                      ]),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          for (final t in tags) PillChip(label: t, small: true),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -90,10 +114,17 @@ class OutfitCompactCard extends StatelessWidget {
             const Divider(height: 1, color: AppColors.border),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(children: [
-                Expanded(child: Text('Kenapa cocok?', style: AppTextStyles.title.copyWith(fontSize: 14))),
-                const Icon(Icons.keyboard_arrow_down),
-              ]),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Kenapa cocok?',
+                      style: AppTextStyles.title.copyWith(fontSize: 14),
+                    ),
+                  ),
+                  const Icon(Icons.keyboard_arrow_down),
+                ],
+              ),
             ),
           ],
         ),

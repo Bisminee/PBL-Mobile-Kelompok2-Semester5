@@ -31,8 +31,13 @@ class _OrbitPainter extends CustomPainter {
     const dashCount = 60;
     for (var i = 0; i < dashCount; i++) {
       final a = (i / dashCount) * math.pi * 2;
-      canvas.drawArc(Rect.fromCircle(center: c, radius: dashR), a,
-          math.pi * 2 / dashCount * 0.5, false, line);
+      canvas.drawArc(
+        Rect.fromCircle(center: c, radius: dashR),
+        a,
+        math.pi * 2 / dashCount * 0.5,
+        false,
+        line,
+      );
     }
 
     // titik orbit

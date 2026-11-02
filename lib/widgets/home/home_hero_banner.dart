@@ -44,25 +44,36 @@ class HomeHeroBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Temukan outfit\nyang cocok',
-                      style: AppTextStyles.h1.copyWith(color: Colors.white, fontSize: 26)),
+                  Text(
+                    'Temukan outfit\nyang cocok',
+                    style: AppTextStyles.h1.copyWith(
+                      color: Colors.white,
+                      fontSize: 26,
+                    ),
+                  ),
                   const SizedBox(height: 6),
-                  Text('Foto pakaianmu dan biarkan Sera-Z\nmenemukan kombinasinya.',
-                      style: AppTextStyles.body.copyWith(color: Colors.white)),
+                  Text(
+                    'Foto pakaianmu dan biarkan Sera-Z\nmenemukan kombinasinya.',
+                    style: AppTextStyles.body.copyWith(color: Colors.white),
+                  ),
                   const SizedBox(height: 16),
-                  Row(children: [
-                    _PillBtn(
+                  Row(
+                    children: [
+                      _PillBtn(
                         label: 'Foto Pakaian',
                         icon: Icons.photo_camera_outlined,
                         dark: true,
-                        onTap: onCamera),
-                    const SizedBox(width: 10),
-                    _PillBtn(
+                        onTap: onCamera,
+                      ),
+                      const SizedBox(width: 10),
+                      _PillBtn(
                         label: 'Galeri',
                         icon: Icons.image_outlined,
                         dark: false,
-                        onTap: onGallery),
-                  ]),
+                        onTap: onGallery,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -78,18 +89,23 @@ class _Bg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFBDBDC2), Color(0xFF3A3A3D)],
-          ),
-        ),
-      );
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFBDBDC2), Color(0xFF3A3A3D)],
+      ),
+    ),
+  );
 }
 
 class _PillBtn extends StatelessWidget {
-  const _PillBtn({required this.label, required this.icon, required this.dark, required this.onTap});
+  const _PillBtn({
+    required this.label,
+    required this.icon,
+    required this.dark,
+    required this.onTap,
+  });
 
   final String label;
   final IconData icon;
@@ -108,11 +124,16 @@ class _PillBtn extends StatelessWidget {
           color: dark ? Colors.black : Colors.white,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Row(children: [
-          Icon(icon, size: 16, color: fg),
-          const SizedBox(width: 8),
-          Text(label, style: AppTextStyles.labelBold.copyWith(color: fg, fontSize: 13)),
-        ]),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: fg),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: AppTextStyles.labelBold.copyWith(color: fg, fontSize: 13),
+            ),
+          ],
+        ),
       ),
     );
   }

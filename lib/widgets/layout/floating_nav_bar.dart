@@ -36,7 +36,11 @@ class FloatingNavBar extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(40),
                 boxShadow: const [
-                  BoxShadow(color: Color(0x1F000000), blurRadius: 24, offset: Offset(0, 8)),
+                  BoxShadow(
+                    color: Color(0x1F000000),
+                    blurRadius: 24,
+                    offset: Offset(0, 8),
+                  ),
                 ],
               ),
               child: Row(
@@ -54,9 +58,14 @@ class FloatingNavBar extends StatelessWidget {
                       width: 56,
                       height: 56,
                       decoration: const BoxDecoration(
-                          color: AppColors.accent, shape: BoxShape.circle),
-                      child: const Icon(Icons.photo_camera_outlined,
-                          color: Colors.white, size: 26),
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.photo_camera_outlined,
+                        color: Colors.white,
+                        size: 26,
+                      ),
                     ),
                   ),
                   _NavItem(
@@ -101,11 +110,14 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(icon, size: 22, color: color),
             const SizedBox(height: 2),
-            Text(label,
-                style: AppTextStyles.labelBold.copyWith(
-                    fontSize: 10,
-                    color: color,
-                    fontWeight: active ? FontWeight.w700 : FontWeight.w400)),
+            Text(
+              label,
+              style: AppTextStyles.labelBold.copyWith(
+                fontSize: 10,
+                color: color,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w400,
+              ),
+            ),
           ],
         ),
       ),

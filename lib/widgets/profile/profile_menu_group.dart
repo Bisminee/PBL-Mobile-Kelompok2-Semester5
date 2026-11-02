@@ -9,12 +9,12 @@ class ProfileSectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 8, left: 4),
-          child: Text(text, style: AppTextStyles.mono(10)),
-        ),
-      );
+    alignment: Alignment.centerLeft,
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 4),
+      child: Text(text, style: AppTextStyles.mono(10)),
+    ),
+  );
 }
 
 class ProfileMenuItem {
@@ -70,34 +70,50 @@ class _Row extends StatelessWidget {
       onTap: item.onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        child: Row(children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-                color: AppColors.secondaryBg, borderRadius: BorderRadius.circular(10)),
-            child: Icon(item.icon, size: 17),
-          ),
-          const SizedBox(width: 14),
-          Expanded(child: Text(item.title, style: AppTextStyles.body.copyWith(fontSize: 15))),
-          if (item.badge != null)
+        child: Row(
+          children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              margin: const EdgeInsets.only(right: 8),
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(6),
+                color: AppColors.secondaryBg,
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(item.badge!, style: AppTextStyles.mono(9)),
+              child: Icon(item.icon, size: 17),
             ),
-          if (item.value != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Text(item.value!, style: AppTextStyles.label.copyWith(fontSize: 13)),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                item.title,
+                style: AppTextStyles.body.copyWith(fontSize: 15),
+              ),
             ),
-          item.trailing ??
-              const Icon(Icons.chevron_right, size: 20, color: AppColors.textSecondary),
-        ]),
+            if (item.badge != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(item.badge!, style: AppTextStyles.mono(9)),
+              ),
+            if (item.value != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  item.value!,
+                  style: AppTextStyles.label.copyWith(fontSize: 13),
+                ),
+              ),
+            item.trailing ??
+                const Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: AppColors.textSecondary,
+                ),
+          ],
+        ),
       ),
     );
   }

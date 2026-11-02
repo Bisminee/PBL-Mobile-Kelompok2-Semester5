@@ -40,14 +40,16 @@ class SideNavRail extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(AppAssets.logo, width: 36, height: 36),
-                  ),
-                  const SizedBox(width: 10),
-                  Text('Sera-Z', style: AppTextStyles.h3),
-                ]),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(AppAssets.logo, width: 36, height: 36),
+                    ),
+                    const SizedBox(width: 10),
+                    Text('Sera-Z', style: AppTextStyles.h3),
+                  ],
+                ),
               ),
               const SizedBox(height: 32),
               _RailItem(
@@ -111,18 +113,20 @@ class _RailItem extends StatelessWidget {
           color: active ? AppColors.secondaryBg : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Row(children: [
-          Icon(icon, size: 22, color: color),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: AppTextStyles.title.copyWith(
-              fontSize: 14,
-              color: color,
-              fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+        child: Row(
+          children: [
+            Icon(icon, size: 22, color: color),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: AppTextStyles.title.copyWith(
+                fontSize: 14,
+                color: color,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }

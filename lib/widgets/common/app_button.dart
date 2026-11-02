@@ -53,7 +53,10 @@ class AppButton extends StatelessWidget {
     final child = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (icon != null) ...[Icon(icon, size: 18, color: fg), const SizedBox(width: 8)],
+        if (icon != null) ...[
+          Icon(icon, size: 18, color: fg),
+          const SizedBox(width: 8),
+        ],
         Text(label, style: AppTextStyles.button.copyWith(color: fg)),
         if (trailingIcon != null) ...[
           const SizedBox(width: 8),

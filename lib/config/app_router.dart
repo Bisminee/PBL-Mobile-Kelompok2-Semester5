@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../models/garment.dart';
+import '../models/outfit.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -19,8 +21,7 @@ import '../widgets/layout/main_shell.dart';
 import 'app_routes.dart';
 import '../services/auth_listenable.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Semua rute aplikasi. Path-nya ada di [AppRoutes].
 final GoRouter appRouter = GoRouter(
@@ -87,11 +88,12 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.detail,
-      builder: (context, state) => const DetailScreen(),
+      builder: (context, state) => DetailScreen(outfit: state.extra as Outfit?),
     ),
     GoRoute(
       path: AppRoutes.clothingDetail,
-      builder: (context, state) => const ClothingDetailScreen(),
+      builder: (context, state) =>
+          ClothingDetailScreen(garment: state.extra as Garment?),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>

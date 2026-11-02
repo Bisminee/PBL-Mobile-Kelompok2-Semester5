@@ -26,19 +26,32 @@ class PillChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: small ? 12 : 20, vertical: small ? 8 : 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: small ? 12 : 20,
+          vertical: small ? 8 : 10,
+        ),
         decoration: BoxDecoration(
           color: selected ? AppColors.accent : Colors.white,
           borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: selected ? AppColors.accent : AppColors.border),
+          border: Border.all(
+            color: selected ? AppColors.accent : AppColors.border,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[Icon(icon, size: 14, color: fg), const SizedBox(width: 6)],
-            Text(label,
-                style: AppTextStyles.body.copyWith(
-                    color: fg, fontSize: small ? 12 : 14, fontWeight: FontWeight.w500)),
+            if (icon != null) ...[
+              Icon(icon, size: 14, color: fg),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: AppTextStyles.body.copyWith(
+                color: fg,
+                fontSize: small ? 12 : 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

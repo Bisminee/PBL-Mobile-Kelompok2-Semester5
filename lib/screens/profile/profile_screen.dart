@@ -106,7 +106,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: CircleIconButton(
-                        icon: Icons.chevron_left, onPressed: () => context.pop()),
+                      icon: Icons.chevron_left,
+                      onPressed: () => context.pop(),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -128,9 +130,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       width: 26,
                       height: 26,
                       decoration: const BoxDecoration(
-                          color: AppColors.accent, shape: BoxShape.circle),
-                      child: const Icon(Icons.photo_camera_outlined,
-                          color: Colors.white, size: 13),
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.photo_camera_outlined,
+                        color: Colors.white,
+                        size: 13,
+                      ),
                     ),
                   ],
                 ),
@@ -140,35 +147,63 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Text('Fala@email.com', style: AppTextStyles.bodySecondary),
                 const SizedBox(height: 28),
                 const ProfileSectionLabel('ACCOUNT'),
-                ProfileMenuGroup(items: [
-                  ProfileMenuItem(icon: Icons.person_outline, title: 'Edit Profile'),
-                  ProfileMenuItem(icon: Icons.lock_outline, title: 'Change Password'),
-                  ProfileMenuItem(
-                      icon: Icons.grid_view_rounded, title: 'Admin Panel', badge: 'ADMIN'),
-                ]),
+                ProfileMenuGroup(
+                  items: [
+                    ProfileMenuItem(
+                      icon: Icons.person_outline,
+                      title: 'Edit Profile',
+                    ),
+                    ProfileMenuItem(
+                      icon: Icons.lock_outline,
+                      title: 'Change Password',
+                    ),
+                    ProfileMenuItem(
+                      icon: Icons.grid_view_rounded,
+                      title: 'Admin Panel',
+                      badge: 'ADMIN',
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 22),
                 const ProfileSectionLabel('PREFERENCES'),
-                ProfileMenuGroup(items: [
-                  ProfileMenuItem(
-                    icon: Icons.notifications_none,
-                    title: 'Notifications',
-                    trailing: Switch(
-                      value: _notif,
-                      activeThumbColor: Colors.white,
-                      activeTrackColor: AppColors.accent,
-                      onChanged: (v) => setState(() => _notif = v),
+                ProfileMenuGroup(
+                  items: [
+                    ProfileMenuItem(
+                      icon: Icons.notifications_none,
+                      title: 'Notifications',
+                      trailing: Switch(
+                        value: _notif,
+                        activeThumbColor: Colors.white,
+                        activeTrackColor: AppColors.accent,
+                        onChanged: (v) => setState(() => _notif = v),
+                      ),
                     ),
-                  ),
-                  ProfileMenuItem(
-                      icon: Icons.contrast, title: 'Appearance', value: 'Terang'),
-                ]),
+                    ProfileMenuItem(
+                      icon: Icons.contrast,
+                      title: 'Appearance',
+                      value: 'Terang',
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 22),
                 const ProfileSectionLabel('ABOUT'),
-                ProfileMenuGroup(items: [
-                  ProfileMenuItem(icon: Icons.info_outline, title: 'About Sera-Z', value: 'v1.0'),
-                  ProfileMenuItem(icon: Icons.shield_outlined, title: 'Privacy Policy'),
-                  ProfileMenuItem(icon: Icons.description_outlined, title: 'Terms & Conditions'),
-                ]),
+                ProfileMenuGroup(
+                  items: [
+                    ProfileMenuItem(
+                      icon: Icons.info_outline,
+                      title: 'About Sera-Z',
+                      value: 'v1.0',
+                    ),
+                    ProfileMenuItem(
+                      icon: Icons.shield_outlined,
+                      title: 'Privacy Policy',
+                    ),
+                    ProfileMenuItem(
+                      icon: Icons.description_outlined,
+                      title: 'Terms & Conditions',
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
                 AppButton(
                   label: _busy ? 'Memproses...' : 'Logout',

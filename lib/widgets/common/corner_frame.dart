@@ -22,7 +22,13 @@ class CornerFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      foregroundPainter: _CornerPainter(color, cornerLength, thickness, radius, inset),
+      foregroundPainter: _CornerPainter(
+        color,
+        cornerLength,
+        thickness,
+        radius,
+        inset,
+      ),
       child: child,
     );
   }
