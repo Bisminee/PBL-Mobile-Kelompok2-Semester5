@@ -10,104 +10,91 @@ Disusun: 2 November 2026
 >
 > **TAKUT KALAU KALIAN NGGAK ADA KONTRIBUSI DI GITHUB**
 
-Fokus minggu ini: **menuntaskan sisa minggu 5**, menyelesaikan integrasi, dan menyiapkan QA.
+Fokus minggu ini: menuntaskan sisa minggu 5, menyelesaikan integrasi, dan menyiapkan QA.
+Pekerjaan yang belum selesai dikembalikan ke orang yang sama.
 
-Pekerjaan yang belum selesai pada minggu 5 dikembalikan ke orang yang sama, lalu ditambah
-pekerjaan baru secukupnya agar beban tetap seimbang.
-
-Total: **17,0 ho**, rentang 3,0 sampai 4,0 ho per orang.
+Total **17,0 ho**, terdiri dari 7,0 ho mobile, 6,5 ho ML, dan 3,5 ho QA serta dokumentasi.
 
 ---
 
 ## 1. Sisa minggu 5 yang dilanjutkan
 
+### 1.1 Sisa pekerjaan mobile
+
 | Tugas | PIC | Status minggu 5 | Target minggu 6 |
 |---|---|---|---|
 | E2.4 Riwayat rekomendasi (`recommendation_history`) | Ahmad | Sebagian, tabel outfit sudah ada | Selesai |
 | E2.6 Unit test DAO | Ahmad | Belum | Selesai |
-| E4.6 Ekspor TFLite model sendiri | Ahmad | Belum, gagal di Windows | Selesai lewat Colab atau Linux |
-| E6.5 Metrik Model 3 (AUC, precision@3) | Faatihurrizki | Belum | Selesai |
 | E8.6 Halaman Admin master data | Izza | Belum | Selesai |
 | E8.1 CRUD UI Lemari: tambah manual dan hapus | Izza | Sebagian, baru baca dan filter | Selesai |
+
+### 1.2 Sisa pekerjaan ML
+
+| Tugas | PIC | Status minggu 5 | Target minggu 6 |
+|---|---|---|---|
+| E4.6 Ekspor TFLite model sendiri | Ahmad | Belum, gagal di Windows | Selesai lewat Colab atau Linux |
+| E6.5 Metrik Model 3 (AUC, precision@3) | Faatihurrizki | Belum | Selesai |
 | Label 9 kelas pada `assets/models/labels.txt` | Abim | Sebagian, masih 15 label lama | Selesai |
 | Dokumentasi metode ML | Faatihurrizki | Belum | Selesai |
-| Uji login di perangkat | Bisma | Belum | Selesai, termasuk logout dan hapus akun |
+
+### 1.3 Sisa pekerjaan QA
+
+| Tugas | PIC | Status minggu 5 | Target minggu 6 |
+|---|---|---|---|
+| Uji login, logout, dan hapus akun di perangkat | Bisma | Belum | Selesai |
 
 ---
 
-## 2. Pembagian per anggota
+## 2. Pembagian pekerjaan minggu 6
 
-### 2.1 Bisma Adhiaksa — 3,5 ho
+### 2.1 Pekerjaan mobile
 
-| Tugas | ho | Branch | PR ke |
-|---|---:|---|---|
-| E9.1 Rencana uji + minimal 20 test case fungsional | 2,0 | `test/qa-plan` | `dev` |
-| Uji login, logout, dan hapus akun di perangkat | 1,0 | `test/device-check` | `dev` |
-| Rekap mingguan dan logbook minggu 6 | 0,5 | `docs/logbook-minggu-6` | `dev` |
+| Anggota | Tugas mobile | ho | Branch | PR ke |
+|---|---|---:|---|---|
+| Ahmad Falahi | E2.4 Riwayat rekomendasi, E2.6 Unit test DAO | 2,0 | `feat/recommendation-history`, `test/local-db` | `dev` |
+| Izza Dhafira Fanani | E8.6 Halaman Admin, E8.1 CRUD UI Lemari | 3,5 | `feat/admin-master-data`, `feat/wardrobe-crud-ui` | `dev` |
+| Abim Mustawa | E8.7 Lengkapi edit profil dan preferensi | 1,5 | `feat/profile-edit` | `dev` |
+| Bisma Adhiaksa | Tidak ada tugas mobile | 0 | - | - |
+| Faatihurrizki Prasojo | Tidak ada tugas mobile | 0 | - | - |
+| **Total** | | **7,0** | | |
 
-Keluaran: dokumen QA plan, catatan hasil uji perangkat, logbook minggu 6.
+### 2.2 Pekerjaan Machine Learning
 
-### 2.2 Ahmad Falahi — 3,0 ho
+| Anggota | Tugas ML | ho | Branch | PR ke |
+|---|---|---:|---|---|
+| Faatihurrizki Prasojo | E6.5 Metrik Model 3, E5.3 Palet 14 warna, E5.4 Unit test warna, dokumentasi metode ML | 4,0 | `ml/model3-metrics`, `feat/color-palette`, `test/color-palette`, `docs/ml-methods` | `dev` |
+| Abim Mustawa | Label 9 kelas, E7.6 Ukur latensi dan ukuran model | 1,5 | `chore/model-assets`, `feat/latency-check` | `dev` |
+| Ahmad Falahi | E4.6 Ekspor TFLite model sendiri | 1,0 | `ml/export-tflite` | `dev` |
+| Bisma Adhiaksa | Tidak ada tugas ML | 0 | - | - |
+| Izza Dhafira Fanani | Tidak ada tugas ML | 0 | - | - |
+| **Total** | | **6,5** | | |
 
-| Tugas | ho | Branch | PR ke |
-|---|---:|---|---|
-| E2.4 Tabel `recommendation_history` + pencatatan riwayat | 1,0 | `feat/recommendation-history` | `dev` |
-| E2.6 Unit test DAO | 1,0 | `test/local-db` | `dev` |
-| E4.6 Ekspor TFLite model sendiri | 1,0 | `ml/export-tflite` | `dev` |
+Catatan:
 
-Keluaran: riwayat tersimpan, test DAO lulus, berkas `.tflite` model sendiri.
+- Urutan kelas wajib: `dress, long_pants, long_sleeve, outerwear, shirt, shoes, shorts, skirt, tshirt`.
+- Model 3 masih dilatih pada data sintetis. Tulis sebagai keterbatasan, bukan hasil validasi nyata.
+- Ekspor dijalankan di Colab atau Linux dengan masukan `best.pt` 3,1 MB.
+- Kalau ekspor berhasil, simpan sebagai `assets/models/model1_yolo11n_v1.tflite` dan perbarui model card.
 
-Catatan: ekspor dijalankan di Colab atau Linux. Berkas masukan hanya `best.pt` 3,1 MB.
-Kalau berhasil, simpan sebagai `assets/models/model1_yolo11n_v1.tflite` dan perbarui model card.
+### 2.3 Pekerjaan QA dan dokumentasi
 
-### 2.3 Faatihurrizki Prasojo — 4,0 ho
-
-| Tugas | ho | Branch | PR ke |
-|---|---:|---|---|
-| E6.5 Metrik Model 3: AUC dan precision@3 ke JSON | 1,0 | `ml/model3-metrics` | `dev` |
-| E5.3 Pemetaan palet 14 warna | 1,0 | `feat/color-palette` | `dev` |
-| E5.4 Unit test warna | 1,0 | `test/color-palette` | `dev` |
-| Dokumentasi metode ML | 1,0 | `docs/ml-methods` | `dev` |
-
-Keluaran: `ml/reports/model3_metrics.json`, palet 14 warna + test, `docs/ml-methods.md`.
-
-Catatan: tulis jelas bahwa Model 3 masih dilatih pada data sintetis dan itu batasan, bukan hasil validasi nyata.
-
-### 2.4 Abim Mustawa — 3,0 ho
-
-| Tugas | ho | Branch | PR ke |
-|---|---:|---|---|
-| Label 9 kelas + aset model + smoke test | 0,5 | `chore/model-assets` | `dev` |
-| E7.6 Ukur latensi dan ukuran model | 1,0 | `feat/latency-check` | `dev` |
-| E8.7 Lengkapi edit profil dan preferensi | 1,5 | `feat/profile-edit` | `dev` |
-
-Keluaran: `labels.txt` berisi 9 kelas, hasil ukur latensi, profil bisa diedit.
-
-Urutan kelas wajib: `dress, long_pants, long_sleeve, outerwear, shirt, shoes, shorts, skirt, tshirt`.
-
-### 2.5 Izza Dhafira Fanani — 3,5 ho
-
-| Tugas | ho | Branch | PR ke |
-|---|---:|---|---|
-| E8.6 Halaman Admin master data kategori dan warna | 2,0 | `feat/admin-master-data` | `dev` |
-| E8.1 CRUD UI Lemari: tambah manual dan hapus | 1,5 | `feat/wardrobe-crud-ui` | `dev` |
-
-Keluaran: layar admin dengan CRUD, tombol tambah dan hapus di layar Lemari.
-
-Catatan: master data memakai tabel SQLite yang sudah ada di `fashion_app.db`. Koordinasi dengan Ahmad bila perlu migrasi.
+| Anggota | Tugas | ho | Branch | PR ke |
+|---|---|---:|---|---|
+| Bisma Adhiaksa | E9.1 Rencana uji dan 20 test case, uji perangkat, rekap logbook | 3,5 | `test/qa-plan`, `test/device-check`, `docs/logbook-minggu-6` | `dev` |
+| **Total** | | **3,5** | | |
 
 ---
 
 ## 3. Ringkasan beban
 
-| Anggota | Sisa minggu 5 | Tugas baru | Total |
-|---|---:|---:|---:|
-| Bisma Adhiaksa | 1,0 | 2,5 | 3,5 |
-| Ahmad Falahi | 3,0 | 0 | 3,0 |
-| Faatihurrizki Prasojo | 1,0 | 3,0 | 4,0 |
-| Abim Mustawa | 0,5 | 2,5 | 3,0 |
-| Izza Dhafira Fanani | 3,5 | 0 | 3,5 |
-| **Total** | **9,0** | **8,0** | **17,0** |
+| Anggota | Mobile | ML | QA dan dokumen | Total |
+|---|---:|---:|---:|---:|
+| Bisma Adhiaksa | 0 | 0 | 3,5 | 3,5 |
+| Ahmad Falahi | 2,0 | 1,0 | 0 | 3,0 |
+| Faatihurrizki Prasojo | 0 | 4,0 | 0 | 4,0 |
+| Abim Mustawa | 1,5 | 1,5 | 0 | 3,0 |
+| Izza Dhafira Fanani | 3,5 | 0 | 0 | 3,5 |
+| **Total** | **7,0** | **6,5** | **3,5** | **17,0** |
 
 ---
 
@@ -127,20 +114,20 @@ Catatan: master data memakai tabel SQLite yang sudah ada di `fashion_app.db`. Ko
 
 ## 5. Target akhir minggu
 
-| Target | Ukuran selesai | PIC |
-|---|---|---|
-| Riwayat rekomendasi | Tersimpan dan tampil kembali setelah restart | Ahmad |
-| Unit test DAO | Minimal 6 test lulus | Ahmad |
-| Ekspor model sendiri | Berkas `.tflite` ada dan bisa dimuat | Ahmad |
-| Metrik Model 3 | AUC dan precision@3 tercatat di JSON | Faatihurrizki |
-| Palet warna | 14 nama warna konsisten, test lulus | Faatihurrizki |
-| Halaman Admin | Master data bisa ditambah, diubah, dihapus | Izza |
-| CRUD Lemari | Tambah manual dan hapus berjalan | Izza |
-| Label model | 9 kelas sesuai urutan training | Abim |
-| Latensi | Tercatat, target di bawah 3 detik per foto | Abim |
-| Edit profil | Nama dan preferensi bisa diubah | Abim |
-| QA plan | 20 test case terdokumentasi | Bisma |
-| Uji perangkat | Login, logout, hapus akun berhasil | Bisma |
+| Kategori | Target | Ukuran selesai | PIC |
+|---|---|---|---|
+| Mobile | Riwayat rekomendasi | Tersimpan dan tampil kembali setelah restart | Ahmad |
+| Mobile | Unit test DAO | Minimal 6 test lulus | Ahmad |
+| Mobile | Halaman Admin | Master data bisa ditambah, diubah, dihapus | Izza |
+| Mobile | CRUD Lemari | Tambah manual dan hapus berjalan | Izza |
+| Mobile | Edit profil | Nama dan preferensi bisa diubah | Abim |
+| ML | Ekspor model sendiri | Berkas `.tflite` ada dan bisa dimuat | Ahmad |
+| ML | Metrik Model 3 | AUC dan precision@3 tercatat di JSON | Faatihurrizki |
+| ML | Palet warna | 14 nama warna konsisten, test lulus | Faatihurrizki |
+| ML | Label model | 9 kelas sesuai urutan training | Abim |
+| ML | Latensi | Tercatat, target di bawah 3 detik per foto | Abim |
+| QA | QA plan | 20 test case terdokumentasi | Bisma |
+| QA | Uji perangkat | Login, logout, hapus akun berhasil | Bisma |
 
 ---
 
@@ -160,7 +147,7 @@ Catatan: master data memakai tabel SQLite yang sudah ada di `fashion_app.db`. Ko
 
 1. Maksimal 2 tugas aktif per orang.
 2. Satu tugas = satu branch = satu PR; branch dari `dev`, PR ke `dev`.
-3. `dev-ml` sudah dihapus dan digabung ke `dev`. Tidak ada lagi jalur ML terpisah.
+3. `dev-ml` sudah dihapus dan digabung ke `dev`. Tidak ada jalur ML terpisah.
 4. Jangan commit dataset, `ml/data`, `ml/runs`, `ml/.venv`, `*.pt`, atau `google-services.json`.
 5. `flutter analyze` dan `flutter test` wajib lulus sebelum PR.
 6. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 8 November.
