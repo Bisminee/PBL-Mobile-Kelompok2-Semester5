@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/garment.dart';
 import '../models/garment_labels.dart';
 import '../models/outfit.dart';
+import 'color_harmony.dart';
 
 /// Warna yang mudah dipadukan dengan hampir semua warna lain.
 const Set<String> neutralColors = {'black', 'white', 'gray', 'beige', 'brown'};
@@ -52,6 +53,7 @@ List<Outfit> buildOutfits({
       if (raw == null) continue;
       final pct = toPercentile(raw);
       final formality = lowerFormality(t.formality, b.formality);
+      final harmony = ColorHarmony.evaluate(t.colorValue, b.colorValue);
       hasil.add((
         raw: raw,
         outfit: Outfit(
@@ -63,7 +65,7 @@ List<Outfit> buildOutfits({
           score: pct,
           formality: formality,
           reasons: [
-            _colorReason(colorRelation(t.colorFamily, b.colorFamily)),
+            '${harmony.label}: ${harmony.detail}',
             _formalityReason(t, b),
             'Skor pasangan lebih tinggi dari ${(pct * 100).round()}% kombinasi '
                 'atasan-bawahan lain di data outfit stylist.',
@@ -75,13 +77,6 @@ List<Outfit> buildOutfits({
   hasil.sort((a, b) => b.raw.compareTo(a.raw));
   return hasil.take(limit).map((e) => e.outfit).toList();
 }
-
-String _colorReason(String relation) => switch (relation) {
-  'Monokrom' => 'Satu warna yang sama di kedua item, tampilan menyatu.',
-  'Netral' => 'Kedua warna netral, mudah dipadukan.',
-  'Netral + aksen' => 'Satu warna netral menyeimbangkan warna lainnya.',
-  _ => 'Dua warna berbeda yang saling kontras.',
-};
 
 String _formalityReason(Garment t, Garment b) {
   if (t.formality == b.formality) {
