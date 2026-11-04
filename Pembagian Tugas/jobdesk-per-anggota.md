@@ -1,96 +1,102 @@
 # Jobdesk per Anggota — Minggu 6
 
-Diperbarui: 2 November 2026
+Diperbarui: 4 November 2026
 Periode: **2 – 8 November 2026**
 
-Dokumen ini menggantikan pembagian minggu 5. Seluruh pekerjaan dikerjakan dari
-branch `dev` dan PR diarahkan ke `dev`. Branch `dev-ml` sudah dihapus dan
-isinya sudah digabung ke `dev`.
+Seluruh pekerjaan dikerjakan dari branch `dev` dan PR diarahkan ke `dev`.
+Branch `dev-ml` sudah dihapus dan seluruh isinya digabung ke `dev`.
 
 ## 1. Ringkasan beban
 
 | Anggota | Mobile | ML | QA dan dokumen | Total |
 |---|---:|---:|---:|---:|
-| Bisma Adhiaksa | 5,0 | 5,5 | 2,5 | **13,0** |
-| Abim Mustawa | 2,5 | 1,5 | 0 | **4,0** |
-| Izza Dhafira Fanani | 4,5 | 0 | 0 | **4,5** |
-| Ahmad Falahi | 0 | 1,0 | 0 | **1,0** |
-| Faatihurrizki Prasojo | 0 | 0 | 0 | **0** |
+| Bisma Adhiaksa | 3,0 | 2,0 | 2,5 | **7,5** |
+| Izza Dhafira Fanani | 4,5 | 2,0 | 0 | **6,5** |
+| Faatihurrizki Prasojo | 3,5 | 0 | 2,0 | **5,5** |
+| Ahmad Falahi | 1,5 | 2,0 | 2,0 | **5,5** |
+| Abim Mustawa | 3,0 | 1,5 | 0 | **4,5** |
 
-## 2. Ahmad Falahi — 1,0 ho
-
-| ID | Tugas | ho | Branch | Selesai bila |
-|---|---|---:|---|---|
-| - | Cari dataset aksesoris: tas, topi, ikat pinggang, perhiasan | 1,0 | `ml/accessory-dataset` | Rekomendasi sumber, lisensi, dan jumlah gambar tertulis di `ml/reports/accessory-dataset.md` |
-
-## 3. Faatihurrizki Prasojo
-
-Tidak ada tugas minggu ini.
-
-## 4. Bisma Adhiaksa — 12,0 ho
+## 2. Bisma Adhiaksa — 7,5 ho
 
 Rincian langkah ada di `panduan-kerja-bisma-minggu-6.md`.
 
-### 4.1 Mobile (4,5 ho)
+### 2.1 Mobile (3,0 ho)
 
 | ID | Tugas | ho | Branch | Selesai bila |
 |---|---|---:|---|---|
 | - | Uji login, logout, hapus akun di perangkat | 1,0 | `test/device-check` | Ketiga alur berhasil di HP |
-| E2.4 | Riwayat rekomendasi | 1,0 | `feat/recommendation-history` | Riwayat tersimpan dan tampil setelah restart |
-| E2.6 | Unit test DAO | 1,0 | `test/local-db` | Minimal 6 test lulus |
-| E7.5 | Fallback aturan | 1,0 | `feat/rule-fallback` | Rekomendasi muncul saat model gagal |
+| E7.5 | Fallback aturan saat model gagal | 1,0 | `feat/rule-fallback` | Rekomendasi tetap muncul |
 | - | Rapikan UI login dan signup | 0,5 | `fix/auth-ui` | Tidak ada kolom yang menyesatkan |
-| - | Profil sesuai akun Google | 0,5 | `feat/google-profile` | Nama, email, dan foto sesuai akun Google |
+| - | Profil sesuai akun Google | 0,5 | `feat/google-profile` | Nama, email, foto sesuai akun |
 
-### 4.2 ML (5,5 ho)
+### 2.2 ML (2,0 ho)
 
 | ID | Tugas | ho | Branch | Selesai bila |
 |---|---|---:|---|---|
-| E4.6 | Ekspor TFLite model sendiri | 1,0 | `ml/export-tflite` | `.tflite` ada dan bisa dimuat |
-| E6.5 | Metrik Model 3 | 1,0 | `ml/model3-metrics` | AUC dan precision@3 di JSON |
+| E4.6 | Ekspor TFLite model sendiri | 1,0 | `ml/export-tflite` | `.tflite` ada dan tervalidasi |
 | E5.3 | Palet 14 warna | 1,0 | `feat/color-palette` | 14 nama konsisten |
-| E5.4 | Unit test warna | 1,0 | `test/color-palette` | Test palet lulus |
-| - | Dokumentasi metode ML | 1,0 | `docs/ml-methods` | Dokumen metode dan keterbatasan |
-| - | Penanganan outfit tidak terdeteksi | 0,5 | `feat/no-outfit-fallback` | Pesan dan saran tampil, bukan layar kosong |
 
-### 4.3 QA dan dokumentasi (2,5 ho)
+### 2.3 QA (2,5 ho)
 
 | ID | Tugas | ho | Branch | Selesai bila |
 |---|---|---:|---|---|
 | E9.1 | Rencana uji dan 20 test case | 2,0 | `test/qa-plan` | 20 test case terdokumentasi |
 | E10.1 | Rekap logbook minggu 6 | 0,5 | `docs/logbook-minggu-6` | Logbook terisi |
 
-## 5. Abim Mustawa — 4,0 ho
+## 3. Izza Dhafira Fanani — 6,5 ho
 
-| ID | Tugas | ho | Branch | Selesai bila |
-|---|---|---:|---|---|
-| - | Label 9 kelas dan aset model | 0,5 | `chore/model-assets` | `labels.txt` sesuai 9 kelas |
-| E7.6 | Ukur latensi dan ukuran model | 1,0 | `feat/latency-check` | Latensi di bawah 3 detik per foto |
-| E8.7 | Lengkapi edit profil dan preferensi | 1,5 | `feat/profile-edit` | Nama dan preferensi bisa diubah |
-| - | Sinkronkan gambar ke folder khusus aplikasi | 1,0 | `feat/photo-sync` | Semua foto ada di folder aplikasi dan path valid |
+| ID | Kategori | Tugas | ho | Branch | Selesai bila |
+|---|---|---|---:|---|---|
+| E8.6 | Mobile | Halaman Admin master data | 2,0 | `feat/admin-master-data` | Master data bisa dikelola |
+| E8.1 | Mobile | CRUD UI Lemari | 1,5 | `feat/wardrobe-crud-ui` | Tambah manual dan hapus berjalan |
+| - | Mobile | Thumbnail di Lemari dan Home | 1,0 | `feat/wardrobe-thumbnails` | Thumbnail tampil, ada placeholder |
+| E5.4 | ML | Unit test warna | 1,0 | `test/color-palette` | Test palet lulus |
+| - | ML | Dokumentasi metode ML | 1,0 | `docs/ml-methods` | Dokumen metode dan keterbatasan |
 
-## 6. Izza Dhafira Fanani — 4,5 ho
+## 4. Faatihurrizki Prasojo — 5,5 ho
 
-| ID | Tugas | ho | Branch | Selesai bila |
-|---|---|---:|---|---|
-| E8.6 | Halaman Admin master data | 2,0 | `feat/admin-master-data` | Master data bisa ditambah, diubah, dihapus |
-| E8.1 | CRUD UI Lemari | 1,5 | `feat/wardrobe-crud-ui` | Tambah manual dan hapus berjalan |
-| - | Thumbnail di Lemari dan Home | 1,0 | `feat/wardrobe-thumbnails` | Thumbnail tampil, ada placeholder bila kosong |
+| ID | Kategori | Tugas | ho | Branch | Selesai bila |
+|---|---|---|---:|---|---|
+| E2.4 | Mobile | Riwayat rekomendasi | 1,0 | `feat/recommendation-history` | Tersimpan dan tampil setelah restart |
+| E2.6 | Mobile | Unit test DAO | 1,0 | `test/local-db` | Minimal 6 test lulus |
+| E8.3 | Mobile | Ranking dan explainability | 1,5 | `feat/ranking-explainability` | Skor dan alasan tampil |
+| E10.2 | Dokumen | Kumpulkan 150 foto lapangan | 2,0 | `docs/field-photos` | 150 foto terkumpul |
+
+## 5. Ahmad Falahi — 5,5 ho
+
+| ID | Kategori | Tugas | ho | Branch | Selesai bila |
+|---|---|---|---:|---|---|
+| E8.5 | Mobile | Tab Detail data nyata | 1,5 | `feat/detail-data` | Data tampil di tab Warna, Styling, Lemari |
+| E6.5 | ML | Metrik Model 3 | 1,0 | `ml/model3-metrics` | AUC dan precision@3 di JSON |
+| - | ML | Cari dataset aksesoris | 1,0 | `ml/accessory-dataset` | Rekomendasi sumber dan lisensi tertulis |
+| E9.2 | QA | Uji fungsional black-box | 2,0 | `test/functional` | Hasil dan daftar bug tercatat |
+
+## 6. Abim Mustawa — 4,5 ho
+
+| ID | Kategori | Tugas | ho | Branch | Selesai bila |
+|---|---|---|---:|---|---|
+| E8.7 | Mobile | Edit profil dan preferensi | 1,5 | `feat/profile-edit` | Nama dan preferensi bisa diubah |
+| - | Mobile | Sinkronkan gambar ke folder aplikasi | 1,0 | `feat/photo-sync` | Semua foto di folder aplikasi, path valid |
+| - | Mobile | Penanganan objek bukan outfit | 0,5 | `feat/non-clothing-object` | Pesan jelas dan tombol ambil ulang |
+| - | ML | Label 9 kelas | 0,5 | `chore/model-assets` | `labels.txt` sesuai 9 kelas |
+| E7.6 | ML | Ukur latensi dan ukuran model | 1,0 | `feat/latency-check` | Di bawah 3 detik per foto |
 
 ## 7. Dependensi
 
 | Tugas | Menunggu |
 |---|---|
-| E2.4 | Tabel outfit dan `local_db.dart` yang sudah ada |
+| E2.4 | Tabel outfit dan `local_db.dart` |
 | E2.6 | `sqflite_common_ffi` |
+| E8.3 | `outfit_engine` dan alasan harmoni |
+| E8.5 | Data lemari dan `OutfitEngine` |
 | E7.5 | `engineProvider`, `recommender.dart`, `color_harmony.dart` |
+| Profil Google | `authProvider` dan `FirebaseAuth.currentUser` |
+| Thumbnail | Sinkron gambar dari Abim |
+| E8.6, E8.1 | Skema master data dan CRUD di `fashion_app.db` |
 | E4.6 | `best.pt` dan lingkungan Colab atau Linux |
 | E6.5 | Skrip `08_train_model3_mlp.py` dan TensorFlow |
 | E5.3, E5.4 | `color_extractor.dart` |
-| E8.6, E8.1 | Skema master data dan CRUD di `fashion_app.db` |
-| Thumbnail Lemari dan Home | Sinkron gambar dari Abim |
-| Profil sesuai akun Google | `authProvider` dan data `FirebaseAuth.currentUser` |
-| Outfit tidak terdeteksi | E7.5 dan `engineProvider` |
+| E9.2 | Build stabil dari PR utama |
 | E9.1 | Tidak ada, bisa dimulai kapan saja |
 
 ## 8. Aturan

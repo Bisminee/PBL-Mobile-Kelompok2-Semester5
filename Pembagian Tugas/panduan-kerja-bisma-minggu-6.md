@@ -2,16 +2,15 @@
 
 Tim Sera-Z · Kelas TI-3D · Semester 5
 Periode: **2 – 8 November 2026**
-Total beban: **13,0 ho** (5,0 mobile, 5,5 ML, 2,5 QA)
+Total beban: **7,5 ho** (3,0 mobile, 2,0 ML, 2,5 QA)
 
 > **CATATAN**
 >
-> Beban minggu ini besar. Kerjakan berurutan, maksimal 2 tugas aktif,
-> dan jangan menunggu sempurna.
+> Kerjakan berurutan, maksimal 2 tugas aktif, dan jangan menunggu sempurna.
 
 ---
 
-## 1. Tugas mobile (5,0 ho)
+## 1. Tugas mobile (3,0 ho)
 
 ### 1.1 Uji perangkat: login, logout, hapus akun — 1,0 ho
 
@@ -28,33 +27,7 @@ Langkah:
 
 Selesai bila: ketiga alur berhasil dan catatan bukti tersimpan.
 
-### 1.2 E2.4 Riwayat rekomendasi — 1,0 ho
-
-Branch: `feat/recommendation-history`
-
-Langkah:
-
-1. Tambah tabel `recommendation_history` di `local_db.dart` bila belum ada.
-2. Catat riwayat setiap kali daftar rekomendasi dibuat: waktu, jumlah outfit, skor tertinggi.
-3. Tambah query untuk membaca 20 riwayat terakhir.
-4. Tampilkan di layar riwayat atau bagian bawah Profil.
-
-Selesai bila: riwayat bertambah setiap rekomendasi dan tetap ada setelah restart.
-
-### 1.3 E2.6 Unit test DAO — 1,0 ho
-
-Branch: `test/local-db`
-
-Langkah:
-
-1. Tambah `sqflite_common_ffi` di `dev_dependencies`.
-2. Buat `test/local_db_test.dart`, jalankan database di memori.
-3. Uji minimal 6 kasus: insert item, baca daftar, hapus item, simpan outfit, baca outfit, hapus outfit.
-4. Pastikan `flutter test` lulus.
-
-Selesai bila: minimal 6 test DAO lulus.
-
-### 1.4 E7.5 Fallback aturan — 1,0 ho
+### 1.2 E7.5 Fallback aturan — 1,0 ho
 
 Branch: `feat/rule-fallback`
 
@@ -67,7 +40,7 @@ Langkah:
 
 Selesai bila: rekomendasi tetap muncul saat model gagal dimuat.
 
-### 1.5 Rapikan UI autentikasi — 0,5 ho
+### 1.3 Rapikan UI autentikasi — 0,5 ho
 
 Branch: `fix/auth-ui`
 
@@ -80,7 +53,7 @@ Langkah:
 
 Selesai bila: tidak ada kolom yang terlihat bisa dipakai tetapi tidak berfungsi.
 
-### 1.6 Perbaiki profil sesuai akun Google — 0,5 ho
+### 1.4 Profil sesuai akun Google — 0,5 ho
 
 Branch: `feat/google-profile`
 
@@ -95,7 +68,7 @@ Selesai bila: data profil sama dengan akun Google yang sedang login.
 
 ---
 
-## 2. Tugas ML (5,5 ho)
+## 2. Tugas ML (2,0 ho)
 
 ### 2.1 E4.6 Ekspor TFLite model sendiri — 1,0 ho
 
@@ -104,70 +77,26 @@ Branch: `ml/export-tflite`
 Langkah:
 
 1. Buka Colab, unggah `best.pt` 3,1 MB.
-2. Jalankan ekspor TFLite int8 dengan dataset kalibrasi.
-3. Unduh hasil, simpan sebagai `assets/models/model1_yolo11n_v1.tflite`.
-4. Perbarui `ml/reports/model1-card.md` dengan ukuran dan nama berkas.
+2. Ekspor TFLite int8 dengan data kalibrasi.
+3. Verifikasi input `[1, 3, 224, 224]` dan output `[1, 9]`.
+4. Unduh hasil, simpan sebagai `assets/models/model1_yolo11n_v1.tflite`.
+5. Perbarui `ml/reports/model1-card.md`.
 
 Selesai bila: berkas `.tflite` ada dan bisa dimuat dengan `tflite_flutter`.
 
-### 2.2 E6.5 Metrik Model 3 — 1,0 ho
-
-Branch: `ml/model3-metrics`
-
-Langkah:
-
-1. Jalankan `ml/scripts/08_train_model3_mlp.py`.
-2. Tambahkan penyimpanan `ml/reports/model3_metrics.json` berisi AUC, akurasi, Random Forest, dan Logistic Regression.
-3. Tulis catatan bahwa data latih sintetis.
-
-Selesai bila: berkas JSON ada dan angkanya bisa dikutip laporan.
-
-### 2.3 E5.3 Palet 14 warna — 1,0 ho
+### 2.2 E5.3 Palet 14 warna — 1,0 ho
 
 Branch: `feat/color-palette`
 
 Langkah:
 
 1. Lengkapi pemetaan nama warna pada `color_extractor.dart` atau modul terkait.
-2. Pastikan 14 nama konsisten dengan daftar di model card dan `model3_metadata.json`.
+2. Pastikan 14 nama konsisten dengan model card dan `model3_metadata.json`.
 3. Uji pada beberapa gambar contoh.
 
 Selesai bila: setiap warna keluaran punya nama dari palet 14 warna.
 
-### 2.4 E5.4 Unit test warna — 1,0 ho
-
-Branch: `test/color-palette`
-
-Langkah:
-
-1. Tambah test untuk pemetaan palet.
-2. Uji warna yang jelas: hitam, putih, navy, merah, krem.
-3. Pastikan test lulus bersama test lain.
-
-### 2.5 Dokumentasi metode ML — 1,0 ho
-
-Branch: `docs/ml-methods`
-
-Langkah:
-
-1. Tulis `docs/ml-methods.md`: dataset, dua langkah pre-processing, split, arsitektur, parameter latih, metrik.
-2. Tulis keterbatasan: Model 3 berbasis data sintetis, akurasi carousell lebih rendah.
-3. Tautkan laporan evaluasi dan model card.
-
 ---
-
-### 2.6 Penanganan outfit tidak terdeteksi — 0,5 ho
-
-Branch: `feat/no-outfit-fallback`
-
-Langkah:
-
-1. Tangani dua kondisi: model tidak menemukan pakaian pada foto, dan tidak ada kombinasi outfit yang cocok.
-2. Tampilkan pesan yang jelas beserta tombol ambil ulang foto atau pilih item manual.
-3. Bila model gagal dimuat, gunakan fallback aturan dari E7.5.
-4. Uji dengan foto bukan pakaian dan dengan lemari yang belum punya bawahan.
-
-Selesai bila: tidak ada layar kosong tanpa penjelasan.
 
 ## 3. Tugas QA dan dokumentasi (2,5 ho)
 
@@ -198,55 +127,44 @@ Langkah:
 | Urutan | Tugas | Alasan |
 |---:|---|---|
 | 1 | Uji perangkat | Membuktikan E3 berjalan sebelum menambah fitur |
-| 2 | E2.4 riwayat | Melengkapi pekerjaan Ahmad |
-| 3 | E2.6 test DAO | Menjaga lapisan data |
-| 4 | E7.5 fallback | Aplikasi tetap berguna bila model gagal |
-| 5 | Penanganan outfit tidak terdeteksi | Melengkapi E7.5 |
-| 6 | Rapikan UI auth | Cepat dan mengurangi kebingungan pengguna |
-| 7 | Profil sesuai akun Google | Menyamakan data dengan akun yang login |
-| 8 | E4.6 ekspor | Membutuhkan Colab, jalankan lebih awal bila memungkinkan |
-| 9 | E6.5 metrik | Cepat, hanya menjalankan skrip |
-| 10 | E5.3 dan E5.4 palet | Berurutan |
-| 11 | Dokumentasi ML | Setelah angka tersedia |
-| 12 | E9.1 QA plan | Bisa paralel sejak awal |
-| 13 | Logbook | Akhir minggu |
+| 2 | E7.5 fallback | Aplikasi tetap berguna bila model gagal |
+| 3 | Rapikan UI auth | Cepat dan mengurangi kebingungan pengguna |
+| 4 | Profil sesuai akun Google | Menyamakan data dengan akun yang login |
+| 5 | E4.6 ekspor | Membutuhkan Colab, jalankan lebih awal bila memungkinkan |
+| 6 | E5.3 palet | Berurutan dengan test warna milik Izza |
+| 7 | E9.1 QA plan | Bisa paralel sejak awal |
+| 8 | Logbook | Akhir minggu |
 
 ## 5. Jadwal harian
 
 | Hari | Pagi | Sore |
 |---|---|---|
-| Sen 2 | E2.4 riwayat | Kerangka E9.1 |
-| Sel 3 | E2.6 test DAO | 20 test case |
-| Rab 4 | E7.5 fallback + E5.3 palet | Penanganan outfit tidak terdeteksi |
-| Kam 5 | Rapikan UI auth + E5.4 test warna | Profil sesuai akun Google |
-| Jum 6 | E4.6 ekspor di Colab | E6.5 metrik |
-| Sab 7 | Dokumentasi ML | Uji perangkat |
+| Sen 2 | Rapikan UI auth | Kerangka E9.1 |
+| Sel 3 | Profil sesuai akun Google | 20 test case |
+| Rab 4 | E7.5 fallback | E5.3 palet |
+| Kam 5 | E5.3 palet lanjutan | Perbaikan temuan |
+| Jum 6 | E4.6 ekspor di Colab | Verifikasi hasil ekspor |
+| Sab 7 | Uji perangkat | Perbaikan temuan |
 | Min 8 | Logbook dan rekap | Review PR |
 
 ## 6. Dependensi
 
 | Tugas | Butuh |
 |---|---|
-| E2.4 | `local_db.dart` dan tabel outfit yang sudah ada |
-| E2.6 | `sqflite_common_ffi` |
 | E7.5 | `engineProvider`, `recommender.dart`, `color_harmony.dart` |
+| Profil Google | `authProvider` dan `FirebaseAuth.currentUser` |
 | E5.3 | `color_extractor.dart` |
-| E6.5 | `ml/scripts/08_train_model3_mlp.py` dan TensorFlow |
-| E4.6 | `best.pt` di `ml/runs/model1_yolo11n/weights/` |
+| E4.6 | `best.pt` dan lingkungan Colab atau Linux |
+| E9.1 | Tidak ada, bisa dimulai kapan saja |
 
 ## 7. Target akhir minggu
 
 | Kategori | Target |
 |---|---|
 | Mobile | Login, logout, hapus akun terbukti di HP |
-| Mobile | Riwayat rekomendasi tersimpan |
-| Mobile | 6 test DAO lulus |
 | Mobile | Rekomendasi tetap muncul tanpa model |
 | Mobile | UI auth tidak menyesatkan |
 | Mobile | Profil sesuai akun Google |
-| ML | Outfit tidak terdeteksi ditangani |
-| ML | `.tflite` model sendiri ada |
-| ML | AUC dan precision@3 tercatat |
-| ML | Palet 14 warna + test lulus |
-| ML | Dokumentasi metode selesai |
+| ML | `.tflite` model sendiri ada dan tervalidasi |
+| ML | Palet 14 warna konsisten |
 | QA | 20 test case terdokumentasi |

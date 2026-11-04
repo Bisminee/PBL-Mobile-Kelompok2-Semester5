@@ -1,6 +1,6 @@
 # Sera-Z — Daftar Branch dan Statusnya
 
-Diperbarui: 2 November 2026
+Diperbarui: 4 November 2026
 
 Branch dibuat **per tugas**, bukan per orang. Satu tugas = satu branch = satu
 Pull Request. Branch tugas dibuat dari `dev` dan PR diarahkan ke `dev`.
@@ -20,30 +20,34 @@ Pull Request. Branch tugas dibuat dari `dev` dan PR diarahkan ke `dev`.
 
 ## 2. Branch tugas minggu 6
 
-| Tugas | Branch | PIC | Status |
+| Tugas | Branch | PIC | Kategori |
 |---|---|---|---|
-| E2.4 Riwayat rekomendasi | `feat/recommendation-history` | Bisma | Belum dibuat |
-| E2.6 Unit test DAO | `test/local-db` | Bisma | Belum dibuat |
-| E7.5 Fallback aturan | `feat/rule-fallback` | Bisma | Belum dibuat |
-| Rapikan UI autentikasi | `fix/auth-ui` | Bisma | Belum dibuat |
-| Uji perangkat | `test/device-check` | Bisma | Belum dibuat |
-| E4.6 Ekspor TFLite | `ml/export-tflite` | Bisma | Belum dibuat |
-| E6.5 Metrik Model 3 | `ml/model3-metrics` | Bisma | Belum dibuat |
-| E5.3 Palet 14 warna | `feat/color-palette` | Bisma | Belum dibuat |
-| E5.4 Unit test warna | `test/color-palette` | Bisma | Belum dibuat |
-| Dokumentasi metode ML | `docs/ml-methods` | Bisma | Belum dibuat |
-| E9.1 Rencana uji | `test/qa-plan` | Bisma | Belum dibuat |
-| Logbook minggu 6 | `docs/logbook-minggu-6` | Bisma | Belum dibuat |
-| E8.6 Halaman Admin | `feat/admin-master-data` | Izza | Belum dibuat |
-| E8.1 CRUD UI Lemari | `feat/wardrobe-crud-ui` | Izza | Belum dibuat |
-| E8.7 Edit profil | `feat/profile-edit` | Abim | Belum dibuat |
-| Label 9 kelas | `chore/model-assets` | Abim | Belum dibuat |
-| E7.6 Latensi | `feat/latency-check` | Abim | Belum dibuat |
-| Profil sesuai akun Google | `feat/google-profile` | Bisma | Belum dibuat |
-| Sinkron gambar | `feat/photo-sync` | Abim | Belum dibuat |
-| Thumbnail Lemari dan Home | `feat/wardrobe-thumbnails` | Izza | Belum dibuat |
-| Outfit tidak terdeteksi | `feat/no-outfit-fallback` | Bisma | Belum dibuat |
-| Dataset aksesoris | `ml/accessory-dataset` | Ahmad | Belum dibuat |
+| E8.6 Halaman Admin | `feat/admin-master-data` | Izza | Mobile |
+| E8.1 CRUD UI Lemari | `feat/wardrobe-crud-ui` | Izza | Mobile |
+| Thumbnail Lemari dan Home | `feat/wardrobe-thumbnails` | Izza | Mobile |
+| E5.4 Unit test warna | `test/color-palette` | Izza | ML |
+| Dokumentasi metode ML | `docs/ml-methods` | Izza | ML |
+| E2.4 Riwayat rekomendasi | `feat/recommendation-history` | Pras | Mobile |
+| E2.6 Unit test DAO | `test/local-db` | Pras | Mobile |
+| E8.3 Ranking dan explainability | `feat/ranking-explainability` | Pras | Mobile |
+| E10.2 Foto lapangan | `docs/field-photos` | Pras | Dokumen |
+| E8.5 Tab Detail data nyata | `feat/detail-data` | Ahmad | Mobile |
+| E6.5 Metrik Model 3 | `ml/model3-metrics` | Ahmad | ML |
+| Dataset aksesoris | `ml/accessory-dataset` | Ahmad | ML |
+| E9.2 Uji fungsional | `test/functional` | Ahmad | QA |
+| E8.7 Edit profil | `feat/profile-edit` | Abim | Mobile |
+| Sinkron gambar | `feat/photo-sync` | Abim | Mobile |
+| Penanganan objek bukan outfit | `feat/non-clothing-object` | Abim | Mobile |
+| Label 9 kelas | `chore/model-assets` | Abim | ML |
+| E7.6 Latensi | `feat/latency-check` | Abim | ML |
+| Uji perangkat | `test/device-check` | Bisma | Mobile |
+| E7.5 Fallback aturan | `feat/rule-fallback` | Bisma | Mobile |
+| Rapikan UI autentikasi | `fix/auth-ui` | Bisma | Mobile |
+| Profil sesuai akun Google | `feat/google-profile` | Bisma | Mobile |
+| E4.6 Ekspor TFLite | `ml/export-tflite` | Bisma | ML |
+| E5.3 Palet 14 warna | `feat/color-palette` | Bisma | ML |
+| E9.1 Rencana uji | `test/qa-plan` | Bisma | QA |
+| Logbook minggu 6 | `docs/logbook-minggu-6` | Bisma | Dokumen |
 
 ---
 
