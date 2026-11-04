@@ -12,7 +12,7 @@ Disusun: 2 November 2026
 
 Fokus minggu ini: menuntaskan sisa minggu 5 dan menyiapkan QA.
 
-Total **18,5 ho**, terdiri dari 9,5 ho mobile, 6,5 ho ML, dan 2,5 ho QA serta dokumentasi.
+Total **22,5 ho**, terdiri dari 12,0 ho mobile, 8,0 ho ML, dan 2,5 ho QA serta dokumentasi.
 
 ---
 
@@ -52,12 +52,14 @@ Tidak ada. Uji perangkat masuk ke pekerjaan mobile.
 
 | Anggota | Tugas mobile | ho | Branch | PR ke |
 |---|---|---:|---|---|
-| Bisma Adhiaksa | Uji perangkat, E2.4 riwayat, E2.6 test DAO, E7.5 fallback aturan, rapikan UI login/signup | 4,5 | `test/device-check`, `feat/recommendation-history`, `test/local-db`, `feat/rule-fallback`, `fix/auth-ui` | `dev` |
-| Izza Dhafira Fanani | E8.6 Halaman Admin, E8.1 CRUD UI Lemari | 3,5 | `feat/admin-master-data`, `feat/wardrobe-crud-ui` | `dev` |
-| Abim Mustawa | E8.7 Lengkapi edit profil dan preferensi | 1,5 | `feat/profile-edit` | `dev` |
-| Ahmad Falahi | Tidak ada tugas | 0 | - | - |
-| Faatihurrizki Prasojo | Tidak ada tugas | 0 | - | - |
-| **Total** | | **9,5** | | |
+| Bisma Adhiaksa | Uji perangkat, E2.4 riwayat, E2.6 test DAO, E7.5 fallback aturan, rapikan UI login/signup, profil sesuai akun Google | 5,0 | `test/device-check`, `feat/recommendation-history`, `test/local-db`, `feat/rule-fallback`, `fix/auth-ui`, `feat/google-profile` | `dev` |
+| Izza Dhafira Fanani | E8.6 Halaman Admin, E8.1 CRUD UI Lemari, thumbnail di Lemari dan Home | 4,5 | `feat/admin-master-data`, `feat/wardrobe-crud-ui`, `feat/wardrobe-thumbnails` | `dev` |
+| Abim Mustawa | E8.7 Lengkapi edit profil, sinkronkan gambar ke folder aplikasi | 2,5 | `feat/profile-edit`, `feat/photo-sync` | `dev` |
+| Ahmad Falahi | Tidak ada tugas mobile | 0 | - | - |
+| Faatihurrizki Prasojo | Tidak ada tugas mobile | 0 | - | - |
+| **Total** | | **12,0** | | |
+
+Catatan: halaman Admin sudah termasuk dalam tugas E8.6 milik Izza, tidak dihitung ulang.
 
 Rincian tugas mobile Bisma:
 
@@ -68,17 +70,18 @@ Rincian tugas mobile Bisma:
 | E2.6 Unit test DAO | 1,0 | Minimal 6 test untuk `local_db.dart` memakai `sqflite_common_ffi` |
 | E7.5 Fallback aturan | 1,0 | Bila engine model gagal dimuat, rekomendasi tetap muncul memakai aturan harmoni dan skor formalitas |
 | Rapikan UI login/signup | 0,5 | Sembunyikan atau nonaktifkan kolom email dan password sampai autentikasi email tersedia |
+| Profil sesuai akun Google | 0,5 | Ambil nama, email, dan foto dari akun Google, tampilkan di halaman Profil |
 
 ### 2.2 Pekerjaan Machine Learning
 
 | Anggota | Tugas ML | ho | Branch | PR ke |
 |---|---|---:|---|---|
-| Bisma Adhiaksa | E4.6 ekspor TFLite, E6.5 metrik Model 3, E5.3 palet warna, E5.4 test warna, dokumentasi metode | 5,0 | `ml/export-tflite`, `ml/model3-metrics`, `feat/color-palette`, `test/color-palette`, `docs/ml-methods` | `dev` |
+| Bisma Adhiaksa | E4.6 ekspor TFLite, E6.5 metrik Model 3, E5.3 palet warna, E5.4 test warna, dokumentasi metode, penanganan outfit tidak terdeteksi | 5,5 | `ml/export-tflite`, `ml/model3-metrics`, `feat/color-palette`, `test/color-palette`, `docs/ml-methods`, `feat/no-outfit-fallback` | `dev` |
 | Abim Mustawa | Label 9 kelas, E7.6 latensi | 1,5 | `chore/model-assets`, `feat/latency-check` | `dev` |
-| Ahmad Falahi | Tidak ada tugas | 0 | - | - |
+| Ahmad Falahi | Cari dataset aksesoris | 1,0 | `ml/accessory-dataset` | `dev` |
 | Faatihurrizki Prasojo | Tidak ada tugas | 0 | - | - |
-| Izza Dhafira Fanani | Tidak ada tugas | 0 | - | - |
-| **Total** | | **6,5** | | |
+| Izza Dhafira Fanani | Tidak ada tugas ML | 0 | - | - |
+| **Total** | | **8,0** | | |
 
 Catatan:
 
@@ -86,6 +89,7 @@ Catatan:
 - Model 3 masih dilatih pada data sintetis. Tulis sebagai keterbatasan, bukan hasil validasi nyata.
 - Ekspor TFLite dijalankan di Colab atau Linux dengan masukan `best.pt` 3,1 MB.
 - Kalau ekspor berhasil, simpan sebagai `assets/models/model1_yolo11n_v1.tflite` dan perbarui model card.
+- Dataset aksesoris: hasil riset ditulis di `ml/reports/accessory-dataset.md` berisi sumber, lisensi, jumlah gambar, dan rekomendasi. Belum masuk pelatihan minggu ini.
 
 ### 2.3 Pekerjaan QA dan dokumentasi
 
@@ -100,26 +104,26 @@ Catatan:
 
 | Anggota | Mobile | ML | QA dan dokumen | Total |
 |---|---:|---:|---:|---:|
-| Bisma Adhiaksa | 4,5 | 5,0 | 2,5 | 12,0 |
-| Ahmad Falahi | 0 | 0 | 0 | 0 |
+| Bisma Adhiaksa | 5,0 | 5,5 | 2,5 | 13,0 |
+| Ahmad Falahi | 0 | 1,0 | 0 | 1,0 |
 | Faatihurrizki Prasojo | 0 | 0 | 0 | 0 |
-| Abim Mustawa | 1,5 | 1,5 | 0 | 3,0 |
-| Izza Dhafira Fanani | 3,5 | 0 | 0 | 3,5 |
-| **Total** | **9,5** | **6,5** | **2,5** | **18,5** |
+| Abim Mustawa | 2,5 | 1,5 | 0 | 4,0 |
+| Izza Dhafira Fanani | 4,5 | 0 | 0 | 4,5 |
+| **Total** | **12,0** | **8,0** | **2,5** | **22,5** |
 
 ---
 
 ## 4. Jadwal harian
 
-| Hari | Bisma | Abim | Izza |
-|---|---|---|---|
-| Sen 2 | E2.4 riwayat + kerangka E9.1 | Label 9 kelas | E8.6 Admin |
-| Sel 3 | E2.6 test DAO + 20 test case | E7.6 latensi | E8.6 Admin |
-| Rab 4 | E7.5 fallback + E5.3 palet | E8.7 edit profil | E8.1 tambah item |
-| Kam 5 | Rapikan UI auth + E5.4 test warna | E8.7 edit profil | E8.1 hapus item |
-| Jum 6 | E4.6 ekspor di Colab + E6.5 metrik | Review PR | Review PR |
-| Sab 7 | Dokumentasi ML + uji perangkat | Uji muat model | Uji CRUD |
-| Min 8 | Rekap dan logbook | Rekap | Rekap |
+| Hari | Bisma | Abim | Izza | Ahmad |
+|---|---|---|---|---|
+| Sen 2 | E2.4 riwayat + kerangka E9.1 | Label 9 kelas | E8.6 Admin | Cari dataset aksesoris |
+| Sel 3 | E2.6 test DAO + 20 test case | E7.6 latensi | E8.6 Admin | Cari dataset aksesoris |
+| Rab 4 | E7.5 fallback + E5.3 palet | Sinkronkan gambar ke folder aplikasi | Thumbnail Lemari dan Home | Tulis rekomendasi dataset |
+| Kam 5 | Rapikan UI auth + E5.4 test warna | E8.7 edit profil | Thumbnail Lemari dan Home | Review hasil |
+| Jum 6 | E4.6 ekspor di Colab + E6.5 metrik | Review PR | Review PR | Review PR |
+| Sab 7 | Dokumentasi ML + uji perangkat + profil Google | Uji muat model | Uji CRUD dan thumbnail | Rekap |
+| Min 8 | Rekap dan logbook | Rekap | Rekap | Rekap |
 
 ---
 
@@ -140,6 +144,11 @@ Catatan:
 | ML | Palet warna | 14 nama warna konsisten, test lulus | Bisma |
 | ML | Label model | 9 kelas sesuai urutan training | Abim |
 | ML | Latensi | Tercatat, target di bawah 3 detik per foto | Abim |
+| Mobile | Profil sesuai akun Google | Nama, email, dan foto tampil di Profil | Bisma |
+| Mobile | Sinkron gambar | Semua foto berada di folder aplikasi dan path valid | Abim |
+| Mobile | Thumbnail | Lemari dan Home menampilkan thumbnail, ada placeholder bila kosong | Izza |
+| ML | Outfit tidak terdeteksi | Muncul pesan dan saran alternatif, bukan layar kosong | Bisma |
+| ML | Dataset aksesoris | Rekomendasi sumber dan lisensi tertulis | Ahmad |
 | QA | QA plan | 20 test case terdokumentasi | Bisma |
 
 ---
@@ -153,7 +162,8 @@ Catatan:
 | Model 3 memakai data sintetis | Tulis keterbatasan di dokumen | Bisma | 5 Nov |
 | Master data belum punya tabel | Cek `fashion_app.db`, tambah migrasi bila perlu | Izza | 3 Nov |
 | Uji perangkat butuh HP dan SHA-1 | Pastikan SHA-1 sudah terdaftar | Bisma | 4 Nov |
-| Beban Bisma 12,0 ho | Kerjakan berurutan, maksimal 2 tugas aktif | Bisma | 8 Nov |
+| Thumbnail butuh foto yang sudah tersinkron | Kerjakan sinkron gambar lebih dulu | Abim lalu Izza | 4 Nov |
+| Beban Bisma 13,0 ho | Kerjakan berurutan, maksimal 2 tugas aktif | Bisma | 8 Nov |
 
 ---
 

@@ -2,7 +2,7 @@
 
 Tim Sera-Z · Kelas TI-3D · Semester 5
 Periode: **2 – 8 November 2026**
-Total beban: **12,0 ho** (4,5 mobile, 5,0 ML, 2,5 QA)
+Total beban: **13,0 ho** (5,0 mobile, 5,5 ML, 2,5 QA)
 
 > **CATATAN**
 >
@@ -11,7 +11,7 @@ Total beban: **12,0 ho** (4,5 mobile, 5,0 ML, 2,5 QA)
 
 ---
 
-## 1. Tugas mobile (4,5 ho)
+## 1. Tugas mobile (5,0 ho)
 
 ### 1.1 Uji perangkat: login, logout, hapus akun — 1,0 ho
 
@@ -80,9 +80,22 @@ Langkah:
 
 Selesai bila: tidak ada kolom yang terlihat bisa dipakai tetapi tidak berfungsi.
 
+### 1.6 Perbaiki profil sesuai akun Google — 0,5 ho
+
+Branch: `feat/google-profile`
+
+Langkah:
+
+1. Di halaman Profil, ambil nama, email, dan foto dari `FirebaseAuth.currentUser`.
+2. Tampilkan foto profil Google bila ada; jika tidak, pakai inisial.
+3. Sinkronkan dengan dokumen `profiles/{uid}` di Firestore.
+4. Uji dengan dua akun berbeda.
+
+Selesai bila: data profil sama dengan akun Google yang sedang login.
+
 ---
 
-## 2. Tugas ML (5,0 ho)
+## 2. Tugas ML (5,5 ho)
 
 ### 2.1 E4.6 Ekspor TFLite model sendiri — 1,0 ho
 
@@ -143,6 +156,19 @@ Langkah:
 
 ---
 
+### 2.6 Penanganan outfit tidak terdeteksi — 0,5 ho
+
+Branch: `feat/no-outfit-fallback`
+
+Langkah:
+
+1. Tangani dua kondisi: model tidak menemukan pakaian pada foto, dan tidak ada kombinasi outfit yang cocok.
+2. Tampilkan pesan yang jelas beserta tombol ambil ulang foto atau pilih item manual.
+3. Bila model gagal dimuat, gunakan fallback aturan dari E7.5.
+4. Uji dengan foto bukan pakaian dan dengan lemari yang belum punya bawahan.
+
+Selesai bila: tidak ada layar kosong tanpa penjelasan.
+
 ## 3. Tugas QA dan dokumentasi (2,5 ho)
 
 ### 3.1 E9.1 Rencana uji dan 20 test case — 2,0 ho
@@ -175,13 +201,15 @@ Langkah:
 | 2 | E2.4 riwayat | Melengkapi pekerjaan Ahmad |
 | 3 | E2.6 test DAO | Menjaga lapisan data |
 | 4 | E7.5 fallback | Aplikasi tetap berguna bila model gagal |
-| 5 | Rapikan UI auth | Cepat dan mengurangi kebingungan pengguna |
-| 6 | E4.6 ekspor | Membutuhkan Colab, jalankan lebih awal bila memungkinkan |
-| 7 | E6.5 metrik | Cepat, hanya menjalankan skrip |
-| 8 | E5.3 dan E5.4 palet | Berurutan |
-| 9 | Dokumentasi ML | Setelah angka tersedia |
-| 10 | E9.1 QA plan | Bisa paralel sejak awal |
-| 11 | Logbook | Akhir minggu |
+| 5 | Penanganan outfit tidak terdeteksi | Melengkapi E7.5 |
+| 6 | Rapikan UI auth | Cepat dan mengurangi kebingungan pengguna |
+| 7 | Profil sesuai akun Google | Menyamakan data dengan akun yang login |
+| 8 | E4.6 ekspor | Membutuhkan Colab, jalankan lebih awal bila memungkinkan |
+| 9 | E6.5 metrik | Cepat, hanya menjalankan skrip |
+| 10 | E5.3 dan E5.4 palet | Berurutan |
+| 11 | Dokumentasi ML | Setelah angka tersedia |
+| 12 | E9.1 QA plan | Bisa paralel sejak awal |
+| 13 | Logbook | Akhir minggu |
 
 ## 5. Jadwal harian
 
@@ -189,8 +217,8 @@ Langkah:
 |---|---|---|
 | Sen 2 | E2.4 riwayat | Kerangka E9.1 |
 | Sel 3 | E2.6 test DAO | 20 test case |
-| Rab 4 | E7.5 fallback | E5.3 palet |
-| Kam 5 | Rapikan UI auth | E5.4 test warna |
+| Rab 4 | E7.5 fallback + E5.3 palet | Penanganan outfit tidak terdeteksi |
+| Kam 5 | Rapikan UI auth + E5.4 test warna | Profil sesuai akun Google |
 | Jum 6 | E4.6 ekspor di Colab | E6.5 metrik |
 | Sab 7 | Dokumentasi ML | Uji perangkat |
 | Min 8 | Logbook dan rekap | Review PR |
@@ -215,6 +243,8 @@ Langkah:
 | Mobile | 6 test DAO lulus |
 | Mobile | Rekomendasi tetap muncul tanpa model |
 | Mobile | UI auth tidak menyesatkan |
+| Mobile | Profil sesuai akun Google |
+| ML | Outfit tidak terdeteksi ditangani |
 | ML | `.tflite` model sendiri ada |
 | ML | AUC dan precision@3 tercatat |
 | ML | Palet 14 warna + test lulus |

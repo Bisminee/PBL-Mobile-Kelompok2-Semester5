@@ -39,6 +39,11 @@ Pull Request. Branch tugas dibuat dari `dev` dan PR diarahkan ke `dev`.
 | E8.7 Edit profil | `feat/profile-edit` | Abim | Belum dibuat |
 | Label 9 kelas | `chore/model-assets` | Abim | Belum dibuat |
 | E7.6 Latensi | `feat/latency-check` | Abim | Belum dibuat |
+| Profil sesuai akun Google | `feat/google-profile` | Bisma | Belum dibuat |
+| Sinkron gambar | `feat/photo-sync` | Abim | Belum dibuat |
+| Thumbnail Lemari dan Home | `feat/wardrobe-thumbnails` | Izza | Belum dibuat |
+| Outfit tidak terdeteksi | `feat/no-outfit-fallback` | Bisma | Belum dibuat |
+| Dataset aksesoris | `ml/accessory-dataset` | Ahmad | Belum dibuat |
 
 ---
 
