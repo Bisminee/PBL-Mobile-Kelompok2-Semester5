@@ -1,4 +1,4 @@
-# Pembagian Tugas Minggu 6 — Sera-Z
+# Pembagian Tugas Minggu 11 — Sera-Z
 
 Tim Sera-Z · Kelas TI-3D · Semester 5
 Periode: **2 – 8 November 2026**
@@ -21,7 +21,7 @@ Total **29,5 ho**, terdiri dari 15,5 ho mobile, 7,5 ho ML, dan 6,5 ho QA serta d
 
 ### 1.1 Sisa pekerjaan mobile
 
-| Tugas | PIC | Target minggu 6 |
+| Tugas | PIC | Target minggu 11 |
 |---|---|---|
 | E2.4 Riwayat rekomendasi (`recommendation_history`) | Pras | Selesai |
 | E2.6 Unit test DAO | Pras | Selesai |
@@ -31,7 +31,7 @@ Total **29,5 ho**, terdiri dari 15,5 ho mobile, 7,5 ho ML, dan 6,5 ho QA serta d
 
 ### 1.2 Sisa pekerjaan ML
 
-| Tugas | PIC | Target minggu 6 |
+| Tugas | PIC | Target minggu 11 |
 |---|---|---|
 | E4.6 Ekspor TFLite model sendiri | Bisma | Selesai lewat Colab atau Linux |
 | E6.5 Metrik Model 3 (AUC, precision@3) | Ahmad | Selesai |
@@ -43,7 +43,7 @@ Total **29,5 ho**, terdiri dari 15,5 ho mobile, 7,5 ho ML, dan 6,5 ho QA serta d
 
 ---
 
-## 2. Pembagian pekerjaan minggu 6
+## 2. Pembagian pekerjaan minggu 11
 
 ### 2.1 Pekerjaan mobile
 

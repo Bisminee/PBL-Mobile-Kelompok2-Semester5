@@ -141,7 +141,7 @@ hasil latihan tidak disimpan di repositori.
 |---|---|
 | `Pembagian Tugas/panduan-git-dan-branch.md` | Tutorial Git dan alur branch untuk anggota baru |
 | `Pembagian Tugas/pembagian-tugas.md` | Daftar jobdesk dan ketergantungan |
-| `Pembagian Tugas/pembagian-tugas-minggu-6.md` | Pembagian tugas minggu berjalan |
+| `Pembagian Tugas/pembagian-tugas-minggu-11.md` | Pembagian tugas minggu berjalan |
 | `Pembagian Tugas/timeline.md` | Jadwal 10 minggu dan milestone |
 | `Pembagian Tugas/Logbook/logbook.md` | Logbook mingguan |
 | `ml/README.md` | Cara menjalankan pipeline ML |

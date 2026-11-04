@@ -64,7 +64,7 @@ Fokus minggu 6 (2-8 November 2026):
 5. Halaman Admin dan CRUD lemari lengkap (Izza).
 6. Edit profil, label 9 kelas, dan latensi (Abim).
 
-Rincian ada di `Pembagian Tugas/pembagian-tugas-minggu-6.md` dan
+Rincian ada di `Pembagian Tugas/pembagian-tugas-minggu-11.md` dan
 `Pembagian Tugas/panduan-kerja-bisma-minggu-6.md`.
 
 ## 6. Catatan branch
