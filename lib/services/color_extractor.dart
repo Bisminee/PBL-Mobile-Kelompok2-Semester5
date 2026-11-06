@@ -5,6 +5,8 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 
+import 'color_palette.dart';
+
 class ColorResult {
   final String
   family; // salah satu kosakata dataset: black, white, gray, beige, brown, blue, ...
@@ -12,6 +14,9 @@ class ColorResult {
   final Map<String, double>
   share; // komposisi 0..1 (untuk color_composition_bar.dart)
   ColorResult(this.family, this.hex, this.share);
+
+  /// Nama warna tampilan dari palet 14 warna.
+  String get paletteName => paletteNameForFamily(family);
 }
 
 String rgbToFamily(int r, int g, int b) {
