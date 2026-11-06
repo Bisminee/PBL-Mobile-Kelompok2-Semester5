@@ -146,24 +146,28 @@ akun dan sudah tergabung di `dev`; enam PR digabung dan integrasi `dev` lulus
 
 ## Minggu 6 — 2 s.d. 8 Nov 2026
 
-**Status:** Rencana (diperbarui saat minggu berjalan)
 **Status:** Berjalan
-**Fokus:** Integrasi model ke aplikasi, penyelesaian fitur, dan persiapan QA.
+**Fokus:** Integrasi, penyelesaian fitur, dan persiapan QA.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 2 Nov | Integrasi dan pembersihan | Menggabungkan `dev-ml` ke `dev` (laporan evaluasi Model 1 dan dataset summary); menghapus branch `dev-ml`; memindahkan aturan harmoni ke alasan rekomendasi dan menghapus widget tak terpakai (PR #14); membersihkan 16 branch merged, 23 README lokal, dokumen minggu 4, dan folder `runs` | Ekspor TFLite model sendiri masih gagal di Windows | Kerjakan sisa tugas minggu 6 | commit `88a9e22`, `bbbf8c3`, `ac1b8e1`, PR #14 |
-| 2 Nov | Perencanaan | Memisahkan tabel mobile dan ML pada pembagian tugas minggu 6; menetapkan beban Bisma 12,0 ho, Abim 3,0 ho, Izza 3,5 ho; membuat panduan kerja khusus Bisma; menyelaraskan status di `pembagian-tugas.md`, `feature-breakdown-id.md`, `branches.md`, `timeline.md`, dan `jobdesk-per-anggota.md` | Beban Bisma tinggi | Kerjakan berurutan, maksimal 2 tugas aktif | commit `6d95688`, `67681c0` |
-| 3–8 Nov | Target W6 | Riwayat rekomendasi (E2.4), unit test DAO (E2.6), fallback aturan (E7.5), rapikan UI auth, ekspor TFLite (E4.6), metrik Model 3 (E6.5), palet warna (E5.3–E5.4), dokumentasi ML, QA plan (E9.1), uji perangkat; Admin dan CRUD lemari (Izza); edit profil, label, latensi (Abim) | — | Perbaikan temuan dan uji regresi | — |
+| 2 Nov | Integrasi dan pembersihan | Menggabungkan `dev-ml` ke `dev` (laporan evaluasi Model 1 dan dataset summary); menghapus branch `dev-ml`; memindahkan aturan harmoni ke alasan rekomendasi dan menghapus widget tak terpakai (PR #14); membersihkan 16 branch merged, 23 README lokal, dokumen minggu 4, dan folder `runs` | Ekspor TFLite model sendiri masih gagal di Windows | Kerjakan sisa tugas minggu | commit `88a9e22`, `bbbf8c3`, `ac1b8e1`, PR #14 |
+| 2 Nov | Perencanaan | Memisahkan tabel mobile dan ML pada pembagian tugas; membuat panduan kerja khusus Bisma; menyelaraskan status di `pembagian-tugas.md`, `feature-breakdown-id.md`, `branches.md`, `timeline.md`, dan `jobdesk-per-anggota.md` | Beban Bisma tinggi | Bagi ulang tugas | commit `6d95688`, `67681c0` |
+| 3 Nov | Audit notebook ML | Meninjau `Evaluasi_YOLO11n_cls.ipynb`: ekspor TFLite berhasil 6,0 MB tetapi belum int8; evaluasi memakai pipeline lama 15 kelas dengan top1 87,66 persen; aset `yolo11n_cls.tflite` di aplikasi beroutput 15 kelas float32 | Model di aplikasi bukan model 9 kelas hasil latihan | Putuskan model yang dipakai | Berkas notebook lokal |
+| 4 Nov | Dokumentasi dan pembagian ulang | Memindahkan tutorial Git ke `panduan-git-dan-branch.md` dan menjadikan README sebagai deskripsi proyek; membagi ulang tugas ke Pras, Ahmad, dan Izza; memindahkan penanganan objek bukan outfit ke Abim; mengganti nama dokumen menjadi minggu 11 | — | Kerjakan tugas baru | commit `6b7a80f`, `87cd5a4`, `bc73581`, `e04be43` |
+| 5–6 Nov | Implementasi mobile dan QA | E7.5 fallback rekomendasi aturan (PR #15), rapikan UI autentikasi (PR #16), profil sesuai akun Google (PR #17), palet 14 warna + 5 unit test (PR #18); menyusun `qa-plan.md` berisi 34 test case | Ekspor TFLite dan uji perangkat belum | Ekspor model, uji perangkat | PR #15–#18, commit `0412d01` |
+| 7–8 Nov | Target penutup | Uji fungsional black-box, uji perangkat, ekspor TFLite, perbaikan temuan | — | Uji regresi dan rekap | — |
 
-**Ringkasan capaian:** `dev-ml` selesai digabung ke `dev` sehingga seluruh
-pekerjaan ML dan mobile berada di satu jalur; kode mati dibersihkan; repository
-dirapikan; status dokumen diselaraskan dengan kondisi 2 November 2026.
+**Ringkasan capaian:** empat PR digabung ke `dev` pada minggu ini: fallback
+rekomendasi, perbaikan UI autentikasi, profil sesuai akun Google, dan palet 14
+warna. Total test naik dari 39 menjadi 46 dan `flutter analyze` bersih.
+Rencana QA dengan 34 test case juga sudah disusun.
 
 **Kendala terbuka:**
-1. Ekspor TFLite model sendiri gagal di Windows.
+1. Ekspor TFLite model sendiri gagal di Windows, perlu Colab atau Linux.
 2. Model 3 masih memakai data sintetis.
-3. Uji perangkat dan rencana QA formal belum.
+3. Uji login dan hapus akun di perangkat belum.
+4. Aset model di aplikasi masih 15 kelas float32, sedangkan model latihan 9 kelas.
 
 ---
 
