@@ -50,6 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     user.email?.split('@').first ??
                     'Pengguna',
                 email: user.email ?? '',
+                photoUrl: user.photoURL,
               ),
             );
       }

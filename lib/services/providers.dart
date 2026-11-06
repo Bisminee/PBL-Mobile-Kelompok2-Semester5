@@ -14,10 +14,13 @@ import 'recommender.dart';
 
 /// Signed-in user (null = logged out). Local placeholder for the cloud profile.
 class AppUser {
-  const AppUser({required this.name, required this.email});
+  const AppUser({required this.name, required this.email, this.photoUrl});
 
   final String name;
   final String email;
+
+  /// URL foto profil dari akun Google. Null bila pengguna tidak punya foto.
+  final String? photoUrl;
 
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+'));
@@ -55,6 +58,7 @@ class AuthNotifier extends Notifier<AppUser?> {
       name: user.displayName ??
           (email.contains('@') ? email.split('@').first : 'Pengguna'),
       email: email,
+      photoUrl: user.photoURL,
     );
   }
 }

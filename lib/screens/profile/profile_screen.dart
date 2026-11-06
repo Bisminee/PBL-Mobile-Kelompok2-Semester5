@@ -85,6 +85,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  Widget _avatar(AppUser? user) {
+    final photoUrl = user?.photoUrl;
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          photoUrl,
+          width: 90,
+          height: 90,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Text(
+            user?.initials ?? '?',
+            style: AppTextStyles.h1,
+          ),
+        ),
+      );
+    }
+    return Text(user?.initials ?? '?', style: AppTextStyles.h1);
+  }
+
   void _showMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
@@ -93,6 +112,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(authProvider);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -124,7 +144,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         border: Border.all(color: AppColors.border),
                       ),
                       alignment: Alignment.center,
-                      child: Text('F', style: AppTextStyles.h1),
+                      child: _avatar(user),
                     ),
                     Container(
                       width: 26,
@@ -142,9 +162,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Text('Falaaa', style: AppTextStyles.h2),
+                Text(user?.name ?? 'Pengguna', style: AppTextStyles.h2),
                 const SizedBox(height: 4),
-                Text('Fala@email.com', style: AppTextStyles.bodySecondary),
+                Text(user?.email ?? 'Belum login',
+                    style: AppTextStyles.bodySecondary),
                 const SizedBox(height: 28),
                 const ProfileSectionLabel('ACCOUNT'),
                 ProfileMenuGroup(
