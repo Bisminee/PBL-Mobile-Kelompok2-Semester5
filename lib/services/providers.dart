@@ -284,8 +284,10 @@ final wardrobeProvider = NotifierProvider<WardrobeNotifier, List<Garment>>(
 /// Kosong bila engine belum termuat atau lemari belum punya satu atasan dan satu bawahan.
 final recommendationsProvider = Provider<List<Outfit>>((ref) {
   final wardrobe = ref.watch(wardrobeProvider);
+  if (wardrobe.isEmpty) return const <Outfit>[];
   final engine = ref.watch(engineProvider);
-  if (engine == null || wardrobe.isEmpty) return const <Outfit>[];
+  // E7.5: bila model belum termuat, tetap beri rekomendasi dari aturan harmoni.
+  if (engine == null) return buildRuleOutfits(wardrobe: wardrobe);
   return buildOutfits(
     wardrobe: wardrobe,
     pairScore: engine.pairScore,
