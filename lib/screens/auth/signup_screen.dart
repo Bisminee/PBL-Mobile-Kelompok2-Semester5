@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/app_text_styles.dart';
 import '../../widgets/common/app_button.dart';
-import '../../widgets/common/app_text_field.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/responsive.dart';
 
@@ -36,39 +35,16 @@ class SignUpScreen extends ConsumerWidget {
                   'Simpan lemarimu dan dapatkan\nrekomendasi yang personal.',
                   style: AppTextStyles.bodySecondary,
                 ),
-                const SizedBox(height: 24),
-                const AppTextField(label: 'Nama', hint: 'Nama lengkap'),
-                const SizedBox(height: 18),
-                const AppTextField(
-                  label: 'Email',
-                  hint: 'fala@email.com',
-                  keyboardType: TextInputType.emailAddress,
+                const SizedBox(height: 12),
+                Text(
+                  'Pendaftaran email belum tersedia. Akun dibuat otomatis saat '
+                  'kamu masuk dengan Google di halaman Login.',
+                  style: AppTextStyles.bodySecondary,
                 ),
-                const SizedBox(height: 18),
-                const AppTextField(
-                  label: 'Password',
-                  hint: 'Buat password',
-                  isPassword: true,
-                  helper: 'Minimal 8 karakter, kombinasi huruf dan angka.',
-                ),
-                const SizedBox(height: 18),
-                const AppTextField(
-                  label: 'Konfirmasi Password',
-                  hint: 'Ulangi password',
-                  isPassword: true,
-                ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 32),
                 AppButton(
-                  label: 'Daftar',
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Pendaftaran email belum aktif. Gunakan login Google.',
-                        ),
-                      ),
-                    );
-                  },
+                  label: 'Kembali ke Login',
+                  onPressed: () => context.pop(),
                 ),
                 const SizedBox(height: 28),
                 Center(

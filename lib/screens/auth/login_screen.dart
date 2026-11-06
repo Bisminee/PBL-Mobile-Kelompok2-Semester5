@@ -11,7 +11,6 @@ import '../../services/auth_service.dart';
 import '../../services/providers.dart';
 import '../../services/user_repository.dart';
 import '../../widgets/common/app_button.dart';
-import '../../widgets/common/app_text_field.dart';
 import '../../widgets/common/responsive.dart';
 
 /// Halaman masuk dengan Google.
@@ -114,26 +113,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: AppTextStyles.bodySecondary,
                 ),
                 const SizedBox(height: 36),
-                const AppTextField(
-                  label: 'Email',
-                  hint: 'fala@email.com',
-                  keyboardType: TextInputType.emailAddress,
+                Text(
+                  'Masuk memakai akun Google. Login email dan password belum tersedia.',
+                  style: AppTextStyles.bodySecondary,
                 ),
                 const SizedBox(height: 20),
-                const AppTextField(
-                  label: 'Password',
-                  hint: 'Masukkan password',
-                  isPassword: true,
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'Lupa password?',
-                    style: AppTextStyles.labelBold.copyWith(fontSize: 13),
-                  ),
-                ),
-                const SizedBox(height: 28),
                 AppButton(
                   label: _loading ? 'Memproses...' : 'Masuk dengan Google',
                   onPressed: _loading ? null : _signInWithGoogle,
