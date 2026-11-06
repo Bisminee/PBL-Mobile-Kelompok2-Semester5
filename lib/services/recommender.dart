@@ -78,6 +78,47 @@ List<Outfit> buildOutfits({
   return hasil.take(limit).map((e) => e.outfit).toList();
 }
 
+/// Rekomendasi cadangan saat model tidak tersedia.
+///
+/// Skor diambil dari aturan harmoni warna dan formalitas, bukan dari model.
+/// Dipakai E7.5 agar layar rekomendasi tidak kosong ketika TFLite gagal dimuat.
+List<Outfit> buildRuleOutfits({
+  required List<Garment> wardrobe,
+  int limit = 10,
+}) {
+  bool siap(Garment g, String slot) => g.slot == slot && g.colorFamily != null;
+
+  final tops = wardrobe.where((g) => siap(g, 'top')).toList();
+  final bottoms = wardrobe.where((g) => siap(g, 'bottom')).toList();
+
+  final hasil = <({double score, Outfit outfit})>[];
+  for (final t in tops) {
+    for (final b in bottoms) {
+      final harmony = ColorHarmony.evaluate(t.colorValue, b.colorValue);
+      final formality = lowerFormality(t.formality, b.formality);
+      hasil.add((
+        score: harmony.score,
+        outfit: Outfit(
+          id: '${t.id}-${b.id}',
+          title: '${t.colorName} + ${b.colorName}',
+          subtitle: formalityLabel(formality),
+          top: t,
+          bottom: b,
+          score: harmony.score,
+          formality: formality,
+          reasons: [
+            '${harmony.label}: ${harmony.detail}',
+            _formalityReason(t, b),
+            'Skor dari aturan harmoni karena model belum termuat.',
+          ],
+        ),
+      ));
+    }
+  }
+  hasil.sort((a, b) => b.score.compareTo(a.score));
+  return hasil.take(limit).map((e) => e.outfit).toList();
+}
+
 String _formalityReason(Garment t, Garment b) {
   if (t.formality == b.formality) {
     return 'Tingkat formalitas sama: ${formalityLabel(t.formality)}.';

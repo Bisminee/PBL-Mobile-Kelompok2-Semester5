@@ -87,4 +87,26 @@ void main() {
       expect(out, isEmpty);
     });
   });
+
+  group('buildRuleOutfits (fallback E7.5)', () {
+    final wardrobe = [
+      _g(1, 't_shirt', 'top', 'black', 'non_formal'),
+      _g(2, 'pants', 'bottom', 'white', 'semi_formal'),
+      _g(3, 'shoes', 'shoes', 'white', 'non_formal'),
+    ];
+
+    test('menghasilkan outfit tanpa bantuan model', () {
+      final out = buildRuleOutfits(wardrobe: wardrobe);
+      expect(out, isNotEmpty);
+      expect(out.first.id, '1-2');
+      expect(out.first.score, inInclusiveRange(0, 1));
+      expect(out.first.reasons.length, 3);
+      expect(out.first.reasons.last, contains('aturan harmoni'));
+    });
+
+    test('lemari tanpa atasan atau bawahan menghasilkan daftar kosong', () {
+      expect(buildRuleOutfits(wardrobe: [wardrobe[0]]), isEmpty);
+      expect(buildRuleOutfits(wardrobe: [wardrobe[1]]), isEmpty);
+    });
+  });
 }
