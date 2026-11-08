@@ -100,7 +100,7 @@ def build_dataset(samples=6000, seed=42):
         t_c = np.random.choice(TOPS)
         b_c = np.random.choice(BOTTOMS)
         if np.random.rand() > 0.4:
-            t_col = np.random.choice(list(NEUTRALS))
+            t_col = np.random.choice(sorted(NEUTRALS))
             b_col = np.random.choice(all_colors)
         else:
             t_col = np.random.choice(all_colors)

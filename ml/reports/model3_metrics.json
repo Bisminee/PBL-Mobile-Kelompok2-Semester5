@@ -1,0 +1,80 @@
+{
+  "task": "E6.5 evaluasi Model 3",
+  "generated": "2026-11-09",
+  "script": "ml/scripts/09_eval_model3.py",
+  "data": {
+    "type": "sintetis",
+    "source": "build_dataset() pada ml/scripts/08_train_model3_mlp.py",
+    "seed": 42,
+    "n_train": 4800,
+    "n_test": 1200,
+    "positive_rate_test": 0.5,
+    "n_features": 20
+  },
+  "training": {
+    "epochs": 35,
+    "batch_size": 64
+  },
+  "precision_at_k_setup": {
+    "k": 3,
+    "query": "satu atasan unik (jenis + warna) di split uji",
+    "candidates": "semua pasangan uji dengan atasan tersebut",
+    "relevant": "label 1 (pasangan cocok) dari generator sintetis",
+    "query_filter": "minimal k kandidat serta memuat pasangan cocok dan tidak cocok",
+    "n_queries_evaluated": 33,
+    "n_queries_total": 64,
+    "candidates_per_query_min": 9,
+    "candidates_per_query_median": 18.0,
+    "candidates_per_query_max": 32,
+    "tie_break": "acak dengan seed yang sama"
+  },
+  "models": {
+    "mlp_keras": {
+      "roc_auc": 0.9762,
+      "accuracy": 0.8967,
+      "precision": 0.8766,
+      "recall": 0.9233,
+      "f1": 0.8994,
+      "precision_at_3": 0.4545
+    },
+    "random_forest": {
+      "roc_auc": 0.978,
+      "accuracy": 0.8983,
+      "precision": 0.8758,
+      "recall": 0.9283,
+      "f1": 0.9013,
+      "precision_at_3": 0.5152
+    },
+    "logistic_regression": {
+      "roc_auc": 0.9716,
+      "accuracy": 0.89,
+      "precision": 0.8462,
+      "recall": 0.9533,
+      "f1": 0.8966,
+      "precision_at_3": 0.4141
+    },
+    "rule_harmony_only": {
+      "roc_auc": 0.9118,
+      "accuracy": 0.88,
+      "precision": 0.8065,
+      "recall": 1.0,
+      "f1": 0.8929,
+      "precision_at_3": 0.4242
+    }
+  },
+  "reference": {
+    "random_precision_at_3": 0.1734,
+    "ideal_precision_at_3": 0.8687,
+    "note": "ideal adalah batas atas; banyak atasan punya kurang dari 3 pasangan cocok di split uji"
+  },
+  "target": {
+    "roc_auc_min": 0.75
+  },
+  "meets_target": true,
+  "limitations": [
+    "Data latih dan uji sintetis. Label dibangkitkan dari aturan harmoni warna yang juga menjadi salah satu fitur, sehingga AUC tinggi menunjukkan model meniru aturan, bukan bukti generalisasi ke penilaian manusia.",
+    "Tidak ada data pasangan outfit nyata atau penilaian pengguna; precision@3 dihitung terhadap label sintetis yang sama.",
+    "Kategori dan palet pada script 08 (4 atasan, 5 bawahan, 16 warna) belum sama dengan 9 kelas Model 1 dan 14 warna aplikasi.",
+    "Validasi nyata perlu data pasangan berlabel manusia, misalnya dari riwayat rekomendasi atau survei pengguna."
+  ]
+}
