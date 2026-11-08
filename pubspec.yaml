@@ -26,6 +26,10 @@ dependencies:
   path_provider: ^2.1.5
   tflite_flutter: ^0.12.1
   image: ^4.5.4
+  # Memilih foto pakaian dari galeri HP (tombol "Galeri").
+  image_picker: ^1.1.2
+  # Cadangan pembuka galeri lewat Storage Access Framework bila image_picker gagal.
+  file_selector: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +44,4 @@ flutter:
     - assets/db/fashion_app.db
     - assets/models/yolo11n_cls.tflite
     - assets/models/labels.txt
+    - assets/models/labels_legacy_15.txt

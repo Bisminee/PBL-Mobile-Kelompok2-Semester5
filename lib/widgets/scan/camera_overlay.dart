@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/app_text_styles.dart';
@@ -7,11 +8,20 @@ import '../common/corner_frame.dart';
 /// Lapisan di atas preview kamera: tombol tutup, label "AI SCAN",
 /// chip deteksi, bingkai sudut, dan petunjuk posisi pakaian.
 ///
-/// Hanya tampilan; tidak punya logika kamera.
+/// Hanya tampilan; aksi kamera dikirim lewat callback dari `CameraScreen`.
 class CameraOverlay extends StatelessWidget {
-  const CameraOverlay({super.key, required this.onClose});
+  const CameraOverlay({
+    super.key,
+    required this.onClose,
+    required this.flashMode,
+    required this.onFlash,
+  });
 
   final VoidCallback onClose;
+
+  /// Mode flash saat ini: mati, otomatis, atau menyala terus.
+  final FlashMode flashMode;
+  final VoidCallback onFlash;
 
   static const _dim = Color(0x99000000);
 
@@ -53,11 +63,16 @@ class CameraOverlay extends StatelessWidget {
               ],
             ),
           ),
-          // Flash: belum ada logikanya (sama seperti desain awal).
-          const CircleIconButton(
-            icon: Icons.bolt,
+          // Tombol flash: mati -> otomatis -> menyala.
+          CircleIconButton(
+            icon: switch (flashMode) {
+              FlashMode.off => Icons.flash_off,
+              FlashMode.auto => Icons.flash_auto,
+              FlashMode.always || FlashMode.torch => Icons.flash_on,
+            },
             background: _dim,
-            iconColor: Colors.white,
+            iconColor: flashMode == FlashMode.off ? Colors.white : Colors.amber,
+            onPressed: onFlash,
           ),
         ],
       ),

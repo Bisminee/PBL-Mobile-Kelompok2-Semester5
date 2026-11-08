@@ -1,10 +1,12 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../services/camera_service.dart';
+import '../../services/gallery_service.dart';
 import '../../widgets/scan/camera_controls.dart';
 import '../../widgets/scan/camera_overlay.dart';
 
@@ -23,6 +25,9 @@ class _CameraScreenState extends State<CameraScreen>
   int _cameraIndex = 0;
   bool _isInitializing = false;
   String? _errorMessage;
+
+  /// off -> auto -> torch -> off. Torch berarti lampu menyala terus.
+  FlashMode _flashMode = FlashMode.off;
 
   List<CameraDescription> get _cameras => CameraService.cameras;
 
@@ -84,6 +89,8 @@ class _CameraScreenState extends State<CameraScreen>
     try {
       await controller.initialize();
       _controller = controller;
+      // Terapkan ulang mode flash setelah kamera siap atau setelah ganti kamera.
+      await _applyFlash(controller);
     } on CameraException catch (e) {
       _errorMessage = _describeError(e);
     }
@@ -105,8 +112,9 @@ class _CameraScreenState extends State<CameraScreen>
       final XFile file = await controller.takePicture();
       if (!mounted) return;
       // Foto baru ditambahkan ke lemari setelah dikonfirmasi di halaman
-      // pratinjau ("Gunakan Foto"); "Ambil Ulang" kembali ke sini.
-      context.push(AppRoutes.cameraPreview, extra: file.path);
+      // pratinjau ("Gunakan Foto"). Layar kamera diganti, bukan ditumpuk,
+      // supaya kamera dilepas dan bisa dibuka lagi saat "Ambil Ulang".
+      context.pushReplacement(AppRoutes.cameraPreview, extra: file.path);
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -115,10 +123,73 @@ class _CameraScreenState extends State<CameraScreen>
     }
   }
 
+  /// Pilih foto yang sudah ada di galeri, lalu langsung ke pratinjau.
+  Future<void> _pickFromGallery() async {
+    try {
+      final path = await GalleryService.pick();
+      if (!mounted || path == null) return;
+      context.pushReplacement(AppRoutes.cameraPreview, extra: path);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            kDebugMode
+                ? 'Gagal membuka galeri.\n$error'
+                : 'Gagal membuka galeri. Coba lagi.',
+          ),
+        ),
+      );
+      debugPrint('Galeri gagal dibuka: $error');
+    }
+  }
+
   Future<void> _switchCamera() async {
     if (_cameras.length < 2 || _isInitializing) return;
     _cameraIndex = (_cameraIndex + 1) % _cameras.length;
     await _initializeCamera(_cameras[_cameraIndex]);
+  }
+
+  /// Menerapkan mode flash ke controller. Beberapa kamera depan tidak punya
+  /// lampu, jadi kegagalan diabaikan dan mode dikembalikan ke off.
+  Future<void> _applyFlash(CameraController controller) async {
+    try {
+      await controller.setFlashMode(_flashMode);
+    } on CameraException {
+      _flashMode = FlashMode.off;
+      try {
+        await controller.setFlashMode(FlashMode.off);
+      } on CameraException {
+        // Perangkat tidak mendukung flash sama sekali.
+      }
+    }
+  }
+
+  /// Ganti mode flash: mati -> otomatis -> menyala terus.
+  Future<void> _cycleFlash() async {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) return;
+
+    final berikut = switch (_flashMode) {
+      FlashMode.off => FlashMode.auto,
+      FlashMode.auto => FlashMode.torch,
+      _ => FlashMode.off,
+    };
+
+    setState(() => _flashMode = berikut);
+    await _applyFlash(controller);
+
+    if (!mounted) return;
+    final pesan = switch (_flashMode) {
+      FlashMode.auto => 'Flash otomatis.',
+      FlashMode.torch => 'Flash menyala.',
+      _ => 'Flash mati.',
+    };
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(pesan), duration: const Duration(seconds: 1)),
+      );
   }
 
   String _describeError(CameraException e) {
@@ -146,7 +217,11 @@ class _CameraScreenState extends State<CameraScreen>
                 Positioned.fill(child: _buildPreview()),
                 SafeArea(
                   bottom: false,
-                  child: CameraOverlay(onClose: () => context.pop()),
+                  child: CameraOverlay(
+                    onClose: () => context.pop(),
+                    flashMode: _flashMode,
+                    onFlash: _cycleFlash,
+                  ),
                 ),
               ],
             ),
@@ -156,6 +231,7 @@ class _CameraScreenState extends State<CameraScreen>
             canSwitch: _cameras.length >= 2,
             onCapture: _takePicture,
             onSwitch: _switchCamera,
+            onGallery: _pickFromGallery,
           ),
         ],
       ),

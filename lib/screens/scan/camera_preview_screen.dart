@@ -1,12 +1,13 @@
 import 'dart:io' show File;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/gallery_service.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -24,14 +25,32 @@ class CameraPreviewScreen extends ConsumerWidget {
   void _usePhoto(BuildContext context, WidgetRef ref) {
     final path = imagePath;
     if (path == null) {
-      // Pemilih galeri belum ada; tanpa foto tidak ada yang bisa dianalisis.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ambil foto pakaian terlebih dahulu.')),
-      );
+      // Tanpa foto tidak ada yang bisa dianalisis; arahkan ke galeri.
+      _pickGallery(context);
       return;
     }
     ref.read(scanSessionProvider.notifier).start(path);
     context.pushReplacement(AppRoutes.analyzing);
+  }
+
+  /// Buka galeri lalu ganti layar ini dengan pratinjau foto yang dipilih.
+  Future<void> _pickGallery(BuildContext context) async {
+    try {
+      final path = await GalleryService.pick();
+      if (!context.mounted || path == null) return;
+      context.pushReplacement(AppRoutes.cameraPreview, extra: path);
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            kDebugMode
+                ? 'Gagal membuka galeri.\n$error'
+                : 'Gagal membuka galeri. Coba lagi.',
+          ),
+        ),
+      );
+    }
   }
 
   Widget _photo(String path) {
@@ -142,15 +161,21 @@ class CameraPreviewScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: AppButton(
-                        label: 'Ambil Ulang',
+                        label: path == null ? 'Batal' : 'Ambil Ulang',
                         style: AppButtonStyle.outlined,
-                        onPressed: () => context.pop(),
+                        onPressed: path == null
+                            ? () => context.pop()
+                            // Kembali ke kamera dengan layar baru, bukan menumpuk,
+                            // supaya kamera benar-benar terbuka lagi.
+                            : () => context.pushReplacement(AppRoutes.camera),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: AppButton(
-                        label: 'Gunakan Foto',
+                        label: path == null
+                            ? 'Pilih dari Galeri'
+                            : 'Gunakan Foto',
                         style: AppButtonStyle.white,
                         onPressed: () => _usePhoto(context, ref),
                       ),

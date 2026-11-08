@@ -14,6 +14,7 @@ class CameraControls extends StatelessWidget {
     required this.canSwitch,
     required this.onCapture,
     required this.onSwitch,
+    required this.onGallery,
   });
 
   /// Shutter aktif hanya saat kamera siap.
@@ -24,6 +25,9 @@ class CameraControls extends StatelessWidget {
 
   final VoidCallback onCapture;
   final VoidCallback onSwitch;
+
+  /// Membuka galeri HP untuk memilih foto yang sudah ada.
+  final VoidCallback onGallery;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,7 @@ class CameraControls extends StatelessWidget {
               maxWidth: 420,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [_leftTile(), _shutter(), _switchButton()],
+                children: [_galleryButton(), _shutter(), _switchButton()],
               ),
             ),
             const SizedBox(height: 18),
@@ -53,15 +57,30 @@ class CameraControls extends StatelessWidget {
     );
   }
 
-  Widget _leftTile() {
-    return Container(
-      width: 70,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+  /// Tombol galeri di kiri shutter. Sebelumnya tile dekorasi tanpa aksi.
+  Widget _galleryButton() {
+    return Semantics(
+      button: true,
+      label: 'Pilih dari galeri',
+      child: GestureDetector(
+        onTap: onGallery,
+        child: Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.photo_library_outlined, size: 26),
+              SizedBox(height: 4),
+              Text('Galeri', style: TextStyle(fontSize: 10)),
+            ],
+          ),
+        ),
       ),
-      child: const Icon(Icons.dry_cleaning_outlined, size: 34),
     );
   }
 
