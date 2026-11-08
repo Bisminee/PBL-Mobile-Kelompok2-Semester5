@@ -7,7 +7,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/crop_args.dart';
 import '../../models/scan_source.dart';
+import '../../services/image_crop.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -37,6 +39,8 @@ class CameraPreviewScreen extends ConsumerStatefulWidget {
 
 class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
   late String? _path = widget.imagePath;
+  late String? _originalPath = widget.imagePath;
+  CropSpec? _spec;
   bool _picking = false;
 
   Future<void> _usePhoto() async {
@@ -60,10 +64,31 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
     setState(() => _picking = true);
     try {
       final path = await pickGalleryPhoto(context, ref);
-      if (path != null && mounted) setState(() => _path = path);
+      if (path != null && mounted) {
+        setState(() {
+          _path = path;
+          _originalPath = path;
+          _spec = null;
+        });
+      }
     } finally {
       if (mounted) setState(() => _picking = false);
     }
+  }
+
+  /// Membuka crop manual. Hanya tersedia untuk foto dari galeri.
+  Future<void> _adjust() async {
+    final original = _originalPath;
+    if (original == null || _picking) return;
+    final outcome = await context.push<CropOutcome>(
+      AppRoutes.cropPhoto,
+      extra: CropArgs(originalPath: original, initialSpec: _spec),
+    );
+    if (outcome == null || !mounted) return;
+    setState(() {
+      _path = outcome.path;
+      _spec = outcome.spec;
+    });
   }
 
   Widget _photo(String path) {
@@ -170,6 +195,19 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                   ],
                 ),
                 const SizedBox(height: 28),
+                if (widget.source == ScanSource.gallery) ...[
+                  TextButton.icon(
+                    onPressed: _picking ? null : _adjust,
+                    icon: const Icon(Icons.crop, size: 18, color: Colors.white),
+                    label: Text(
+                      'Sesuaikan area',
+                      style: AppTextStyles.labelBold.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 Row(
                   children: [
                     Expanded(
