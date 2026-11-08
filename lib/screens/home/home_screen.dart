@@ -7,6 +7,7 @@ import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/garment.dart';
 import '../../models/garment_labels.dart';
+import '../../models/scan_source.dart';
 import '../../services/providers.dart';
 import '../../services/recommender.dart';
 import '../../widgets/common/garment_photo.dart';
@@ -14,6 +15,17 @@ import '../../widgets/common/responsive.dart';
 import '../../widgets/common/section_header.dart';
 import '../../widgets/home/home_hero_banner.dart';
 import '../../widgets/home/recommendation_card.dart';
+import '../scan/gallery_pick.dart';
+
+/// Membuka galeri, menyiapkan foto, lalu masuk ke pratinjau.
+Future<void> _openGallery(BuildContext context, WidgetRef ref) async {
+  final path = await pickGalleryPhoto(context, ref);
+  if (path == null || !context.mounted) return;
+  context.push(
+    AppRoutes.cameraPreview,
+    extra: PreviewArgs(path, ScanSource.gallery),
+  );
+}
 
 /// Tab Home: sapaan, banner foto pakaian, ringkasan lemari, dan rekomendasi.
 class HomeScreen extends ConsumerWidget {
@@ -108,7 +120,7 @@ class HomeScreen extends ConsumerWidget {
                 child: HomeHeroBanner(
                   height: wide ? 340 : 400,
                   onCamera: () => context.push(AppRoutes.camera),
-                  onGallery: () => context.push(AppRoutes.cameraPreview),
+                  onGallery: () => _openGallery(context, ref),
                 ),
               ),
               const SizedBox(height: 28),

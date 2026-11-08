@@ -1,10 +1,14 @@
+import 'dart:io' show File;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/scan_source.dart';
 import '../../services/camera_service.dart';
+import '../../services/photo_intake.dart';
 import '../../widgets/scan/camera_controls.dart';
 import '../../widgets/scan/camera_overlay.dart';
 
@@ -22,6 +26,7 @@ class _CameraScreenState extends State<CameraScreen>
   CameraController? _controller;
   int _cameraIndex = 0;
   bool _isInitializing = false;
+  bool _isProcessing = false;
   String? _errorMessage;
 
   List<CameraDescription> get _cameras => CameraService.cameras;
@@ -30,7 +35,8 @@ class _CameraScreenState extends State<CameraScreen>
     final controller = _controller;
     return controller != null &&
         controller.value.isInitialized &&
-        !_isInitializing;
+        !_isInitializing &&
+        !_isProcessing;
   }
 
   @override
@@ -97,21 +103,41 @@ class _CameraScreenState extends State<CameraScreen>
     final controller = _controller;
     if (controller == null ||
         !controller.value.isInitialized ||
-        controller.value.isTakingPicture) {
+        controller.value.isTakingPicture ||
+        _isProcessing) {
       return;
     }
 
+    setState(() => _isProcessing = true);
     try {
       final XFile file = await controller.takePicture();
+      final bytes = await File(file.path).readAsBytes();
+      final path = await PhotoIntake.prepare(bytes, prefix: 'camera');
       if (!mounted) return;
+      if (path == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Foto tidak bisa dibaca. Coba lagi.')),
+        );
+        return;
+      }
       // Foto baru ditambahkan ke lemari setelah dikonfirmasi di halaman
       // pratinjau ("Gunakan Foto"); "Ambil Ulang" kembali ke sini.
-      context.push(AppRoutes.cameraPreview, extra: file.path);
+      context.push(
+        AppRoutes.cameraPreview,
+        extra: PreviewArgs(path, ScanSource.camera),
+      );
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(_describeError(e))));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Foto tidak bisa dibaca. Coba lagi.')),
+      );
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
     }
   }
 

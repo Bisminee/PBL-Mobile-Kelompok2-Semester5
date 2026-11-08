@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../models/garment.dart';
 import '../models/outfit.dart';
+import '../models/scan_source.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -71,8 +72,13 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.cameraPreview,
-      builder: (context, state) =>
-          CameraPreviewScreen(imagePath: state.extra as String?),
+      builder: (context, state) {
+        final args = state.extra;
+        return CameraPreviewScreen(
+          imagePath: args is PreviewArgs ? args.path : null,
+          source: args is PreviewArgs ? args.source : ScanSource.camera,
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.analyzing,
