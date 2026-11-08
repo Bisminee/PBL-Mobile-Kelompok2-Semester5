@@ -11,6 +11,7 @@ class AppRoutes {
   static const profile = '/profile';
   static const camera = '/camera';
   static const cameraPreview = '/camera-preview';
+  static const cropPhoto = '/crop-photo';
   static const analyzing = '/analyzing';
   static const detectionResult = '/detection-result';
   static const recommendation = '/recommendation';

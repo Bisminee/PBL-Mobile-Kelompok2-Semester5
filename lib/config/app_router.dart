@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../models/crop_args.dart';
 import '../models/garment.dart';
 import '../models/outfit.dart';
 import '../models/scan_source.dart';
@@ -14,6 +15,7 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/scan/analyzing_screen.dart';
 import '../screens/scan/camera_preview_screen.dart';
 import '../screens/scan/camera_screen.dart';
+import '../screens/scan/crop_screen.dart';
 import '../screens/scan/detection_result_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/wardrobe/clothing_detail_screen.dart';
@@ -79,6 +81,10 @@ final GoRouter appRouter = GoRouter(
           source: args is PreviewArgs ? args.source : ScanSource.camera,
         );
       },
+    ),
+    GoRoute(
+      path: AppRoutes.cropPhoto,
+      builder: (context, state) => CropScreen(args: state.extra! as CropArgs),
     ),
     GoRoute(
       path: AppRoutes.analyzing,
