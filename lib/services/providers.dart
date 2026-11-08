@@ -8,8 +8,10 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/garment.dart';
 import '../models/outfit.dart';
+import '../models/scan_source.dart';
 import 'local_db.dart';
 import 'outfit_engine.dart';
+import 'photo_source.dart';
 import 'recommender.dart';
 
 /// Signed-in user (null = logged out). Local placeholder for the cloud profile.
@@ -34,8 +36,9 @@ class AuthNotifier extends Notifier<AppUser?> {
   @override
   AppUser? build() {
     try {
-      final subscription =
-          FirebaseAuth.instance.authStateChanges().listen((user) {
+      final subscription = FirebaseAuth.instance.authStateChanges().listen((
+        user,
+      ) {
         state = _fromFirebase(user);
       });
       ref.onDispose(subscription.cancel);
@@ -55,7 +58,8 @@ class AuthNotifier extends Notifier<AppUser?> {
     if (user == null) return null;
     final email = user.email ?? '';
     return AppUser(
-      name: user.displayName ??
+      name:
+          user.displayName ??
           (email.contains('@') ? email.split('@').first : 'Pengguna'),
       email: email,
       photoUrl: user.photoURL,
@@ -92,15 +96,22 @@ final genderProvider = NotifierProvider<GenderNotifier, String>(
 // Sesi scan: foto -> hasil deteksi (dibaca analyzing_screen dan detection_result_screen)
 // ===========================================================================
 
+/// Pemilih foto galeri. Diganti versi palsu pada widget test.
+final photoPickerProvider = Provider<PhotoPicker>(
+  (ref) => GalleryPhotoPicker(),
+);
+
 class ScanSession {
   const ScanSession({
     this.imagePath,
+    this.source = ScanSource.camera,
     this.detection,
     this.loading = false,
     this.errorMessage,
   });
 
   final String? imagePath;
+  final ScanSource source;
   final Detection? detection;
   final bool loading;
   final String? errorMessage;
@@ -111,11 +122,13 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
   ScanSession build() => const ScanSession();
 
   /// Dipanggil camera_preview_screen saat user memilih "Gunakan Foto".
-  void start(String imagePath) => state = ScanSession(imagePath: imagePath);
+  void start(String imagePath, {ScanSource source = ScanSource.camera}) =>
+      state = ScanSession(imagePath: imagePath, source: source);
 
   /// Dipanggil analyzing_screen. Hasil atau pesan galat dibaca lewat state.
   Future<void> run() async {
     final path = state.imagePath;
+    final source = state.source;
     if (path == null) {
       state = const ScanSession(errorMessage: 'Foto tidak ditemukan.');
       return;
@@ -124,23 +137,25 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
     if (engine == null) {
       state = ScanSession(
         imagePath: path,
+        source: source,
         errorMessage:
             'Model deteksi hanya tersedia di Android dan iOS, '
             'dan harus terpasang bersama aplikasi.',
       );
       return;
     }
-    state = ScanSession(imagePath: path, loading: true);
+    state = ScanSession(imagePath: path, source: source, loading: true);
     try {
       final bytes = await File(path).readAsBytes();
       final d = await engine.analyze(bytes, gender: ref.read(genderProvider));
       // User bisa menutup layar dan memulai scan lain selagi analisis berjalan; hasil lama dibuang.
       if (state.imagePath != path) return;
-      state = ScanSession(imagePath: path, detection: d);
+      state = ScanSession(imagePath: path, source: source, detection: d);
     } catch (_) {
       if (state.imagePath != path) return;
       state = ScanSession(
         imagePath: path,
+        source: source,
         errorMessage: 'Foto tidak bisa dianalisis. Coba foto lain.',
       );
     }
@@ -152,7 +167,11 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
     final engine = ref.read(engineProvider);
     if (d == null || engine == null || d.type == type) return;
     final nd = await engine.withType(d, type, gender: ref.read(genderProvider));
-    state = ScanSession(imagePath: state.imagePath, detection: nd);
+    state = ScanSession(
+      imagePath: state.imagePath,
+      source: state.source,
+      detection: nd,
+    );
   }
 
   void chooseFormality(String formality) {
@@ -160,6 +179,7 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
     if (d == null) return;
     state = ScanSession(
       imagePath: state.imagePath,
+      source: state.source,
       detection: d.copyWith(formality: formality),
     );
   }

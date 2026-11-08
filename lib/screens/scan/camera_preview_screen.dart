@@ -7,31 +7,63 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/scan_source.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/clothing_thumb.dart';
 import '../../widgets/common/responsive.dart';
+import 'gallery_pick.dart';
 
-/// Pratinjau foto sebelum dipakai. "Gunakan Foto" memulai analisis; foto baru masuk lemari
-/// setelah user menyimpan hasilnya di layar hasil deteksi.
-class CameraPreviewScreen extends ConsumerWidget {
-  const CameraPreviewScreen({super.key, this.imagePath});
+/// Pratinjau foto sebelum dipakai. "Gunakan Foto" memulai analisis; foto baru
+/// masuk lemari setelah user menyimpan hasilnya di layar hasil deteksi.
+class CameraPreviewScreen extends ConsumerStatefulWidget {
+  const CameraPreviewScreen({
+    super.key,
+    this.imagePath,
+    this.source = ScanSource.camera,
+  });
 
-  /// Path foto dari kamera. Null jika dibuka tanpa foto (mis. tombol Galeri).
+  /// Path foto yang sudah disalin ke folder sementara aplikasi.
   final String? imagePath;
 
-  void _usePhoto(BuildContext context, WidgetRef ref) {
-    final path = imagePath;
+  /// Asal foto. Menentukan label tombol kiri dan perilaku saat memilih ulang.
+  final ScanSource source;
+
+  @override
+  ConsumerState<CameraPreviewScreen> createState() =>
+      _CameraPreviewScreenState();
+}
+
+class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
+  late String? _path = widget.imagePath;
+  bool _picking = false;
+
+  Future<void> _usePhoto() async {
+    final path = _path;
     if (path == null) {
-      // Pemilih galeri belum ada; tanpa foto tidak ada yang bisa dianalisis.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Ambil foto pakaian terlebih dahulu.')),
       );
       return;
     }
-    ref.read(scanSessionProvider.notifier).start(path);
+    ref.read(scanSessionProvider.notifier).start(path, source: widget.source);
     context.pushReplacement(AppRoutes.analyzing);
+  }
+
+  Future<void> _retake() async {
+    if (widget.source != ScanSource.gallery) {
+      context.pop();
+      return;
+    }
+    if (_picking) return;
+    setState(() => _picking = true);
+    try {
+      final path = await pickGalleryPhoto(context, ref);
+      if (path != null && mounted) setState(() => _path = path);
+    } finally {
+      if (mounted) setState(() => _picking = false);
+    }
   }
 
   Widget _photo(String path) {
@@ -43,10 +75,10 @@ class CameraPreviewScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final path = imagePath;
+  Widget build(BuildContext context) {
+    final path = _path;
     final fileName = path == null
-        ? 'IMG_0927 · 3024×4032'
+        ? 'Belum ada foto'
         : path.split(RegExp(r'[\\/]')).last;
 
     return Scaffold(
@@ -142,9 +174,11 @@ class CameraPreviewScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: AppButton(
-                        label: 'Ambil Ulang',
+                        label: widget.source == ScanSource.gallery
+                            ? 'Pilih Ulang'
+                            : 'Ambil Ulang',
                         style: AppButtonStyle.outlined,
-                        onPressed: () => context.pop(),
+                        onPressed: _picking ? null : _retake,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -152,7 +186,7 @@ class CameraPreviewScreen extends ConsumerWidget {
                       child: AppButton(
                         label: 'Gunakan Foto',
                         style: AppButtonStyle.white,
-                        onPressed: () => _usePhoto(context, ref),
+                        onPressed: _usePhoto,
                       ),
                     ),
                   ],
