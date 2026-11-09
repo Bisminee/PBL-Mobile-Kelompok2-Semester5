@@ -1,4 +1,3 @@
 source,n,accuracy,macro_f1
-carousell,1114,0.8779,0.839
-clothing_full,560,0.9071,0.8846
-fashion_products,3377,0.971,0.916
+fashion_products_hf,3340,0.9677,0.8693
+negatives,120,1.0,1.0

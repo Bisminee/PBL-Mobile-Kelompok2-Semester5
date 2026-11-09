@@ -1,5 +1,6 @@
 dress
 pants
+longsleeve
 other
 outwear
 shirt
