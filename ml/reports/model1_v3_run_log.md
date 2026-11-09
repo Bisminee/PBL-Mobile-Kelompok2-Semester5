@@ -55,12 +55,19 @@ Kelas terlemah: `outerwear` F1 0,687 (40 gambar), `skirt` 0,714 (15),
 | Ditolak benar | 120 |
 | Tingkat penolakan | **100 persen** |
 
-Ambang 0,50 belum divalidasi. Jalankan:
+Sapuan ambang pada test set v3:
 
-```bash
-python ml/scripts/14_threshold_sweep.py \
-    --weights ml/runs/model1_hf_v3/weights/best.pt
-```
+| Ambang | Akurasi pakaian | Pakaian salah ditolak | Bukan pakaian ditolak |
+|---:|---:|---:|---:|
+| 0,30 | 96,77 persen | 0,00 persen | 100 persen |
+| 0,50 | 97,08 persen | 0,63 persen | 100 persen |
+| 0,60 | 97,77 persen | 1,95 persen | 100 persen |
+| 0,70 | 98,27 persen | 3,11 persen | 100 persen |
+| 0,90 | 99,07 persen | 6,26 persen | 100 persen |
+
+Ambang 0,50 dipilih karena paling sedikit menolak pakaian asli (0,63 persen)
+sementara seluruh objek `other` tetap tertolak. Data lengkap:
+`ml/reports/model1_v3_threshold_sweep.csv`.
 
 ## 5. Artefak
 

@@ -21,6 +21,10 @@ const String notGarmentType = 'other';
 
 /// Batas bawah agar hasil masih dianggap pakaian.
 /// Di bawah angka ini model dianggap menebak asal, jadi hasil tidak boleh disimpan.
+///
+/// Divalidasi pada test set model v3: pada 0,50 objek `other` ditolak 100 persen
+/// dan pakaian asli yang salah ditolak 0,63 persen. Bukti:
+/// ml/reports/model1_v3_threshold_sweep.csv.
 const double minimumGarmentConfidence = 0.50;
 
 class Detection {

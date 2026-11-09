@@ -108,8 +108,10 @@ Diukur pada test set, belum pada foto HP.
 3. `skirt` hanya 15 gambar uji, F1 0,714.
 4. Uji foto lapangan (150 foto HP) belum dijalankan.
 5. Model mengklasifikasikan seluruh gambar, bukan memberi kotak pembatas.
-6. Ambang `minimumGarmentConfidence` 0,50 belum divalidasi dengan
-   `14_threshold_sweep.py`.
+6. Ambang `minimumGarmentConfidence` 0,50 sudah divalidasi pada test set v3:
+   objek `other` ditolak 100 persen, pakaian salah ditolak 0,63 persen, dan
+   akurasi pakaian yang diterima 97,08 persen. Detail di
+   `ml/reports/model1_v3_threshold_sweep.csv`.
 
 ## 7. Artefak
 
