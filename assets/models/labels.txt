@@ -1,10 +1,9 @@
 dress
-long_pants
-long_sleeve
+pants
 other
-outerwear
+outwear
 shirt
 shoes
 shorts
 skirt
-tshirt
+t_shirt
