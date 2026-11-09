@@ -35,17 +35,39 @@ class DetailScreen extends ConsumerStatefulWidget {
 class _DetailScreenState extends ConsumerState<DetailScreen> {
   bool _saved = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Tandai tombol sudah tersimpan bila outfit ini pernah disimpan.
+    final o = widget.outfit;
+    if (o != null) _cekSudahDisimpan(o);
+  }
+
+  List<int> _itemIds(Outfit o) => [
+    int.tryParse(o.top.id),
+    int.tryParse(o.bottom.id),
+  ].whereType<int>().toList();
+
+  Future<void> _cekSudahDisimpan(Outfit o) async {
+    final ids = _itemIds(o);
+    if (ids.length < 2) return;
+    try {
+      final sudah = await ref.read(localDbProvider).outfitSaved(ids);
+      if (mounted && sudah) setState(() => _saved = true);
+    } catch (_) {
+      // Database belum siap: biarkan tombol aktif.
+    }
+  }
+
   Future<void> _saveOutfit(Outfit o) async {
     if (_saved) return;
-    final ids = [
-      int.tryParse(o.top.id),
-      int.tryParse(o.bottom.id),
-    ].whereType<int>().toList();
+    final ids = _itemIds(o);
     if (ids.length < 2) return;
     try {
       await ref
           .read(localDbProvider)
           .saveOutfit(o.title, o.formality ?? 'non_formal', o.score, ids);
+      ref.invalidate(savedOutfitsProvider);
       if (!mounted) return;
       setState(() => _saved = true);
       ScaffoldMessenger.of(
@@ -633,6 +655,7 @@ class _GarmentTile extends StatelessWidget {
       badge: badge,
       kind: clothingKindOf(g.garmentType, g.slot),
       dark: g.isDark,
+      imagePath: g.imagePath,
     ),
   );
 }

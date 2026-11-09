@@ -11,6 +11,7 @@ import '../screens/home/home_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/outfit/detail_screen.dart';
 import '../screens/outfit/recommendation_screen.dart';
+import '../screens/outfit/saved_outfits_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/scan/analyzing_screen.dart';
 import '../screens/scan/camera_preview_screen.dart';
@@ -97,6 +98,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.recommendation,
       builder: (context, state) => const RecommendationScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.savedOutfits,
+      builder: (context, state) => const SavedOutfitsScreen(),
     ),
     GoRoute(
       path: AppRoutes.detail,
