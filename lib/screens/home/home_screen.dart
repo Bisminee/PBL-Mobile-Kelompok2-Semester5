@@ -8,6 +8,7 @@ import '../../config/app_text_styles.dart';
 import '../../models/garment.dart';
 import '../../models/garment_labels.dart';
 import '../../models/scan_source.dart';
+import '../../services/home_summary.dart';
 import '../../services/providers.dart';
 import '../../services/recommender.dart';
 import '../../widgets/common/garment_photo.dart';
@@ -42,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
     final outfits = ref.watch(recommendationsProvider).take(5).toList();
 
     final miniItems = <Widget>[
-      for (final g in wardrobe.reversed.take(6))
+      for (final g in wardrobe.reversed.take(4))
         _MiniItem(
           g,
           onTap: () => context.push(AppRoutes.clothingDetail, extra: g),
@@ -56,6 +57,8 @@ class HomeScreen extends ConsumerWidget {
           matchLabel: 'SKOR ${(o.score * 100).round()}',
           score: (o.score * 100).round(),
           description: describeOutfit(o),
+          top: o.top,
+          bottom: o.bottom,
           onTap: () => context.push(AppRoutes.detail, extra: o),
         ),
     ];
@@ -128,7 +131,9 @@ class HomeScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SectionHeader(
                   title: 'Lemari Saya',
-                  subtitle: '${wardrobe.length} item pakaian',
+                  subtitle: wardrobe.isEmpty
+                      ? 'Belum ada item'
+                      : '${wardrobe.length} item pakaian',
                   actionLabel: 'Lihat Semua',
                   onAction: () => context.go(AppRoutes.wardrobe),
                 ),
@@ -156,6 +161,13 @@ class HomeScreen extends ConsumerWidget {
                     children: miniItems,
                   ),
                 ),
+              if (wardrobe.isNotEmpty) ...[
+                const SizedBox(height: 18),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _CategorySummary(counts: countByCategory(wardrobe)),
+                ),
+              ],
               const SizedBox(height: 28),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -243,5 +255,44 @@ class _MiniItem extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Kartu kecil berisi jumlah item per kategori, mis. "Atasan 4".
+class _CategorySummary extends StatelessWidget {
+  const _CategorySummary({required this.counts});
+
+  final Map<String, int> counts;
+
+  @override
+  Widget build(BuildContext context) {
+    final kartu = <Widget>[
+      for (final kategori in kategoriHome)
+        if ((counts[kategori] ?? 0) > 0)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryBg,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${counts[kategori]}',
+                  style: AppTextStyles.h2.copyWith(fontSize: 18),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  kategori,
+                  style: AppTextStyles.label.copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+    ];
+
+    if (kartu.isEmpty) return const SizedBox.shrink();
+    return Wrap(spacing: 10, runSpacing: 10, children: kartu);
   }
 }

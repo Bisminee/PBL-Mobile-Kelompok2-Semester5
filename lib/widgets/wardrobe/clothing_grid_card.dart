@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../common/clothing_thumb.dart';
+import '../common/garment_photo.dart';
 
 /// Kartu pakaian untuk grid di tab Lemari.
 class ClothingGridCard extends StatelessWidget {
@@ -11,18 +12,24 @@ class ClothingGridCard extends StatelessWidget {
     required this.name,
     required this.category,
     required this.colorName,
-    required this.colorDark,
+    required this.colorValue,
     required this.kind,
     required this.dark,
+    this.imagePath,
     this.onTap,
   });
 
   final String name;
   final String category;
   final String colorName;
-  final bool colorDark;
+
+  /// Warna asli hasil deteksi, dipakai untuk titik warna di kartu.
+  final Color colorValue;
   final ClothingKind kind;
   final bool dark;
+
+  /// Path foto asli hasil kamera. Null = pakai ikon pengganti.
+  final String? imagePath;
   final VoidCallback? onTap;
 
   @override
@@ -42,7 +49,12 @@ class ClothingGridCard extends StatelessWidget {
             Expanded(
               child: SizedBox(
                 width: double.infinity,
-                child: ClothingThumb(kind: kind, dark: dark, iconSize: 52),
+                child: GarmentPhoto(
+                  imagePath: imagePath,
+                  kind: kind,
+                  dark: dark,
+                  iconSize: 52,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -60,29 +72,35 @@ class ClothingGridCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text(
-                        category,
-                        style: AppTextStyles.label.copyWith(fontSize: 11),
+                      Flexible(
+                        child: Text(
+                          category,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.label.copyWith(fontSize: 11),
+                        ),
                       ),
                       Text(
                         '  ·  ',
                         style: AppTextStyles.label.copyWith(fontSize: 11),
                       ),
                       Container(
-                        width: 9,
-                        height: 9,
+                        width: 10,
+                        height: 10,
                         decoration: BoxDecoration(
-                          color: colorDark
-                              ? AppColors.darkSecondary
-                              : Colors.white,
+                          color: colorValue,
                           shape: BoxShape.circle,
                           border: Border.all(color: AppColors.border),
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        colorName,
-                        style: AppTextStyles.label.copyWith(fontSize: 11),
+                      Flexible(
+                        child: Text(
+                          colorName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.label.copyWith(fontSize: 11),
+                        ),
                       ),
                     ],
                   ),

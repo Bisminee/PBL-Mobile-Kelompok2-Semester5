@@ -1,7 +1,7 @@
-# Pembagian Tugas Minggu 11 — Sera-Z
+# Pembagian Tugas Minggu 11 â€” Sera-Z
 
-Tim Sera-Z · Kelas TI-3D · Semester 5
-Periode: **2 – 8 November 2026**
+Tim Sera-Z Â· Kelas TI-3D Â· Semester 5
+Periode: **2 â€“ 8 November 2026**
 Disusun: 4 November 2026
 
 > **CATATAN DARI BISMA**
@@ -14,6 +14,76 @@ Fokus minggu ini: menuntaskan sisa minggu 5, menyelesaikan integrasi, menyiapkan
 dan menarik sebagian tugas minggu depan agar beban lebih merata.
 
 Total **29,5 ho**, terdiri dari 15,5 ho mobile, 7,5 ho ML, dan 6,5 ho QA serta dokumentasi.
+
+---
+
+## Status per 9 November 2026
+
+### Bisma Adhiaksa
+
+| Tugas | Status | Bukti |
+|---|---|---|
+| Uji login, logout, hapus akun di perangkat | Belum | Butuh HP dan SHA-1 terdaftar |
+| E7.5 Fallback aturan | Selesai | PR #15 |
+| Rapikan UI autentikasi | Selesai | PR #16 |
+| Profil sesuai akun Google | Selesai | PR #17 |
+| E4.6 Ekspor TFLite model sendiri | Belum | Ekspor float32, float16, dan int8 dynamic range ada, tetapi belum dipasang di aset aplikasi |
+| E5.3 Palet 14 warna | Selesai | PR #18 |
+| E9.1 Rencana uji 34 kasus | Selesai | `Pembagian Tugas/qa-plan.md` |
+| Rekap logbook | Selesai | `Pembagian Tugas/Logbook/logbook.md` |
+
+Pekerjaan tambahan yang sudah digabung: impor galeri (PR #20), crop 1:1
+(PR #21), tombol galeri di kamera dan Photo Picker (PR #24).
+
+### Ahmad Falahi
+
+| Tugas | Status | Bukti |
+|---|---|---|
+| E8.5 Tab Detail data nyata | Selesai | PR #19 |
+| E6.5 Metrik Model 3 | Menunggu perbaikan | PR #22 |
+| Riset dataset aksesoris | Menunggu perbaikan | PR #23 |
+| E9.2 Uji fungsional black-box | Belum | Belum ada branch atau PR |
+
+### Abim Mustawa
+
+| Tugas | Status | Bukti |
+|---|---|---|
+| E8.7 Edit profil dan preferensi | Menunggu perbaikan | PR #26 |
+| Sinkronkan gambar ke folder aplikasi | Sebagian | Penyimpanan foto di folder aplikasi sudah ada; pemisahan data per akun belum |
+| Penanganan objek bukan pakaian | Menunggu perbaikan | PR #32 |
+| Label 10 kelas | Menunggu perbaikan | PR #32. Model 10 kelas belum ada |
+| E7.6 Latensi dan ukuran model | Belum | Belum ada branch atau PR |
+| Pipeline dataset HF dan kelas `other` | Menunggu perbaikan | PR #31 |
+
+### Faatihurrizki Prasojo
+
+| Tugas | Status | Bukti |
+|---|---|---|
+| E2.4 Riwayat rekomendasi | Belum | Belum ada branch atau PR |
+| E2.6 Unit test DAO | Belum | Belum ada branch atau PR |
+| E8.3 Ranking dan explainability | Belum | Belum ada branch atau PR |
+| E10.2 Kumpulkan 150 foto lapangan | Belum | Belum ada branch atau PR |
+
+### Izza Dhafira Fanani
+
+| Tugas | Status | Bukti |
+|---|---|---|
+| E8.6 Halaman Admin master data | Belum | Belum ada branch atau PR |
+| E8.1 CRUD UI Lemari | Sebagian | Pencarian dan daftar sudah ada lewat PR #25; tambah manual dan hapus belum |
+| Thumbnail Lemari dan Home | Sebagian | Foto asli sudah dipakai di PR #25 dan #27; placeholder dan pengujian belum |
+| E5.4 Unit test warna | Belum | Belum ada branch atau PR |
+| Dokumentasi metode ML | Belum | Belum ada branch atau PR |
+
+### Rekap tim per 9 November 2026
+
+| Item | Kondisi |
+|---|---|
+| Test otomatis | 80 lulus, `flutter analyze` bersih |
+| PR digabung | 24 PR |
+| PR terbuka | 6 PR, semuanya menunggu perbaikan |
+| Tugas selesai minggu 11 | 7 tugas |
+| Tugas menunggu perbaikan | 6 PR dari Ahmad dan Abim |
+| Tugas belum mulai atau baru sebagian | 11 tugas |
 
 ---
 
@@ -177,3 +247,4 @@ Rentang beban 4,5 sampai 7,5 ho.
 4. Jangan commit dataset, `ml/data`, `ml/runs`, `ml/.venv`, `*.pt`, atau `google-services.json`.
 5. `flutter analyze` dan `flutter test` wajib lulus sebelum PR.
 6. Status di papan Notion diperbarui setiap hari; rekap diisi Minggu, 8 November.
+

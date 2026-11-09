@@ -43,6 +43,8 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
           '${typeLabel(o.top.garmentType)} · ${typeLabel(o.bottom.garmentType)}',
       description: describeOutfit(o),
       tags: [formalityLabel(o.formality), 'Lemarimu'],
+      top: o.top,
+      bottom: o.bottom,
       onTap: () => openDetail(o),
     );
 

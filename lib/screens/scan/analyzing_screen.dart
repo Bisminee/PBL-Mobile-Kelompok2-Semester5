@@ -206,7 +206,15 @@ class _StepRow extends StatelessWidget {
               style: AppTextStyles.title.copyWith(fontSize: 15),
             ),
           ),
-          Text(value, style: AppTextStyles.mono(11)),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.mono(11),
+            ),
+          ),
         ],
       ),
     );

@@ -1,7 +1,7 @@
 # Sera-Z — Timeline Proyek (10 Minggu)
 
 Periode: **28 September 2026 – 6 Desember 2026**
-Diperbarui: **2 November 2026** (awal minggu 6)
+Diperbarui: **9 November 2026** (awal minggu 7 proyek / minggu 12 akademik)
 Estimasi dalam jam-orang (ho). Kode tugas mengacu pada
 `feature-breakdown-id.md`.
 
@@ -13,19 +13,19 @@ PR #3 belum direview, dan integrasi belum bisa dimulai.
 
 ## 1. Ringkasan status
 
-| Area | Kondisi per 2 November 2026 |
+| Area | Kondisi per 9 November 2026 |
 |---|---|
 | Fondasi aplikasi (E1) | Selesai, PR #1 dan #4 |
 | Aturan harmoni (E6.4) | Selesai, PR #2 |
 | Dataset dan Model 1 | Selesai, PR #6 dan #7; akurasi test 94,34 persen |
-| Penyimpanan (E2) | Selesai sebagian, PR #13; riwayat dan test DAO tersisa |
-| Auth (E3) | Selesai, PR #8–#12 |
-| Modul warna (E5) | Sebagian, PR #13; palet dan test tersisa |
-| Model 3 (E6) | Sebagian; MLP data sintetis, metrik belum |
-| Integrasi (E7) | Sebagian, PR #13; fallback dan latensi tersisa |
-| Fitur aplikasi (E8) | Sebagian; Admin dan CRUD lengkap tersisa |
-| QA (E9) | 39 test otomatis lulus; rencana uji formal belum |
-| Dokumentasi (E10) | Logbook minggu 1–6 dan laporan Milestone 1 |
+| Penyimpanan (E2) | Sebagian, PR #13 dan #25; riwayat dan test DAO tersisa |
+| Auth (E3) | Selesai, PR #8 sampai #12 |
+| Modul warna (E5) | Sebagian, palet 14 warna selesai, K-Means dan test tersisa |
+| Model 3 (E6) | Sebagian; MLP data sintetis, metrik menunggu review |
+| Integrasi (E7) | Sebagian, PR #13, #15, dan #19; latensi tersisa |
+| Fitur aplikasi (E8) | Sebagian; galeri, crop, outfit, Home, Detail selesai; Admin dan CRUD lengkap tersisa |
+| QA (E9) | 80 test otomatis lulus; QA plan 34 kasus; uji lapangan belum |
+| Dokumentasi (E10) | Logbook minggu 1 sampai 7, laporan Milestone 1, dokumen ML per anggota |
 
 Jalur ML sudah tuntas sampai pelatihan dan evaluasi. Sisa pekerjaan ada pada
 ekspor model sendiri, metrik Model 3, dan penyelesaian fitur.
@@ -41,8 +41,8 @@ ekspor model sendiri, metrik Model 3, dan penyelesaian fitur.
 | 3 | 12 – 18 Okt | Pipeline ML dan kualitas UI | PR #3 pipeline Model 1, perbaikan layout responsif, keputusan lisensi dataset | — | Selesai |
 | 4 | 19 – 25 Okt | Laporan Milestone 1 | Penyusunan laporan Milestone 1, logbook minggu 1–8 | CP-2 Milestone 1 (24 Okt) | Selesai (laporan), jalur ML tertinggal |
 | 5 | 26 Okt – 1 Nov | Dataset, latihan model, autentikasi | Dataset 33.667 gambar (PR #6); baseline 89,37 persen; YOLOv11n-cls 94,34 persen (PR #7); autentikasi Firebase (PR #8–#12) | — | Selesai |
-| 6 | 2 – 8 Nov | Integrasi dan penyelesaian | SQLite dan TFLite (PR #13); riwayat rekomendasi, test DAO, fallback aturan, ekspor model, metrik Model 3, label, Admin, CRUD lemari, QA plan | — | Berjalan |
-| 7 | 9 – 15 Nov | Penyempurnaan fitur | E8.3, E8.5, E7.6, perbaikan temuan | — | Rencana |
+| 6 | 2 - 8 Nov | Integrasi dan penyelesaian | SQLite dan TFLite (PR #13); auth, fallback aturan, palet warna, tab Detail, galeri dan crop, simpan outfit, QA plan | - | Selesai, sebagian tugas minggu 7 sudah ditarik |
+| 7 | 9 - 15 Nov | Penyempurnaan fitur dan penutupan PR | Review dan perbaikan PR #22, #23, #26, #30, #31, #32; E4.6 ekspor model; uji perangkat; E5.2, E5.4, E7.6; E2.4, E2.6, E8.3, E10.2 | - | Berjalan |
 | 8 | 16 – 22 Nov | Uji fungsional dan laporan | E9.2–E9.5, E10.3, draf laporan | CP-3 Milestone 2 (27 Nov) | Rencana |
 | 9 | 23 – 29 Nov | QA lanjutan | E9.6, E9.7, E10.4 | — | Rencana |
 | 10 | 30 Nov – 6 Des | Freeze dan demo | E10.5, build rilis, demo | CP-4 Final (4 Des) | Rencana |
@@ -56,16 +56,16 @@ Catatan: CP-3 Milestone 2 tetap **27 Nov**. Model 1 sudah tersedia dari blok ML
 
 | Epic | Tugas tersisa | Target minggu | Penanggung sementara |
 |---|---|---|---|
-| E2 Penyimpanan | E2.4, E2.6 | 6 | Bisma |
-| E3 Autentikasi | Selesai | — | — |
-| E4 Model 1 | E4.6 ekspor model sendiri | 6 | Bisma |
-| E5 Modul warna | E5.3, E5.4 | 6 | Bisma |
-| E6 Model 3 | E6.5 metrik AUC dan precision@3 | 6 | Bisma |
-| E7 Integrasi | E7.5 fallback, E7.6 latensi | 6 | Bisma (fallback), Abim (latensi) |
-| E8 Fitur aplikasi | E8.1, E8.6, E8.7 | 6 | Izza (E8.1, E8.6), Abim (E8.7) |
-| E8 Fitur lanjutan | E8.3, E8.5 | 7 | Izza |
-| E9 QA | E9.1–E9.7 | 6, 8–9 | Bisma dan seluruh tim |
-| E10 Dokumentasi | E10.2–E10.5 | 6, 8–10 | Izza (laporan), Bisma (metode ML) |
+| E2 Penyimpanan | E2.4, E2.6 | 7 | Pras |
+| E3 Autentikasi | Selesai | - | - |
+| E4 Model 1 | E4.6 ekspor model sendiri | 7 | Bisma |
+| E5 Modul warna | E5.2, E5.4 | 7 | Izza (E5.4), belum ada PIC E5.2 |
+| E6 Model 3 | E6.5 metrik AUC dan precision@3 | 7 | Ahmad |
+| E7 Integrasi | E7.6 latensi | 7 | Abim |
+| E8 Fitur aplikasi | E8.1, E8.6, E8.7 | 7 | Izza (E8.1, E8.6), Abim (E8.7) |
+| E8 Fitur lanjutan | E8.3 | 7 | Pras |
+| E9 QA | E9.1-E9.7 | 7-9 | Bisma dan seluruh tim |
+| E10 Dokumentasi | E10.2-E10.5 | 7-10 | Pras (foto lapangan), Izza (laporan), Bisma (metode ML) |
 
 Penanggung sementara hanya berlaku untuk minggu berjalan dan boleh ditukar.
 Aturan tetap: maksimal 2 tugas aktif per orang.

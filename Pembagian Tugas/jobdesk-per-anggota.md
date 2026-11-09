@@ -1,7 +1,8 @@
-# Jobdesk per Anggota — Minggu 6
+# Jobdesk per Anggota – Minggu 11
 
-Diperbarui: 4 November 2026
+Diperbarui: 9 November 2026
 Periode: **2 – 8 November 2026**
+Status terakhir: **9 November 2026**
 
 Seluruh pekerjaan dikerjakan dari branch `dev` dan PR diarahkan ke `dev`.
 Branch `dev-ml` sudah dihapus dan seluruh isinya digabung ke `dev`.
@@ -107,3 +108,18 @@ Rincian langkah ada di `panduan-kerja-bisma-minggu-6.md`.
    `google-services.json`.
 4. `flutter analyze` dan `flutter test` wajib lulus sebelum PR.
 5. Perbarui papan Notion dan logbook setiap hari.
+
+## 9. Status pelaksanaan per 9 November 2026
+
+| Anggota | Selesai | Menunggu perbaikan | Belum mulai |
+|---|---|---|---|
+| Bisma | E7.5, UI auth, profil Google, E5.3, E9.1, logbook, galeri, crop, kamera | - | Uji perangkat, E4.6 |
+| Ahmad | E8.5 | E6.5 (#22), dataset aksesoris (#23) | E9.2 |
+| Abim | Pipeline foto dan sebagian profil | E8.7 (#26), label 10 kelas (#32), objek bukan pakaian (#32), pipeline HF (#31) | E7.6 |
+| Pras | - | - | E2.4, E2.6, E8.3, E10.2 |
+| Izza | - | - | E8.6, E5.4, dokumentasi ML; E8.1 dan thumbnail baru sebagian |
+
+Rincian status dan bukti ada di `Pembagian Tugas/pembagian-tugas-minggu-11.md`
+bagian "Status per 9 November 2026". Rincian tugas ML ada di
+`Pembagian Tugas/tugas-ml-per-anggota.md`.
+
