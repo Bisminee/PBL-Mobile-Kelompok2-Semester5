@@ -34,11 +34,21 @@ class InfoGrid extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: c.dotColor,
                       shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.border),
                     ),
                   ),
                   const SizedBox(width: 8),
                 ],
-                Text(c.value, style: AppTextStyles.title),
+                // Flexible mencegah overflow saat nilai panjang, mis.
+                // "Kaos lengan panjang", di layar 360 dp.
+                Flexible(
+                  child: Text(
+                    c.value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.title,
+                  ),
+                ),
               ],
             ),
           ],
