@@ -1,6 +1,5 @@
 dress
 long_pants
-long_sleeve
 other
 outerwear
 shirt
