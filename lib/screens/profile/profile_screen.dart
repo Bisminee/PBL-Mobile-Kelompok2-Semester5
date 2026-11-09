@@ -7,6 +7,7 @@ import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
+import '../../services/profile_prefs.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -37,8 +38,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _muatPreferensi() async {
     try {
       final nilai = await ref.read(localDbProvider).preference('notif_enabled');
-      if (mounted && nilai != null) {
-        setState(() => _notif = nilai == 'true');
+      if (mounted) {
+        setState(() => _notif = parseBoolPreference(nilai));
       }
     } catch (_) {
       // Database belum siap: pakai nilai bawaan.
@@ -48,7 +49,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _ubahNotif(bool value) async {
     setState(() => _notif = value);
     try {
-      await ref.read(localDbProvider).setPreference('notif_enabled', '$value');
+      await ref
+          .read(localDbProvider)
+          .setPreference('notif_enabled', encodeBoolPreference(value));
     } catch (error) {
       debugPrint('Gagal menyimpan preferensi notifikasi: $error');
     }
@@ -83,14 +86,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     controller.dispose();
 
     if (nama == null || nama.isEmpty || nama == user?.name) return;
+    final rapi = normalizeDisplayName(nama);
+    if (rapi == null || rapi == user?.name) return;
     setState(() => _busy = true);
     try {
-      final terbaru = await _authService.updateDisplayName(nama);
+      final terbaru = await _authService.updateDisplayName(rapi);
       ref
           .read(authProvider.notifier)
           .setUser(
             AppUser(
-              name: terbaru.displayName ?? nama,
+              name: terbaru.displayName ?? rapi,
               email: terbaru.email ?? user?.email ?? '',
               photoUrl: terbaru.photoURL,
             ),

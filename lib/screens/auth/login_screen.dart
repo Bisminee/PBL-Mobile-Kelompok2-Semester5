@@ -11,7 +11,6 @@ import '../../config/app_text_styles.dart';
 import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
 import '../../services/providers.dart';
-import '../../services/runtime_config.dart';
 import '../../services/user_repository.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/responsive.dart';
@@ -37,7 +36,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   /// Mode uji aktif bila flag build dipasang, atau bila Firebase gagal dimuat
   /// (mis. google-services.json belum ada). Jadi `flutter run` biasa pun tetap
   /// bisa dipakai untuk mencoba aplikasi.
-  bool get _modeUji => kDebugMode || _devSkipAuth || !firebaseReady;
+  bool get _modeUji => kDebugMode || _devSkipAuth;
 
   @override
   void initState() {

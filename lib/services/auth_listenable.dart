@@ -18,7 +18,16 @@ class AuthListenable extends ChangeNotifier {
   bool get isSignedIn => _signedIn;
 
   /// Masuk tanpa akun, hanya untuk build uji.
-  void debugSignIn() => setSignedIn(true);
+  void debugSignIn() {
+    // Jangan sampai jalur ini terbawa ke build release.
+    const diizinkanFlag = bool.fromEnvironment('DEV_SKIP_AUTH');
+    if (!kDebugMode && !diizinkanFlag) {
+      throw StateError(
+        'debugSignIn hanya boleh dipakai pada build debug atau DEV_SKIP_AUTH.',
+      );
+    }
+    setSignedIn(true);
+  }
 
   /// Menyamakan status login secara langsung. Dipakai setelah login Google
   /// berhasil dan saat logout, agar router tidak memakai status yang basi.

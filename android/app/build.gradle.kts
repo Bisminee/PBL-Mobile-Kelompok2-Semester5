@@ -48,13 +48,21 @@ flutter {
 }
 
 // Firebase hanya diaktifkan bila google-services.json sudah disalin ke
-// android/app/. Tanpa berkas itu, build tetap berhasil dan aplikasi bisa
-// dibuka untuk uji UI; hanya login Google yang tidak berfungsi.
+// android/app/. Build debug tetap boleh jalan untuk uji UI, tetapi build
+// release wajib punya konfigurasi Firebase.
+val membangunRelease = gradle.startParameter.taskNames.any {
+    it.contains("release", ignoreCase = true)
+}
 if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
+} else if (membangunRelease) {
+    throw GradleException(
+        "google-services.json wajib ada untuk build release. " +
+            "Letakkan berkasnya di android/app/google-services.json."
+    )
 } else {
     logger.lifecycle(
-        "google-services.json tidak ditemukan: build tanpa Firebase. " +
+        "google-services.json tidak ditemukan: build debug tanpa Firebase. " +
             "Login Google tidak akan berfungsi."
     )
 }
