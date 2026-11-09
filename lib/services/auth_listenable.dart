@@ -17,6 +17,17 @@ class AuthListenable extends ChangeNotifier {
 
   bool get isSignedIn => _signedIn;
 
+  /// Masuk tanpa akun, hanya untuk build uji.
+  void debugSignIn() => setSignedIn(true);
+
+  /// Menyamakan status login secara langsung. Dipakai setelah login Google
+  /// berhasil dan saat logout, agar router tidak memakai status yang basi.
+  void setSignedIn(bool value) {
+    if (_signedIn == value) return;
+    _signedIn = value;
+    notifyListeners();
+  }
+
   void _bind() {
     try {
       _signedIn = FirebaseAuth.instance.currentUser != null;

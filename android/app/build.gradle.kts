@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
+    // Plugin Firebase (Google Services) dipasang secara kondisional di bagian
+    // bawah berkas ini, supaya proyek tetap bisa di-build tanpa
+    // google-services.json (berkas itu tidak di-commit, lihat .gitignore).
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -43,4 +45,16 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+// Firebase hanya diaktifkan bila google-services.json sudah disalin ke
+// android/app/. Tanpa berkas itu, build tetap berhasil dan aplikasi bisa
+// dibuka untuk uji UI; hanya login Google yang tidak berfungsi.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.lifecycle(
+        "google-services.json tidak ditemukan: build tanpa Firebase. " +
+            "Login Google tidak akan berfungsi."
+    )
 }
