@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../config/app_text_styles.dart';
 import '../common/responsive.dart';
 
-/// Panel hitam di bawah preview kamera: tile kiri (dekorasi), tombol shutter,
-/// dan tombol ganti kamera.
+/// Panel hitam di bawah preview kamera: tombol galeri, tombol shutter, dan
+/// tombol ganti kamera.
 ///
 /// Hanya tampilan; aksi dikirim lewat callback dari `CameraScreen`.
 class CameraControls extends StatelessWidget {
@@ -14,6 +14,7 @@ class CameraControls extends StatelessWidget {
     required this.canSwitch,
     required this.onCapture,
     required this.onSwitch,
+    required this.onGallery,
   });
 
   /// Shutter aktif hanya saat kamera siap.
@@ -24,6 +25,9 @@ class CameraControls extends StatelessWidget {
 
   final VoidCallback onCapture;
   final VoidCallback onSwitch;
+
+  /// Membuka pemilih foto galeri. Tetap aktif walau kamera gagal dimuat.
+  final VoidCallback onGallery;
 
   @override
   Widget build(BuildContext context) {
@@ -54,14 +58,21 @@ class CameraControls extends StatelessWidget {
   }
 
   Widget _leftTile() {
-    return Container(
-      width: 70,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+    return Semantics(
+      button: true,
+      label: 'Buka galeri',
+      child: GestureDetector(
+        onTap: onGallery,
+        child: Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Icon(Icons.photo_library_outlined, size: 32),
+        ),
       ),
-      child: const Icon(Icons.dry_cleaning_outlined, size: 34),
     );
   }
 
