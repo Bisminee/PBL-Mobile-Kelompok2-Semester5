@@ -2,6 +2,7 @@ import 'dart:io' show File;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
@@ -11,17 +12,18 @@ import '../../services/camera_service.dart';
 import '../../services/photo_intake.dart';
 import '../../widgets/scan/camera_controls.dart';
 import '../../widgets/scan/camera_overlay.dart';
+import 'gallery_pick.dart';
 
 /// Layar kamera. Tampilan dari desain Sera-Z; logika kamera (inisialisasi,
 /// lifecycle, ganti kamera, ambil foto, penanganan error) dari versi `lib`.
-class CameraScreen extends StatefulWidget {
+class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
 
   @override
-  State<CameraScreen> createState() => _CameraScreenState();
+  ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen>
+class _CameraScreenState extends ConsumerState<CameraScreen>
     with WidgetsBindingObserver {
   CameraController? _controller;
   int _cameraIndex = 0;
@@ -147,6 +149,22 @@ class _CameraScreenState extends State<CameraScreen>
     await _initializeCamera(_cameras[_cameraIndex]);
   }
 
+  /// Membuka galeri lalu lanjut ke pratinjau. Batal memilih tetap di kamera.
+  Future<void> _openGallery() async {
+    if (_isProcessing) return;
+    setState(() => _isProcessing = true);
+    try {
+      final path = await pickGalleryPhoto(context, ref);
+      if (!mounted || path == null) return;
+      context.push(
+        AppRoutes.cameraPreview,
+        extra: PreviewArgs(path, ScanSource.gallery),
+      );
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
   String _describeError(CameraException e) {
     switch (e.code) {
       case 'CameraAccessDenied':
@@ -182,6 +200,7 @@ class _CameraScreenState extends State<CameraScreen>
             canSwitch: _cameras.length >= 2,
             onCapture: _takePicture,
             onSwitch: _switchCamera,
+            onGallery: _openGallery,
           ),
         ],
       ),

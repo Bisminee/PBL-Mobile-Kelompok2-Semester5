@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show debugPrint, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 import 'config/app_router.dart';
 import 'config/app_theme.dart';
@@ -28,6 +31,7 @@ Future<void> main() async {
   }
 
   await CameraService.init();
+  _enableAndroidPhotoPicker();
   final engine = await _loadEngine();
   runApp(
     ProviderScope(
@@ -35,6 +39,16 @@ Future<void> main() async {
       child: const SeraZApp(),
     ),
   );
+}
+
+/// Memakai Android Photo Picker agar pemilih foto tampil sebagai lembar foto,
+/// bukan daftar "Buka dari". Android 16 ke atas selalu memakainya.
+void _enableAndroidPhotoPicker() {
+  if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+  final implementation = ImagePickerPlatform.instance;
+  if (implementation is ImagePickerAndroid) {
+    implementation.useAndroidPhotoPicker = true;
+  }
 }
 
 /// Memuat model deteksi dan tabel ML. Mengembalikan null bila gagal, supaya app tetap terbuka
