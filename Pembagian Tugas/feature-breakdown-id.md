@@ -1,5 +1,6 @@
 # Sera-Z — Rincian Fitur & Epic (Penjelasan Jobdesk)
 
+Diperbarui: 9 November 2026
 Dokumen ini menjelaskan **Epic** (kelompok pekerjaan besar) dan **jobdesk**
 (tugas di dalamnya) beserta fungsinya. Tidak ada pembagian ke peran atau orang —
 semua tugas bersifat terbuka dan boleh dikerjakan siapa saja.
@@ -23,16 +24,16 @@ Untuk cara mengambil tugas dan ketergantungan, lihat `context/pembagian-tugas.md
 
 | Epic | Nama | Status |
 |------|------|--------|
-| E1 | Fondasi Aplikasi | ✅ Selesai |
-| E2 | Penyimpanan & Data | 🟡 Sebagian (E2.4, E2.6 tersisa) |
-| E3 | Autentikasi & Cloud | ✅ Selesai |
-| E4 | Model 1 — Klasifikasi jenis pakaian | 🟡 Sebagian (E4.6 tersisa) |
-| E5 | Modul 2 — Ekstraksi warna | 🟡 Sebagian |
-| E6 | Model 3 — Skor kecocokan | 🟡 Sebagian (E6.4 selesai) |
-| E7 | Integrasi On-device | 🟡 Sebagian |
-| E8 | Penyelesaian Fitur | 🟡 Sebagian |
-| E9 | QA & Pengujian | 🟡 Sebagian |
-| E10 | Dokumentasi | 🟡 Sebagian |
+| E1 | Fondasi Aplikasi | Selesai |
+| E2 | Penyimpanan & Data | Sebagian (E2.4, E2.6 belum) |
+| E3 | Autentikasi & Cloud | Selesai |
+| E4 | Model 1 - Klasifikasi jenis pakaian | Sebagian (E4.6 belum) |
+| E5 | Modul 2 - Ekstraksi warna | Sebagian (E5.2, E5.4 belum) |
+| E6 | Model 3 - Skor kecocokan | Sebagian (E6.4 selesai, E6.5 menunggu review) |
+| E7 | Integrasi On-device | Sebagian (E7.1 sampai E7.5 jalan, E7.6 belum) |
+| E8 | Penyelesaian Fitur | Sebagian (Admin dan CRUD lengkap belum) |
+| E9 | QA & Pengujian | Sebagian (80 test, QA plan; uji lapangan belum) |
+| E10 | Dokumentasi | Sebagian (logbook dan dokumen ML berjalan) |
 
 ---
 

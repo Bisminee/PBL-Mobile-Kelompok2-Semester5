@@ -1,5 +1,7 @@
 # Peta Tugas dan PIC
 
+Diperbarui: 9 November 2026 (branch `dev`, commit `f67732a`)
+
 Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md` (rincian jobdesk),
 `Pembagian Tugas/pembagian-tugas.md` (cara mengambil tugas),
 `Pembagian Tugas/Epics/` (satu berkas per epic).
@@ -9,14 +11,14 @@ Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md` (rincian jobdesk),
 | Epic | Nama | Estimasi | Status |
 |---|---|---:|---|
 | E1 | Fondasi aplikasi | 7 | Selesai |
-| E2 | Penyimpanan dan data | 7 | Belum |
-| E3 | Autentikasi dan cloud | 5 | Belum |
-| E4 | Model 1 klasifikasi jenis pakaian | 8 | Pipeline siap, belum dilatih |
-| E5 | Modul 2 ekstraksi warna | 5 | Belum |
-| E6 | Model 3 skor kecocokan | 8,5 | Sebagian (E6.4 selesai) |
-| E7 | Integrasi on-device | 9,5 | Belum |
-| E8 | Penyelesaian fitur | 11,5 | Sebagian |
-| E9 | QA dan pengujian | 11 | Sebagian |
+| E2 | Penyimpanan dan data | 7 | Sebagian (E2.4 dan E2.6 belum) |
+| E3 | Autentikasi dan cloud | 5 | Selesai |
+| E4 | Model 1 klasifikasi jenis pakaian | 8 | Terlatih dan evaluasi selesai; E4.6 belum |
+| E5 | Modul 2 ekstraksi warna | 5 | Sebagian (E5.2 dan E5.4 belum) |
+| E6 | Model 3 skor kecocokan | 8,5 | Sebagian (E6.4 selesai, E6.5 menunggu review, E6.1 dan E6.6 belum) |
+| E7 | Integrasi on-device | 9,5 | Sebagian (E7.1 sampai E7.5 jalan, E7.6 belum) |
+| E8 | Penyelesaian fitur | 11,5 | Sebagian (Admin, CRUD lengkap, profil terbuka) |
+| E9 | QA dan pengujian | 11 | Sebagian (80 test dan QA plan; uji lapangan belum) |
 | E10 | Dokumentasi | 11,5 | Berjalan |
 
 ## 2. Daftar jobdesk ringkas
