@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
@@ -29,6 +30,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     setState(() => _busy = true);
     try {
       await _authService.signOut();
+      // Mode uji tidak punya pengguna Firebase, jadi status login harus
+      // diturunkan manual agar router benar-benar membuka halaman login.
+      authListenable.setSignedIn(false);
       ref.read(authProvider.notifier).signOut();
       ref.read(wardrobeProvider.notifier).clear();
       if (mounted) context.go(AppRoutes.login);
@@ -70,6 +74,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     try {
       await _authService.deleteAccount();
+      authListenable.setSignedIn(false);
       ref.read(authProvider.notifier).signOut();
       ref.read(wardrobeProvider.notifier).clear();
       if (mounted) context.go(AppRoutes.login);
@@ -94,10 +99,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           width: 90,
           height: 90,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Text(
-            user?.initials ?? '?',
-            style: AppTextStyles.h1,
-          ),
+          errorBuilder: (context, error, stackTrace) =>
+              Text(user?.initials ?? '?', style: AppTextStyles.h1),
         ),
       );
     }
@@ -106,8 +109,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -164,8 +168,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const SizedBox(height: 12),
                 Text(user?.name ?? 'Pengguna', style: AppTextStyles.h2),
                 const SizedBox(height: 4),
-                Text(user?.email ?? 'Belum login',
-                    style: AppTextStyles.bodySecondary),
+                Text(
+                  user?.email ?? 'Belum login',
+                  style: AppTextStyles.bodySecondary,
+                ),
                 const SizedBox(height: 28),
                 const ProfileSectionLabel('ACCOUNT'),
                 ProfileMenuGroup(

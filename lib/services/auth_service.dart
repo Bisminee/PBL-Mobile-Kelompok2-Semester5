@@ -92,8 +92,16 @@ class AuthService {
   }
 
   /// Keluar dari Firebase dan Google.
+  ///
+  /// Keluar dari Google dibuat best-effort: pada mode uji pengguna mungkin
+  /// tidak pernah login Google, dan memanggil signOut tanpa inisialisasi
+  /// akan melempar error yang tidak perlu.
   Future<void> signOut() async {
-    await GoogleSignIn.instance.signOut();
+    try {
+      await GoogleSignIn.instance.signOut();
+    } catch (error) {
+      debugPrint('Google signOut dilewati: $error');
+    }
     await _auth.signOut();
   }
 

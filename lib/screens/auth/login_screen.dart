@@ -1,6 +1,7 @@
 import 'dart:async' show TimeoutException, unawaited;
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final UserRepository _userRepository = UserRepository();
   bool _loading = false;
   String? _error;
+
+  /// Pintu masuk tanpa akun untuk build debug. Sementara dipakai selama
+  /// login Google belum stabil di perangkat uji.
+  bool get _modeUji => kDebugMode;
+
+  /// Masuk sebagai tamu: tidak menyentuh Firebase, hanya membuka kunci rute.
+  void _continueWithoutLogin() {
+    authListenable.setSignedIn(true);
+    ref
+        .read(authProvider.notifier)
+        .setUser(const AppUser(name: 'Mode Uji', email: 'tanpa-akun'));
+    context.go(AppRoutes.home);
+  }
 
   Future<void> _signInWithGoogle() async {
     setState(() {
@@ -165,6 +179,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   'Masuk untuk melanjutkan ke lemarimu.',
                   style: AppTextStyles.bodySecondary,
                 ),
+                if (_modeUji) ...[
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBg,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.accent),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'MODE UJI TANPA AKUN',
+                          style: AppTextStyles.mono(10),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Masuk tanpa akun untuk mencoba kamera, lemari, dan '
+                          'rekomendasi. Data disimpan lokal di HP.',
+                          style: AppTextStyles.label.copyWith(fontSize: 12),
+                        ),
+                        const SizedBox(height: 12),
+                        AppButton(
+                          label: 'Masuk tanpa akun',
+                          onPressed: _continueWithoutLogin,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 36),
                 Text(
                   'Masuk memakai akun Google. Login email dan password belum tersedia.',
