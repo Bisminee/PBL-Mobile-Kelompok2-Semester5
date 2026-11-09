@@ -19,17 +19,17 @@ M1 = ROOT / "ml" / "data" / "processed" / "model1"
 RUNS = ROOT / "ml" / "runs"
 
 
-def sanity_check() -> None:
+def sanity_check(data: Path) -> None:
     for split in ("train", "val"):
-        d = M1 / split
+        d = data / split
         if not d.exists():
             raise SystemExit(f"Folder {d} tidak ada — jalankan 01_prepare_model1.py dulu.")
-    train_cls = sorted(p.name for p in (M1 / "train").iterdir() if p.is_dir())
-    val_cls = sorted(p.name for p in (M1 / "val").iterdir() if p.is_dir())
+    train_cls = sorted(p.name for p in (data / "train").iterdir() if p.is_dir())
+    val_cls = sorted(p.name for p in (data / "val").iterdir() if p.is_dir())
     if train_cls != val_cls:
         raise SystemExit(f"Kelas train != val:\n train={train_cls}\n val={val_cls}")
-    n_train = sum(1 for _ in (M1 / "train").rglob("*.jpg"))
-    n_val = sum(1 for _ in (M1 / "val").rglob("*.jpg"))
+    n_train = sum(1 for _ in (data / "train").rglob("*.jpg"))
+    n_val = sum(1 for _ in (data / "val").rglob("*.jpg"))
     print(f"Kelas ({len(train_cls)}): {train_cls}")
     print(f"Train: {n_train} gambar | Val: {n_val} gambar")
 
@@ -42,8 +42,14 @@ def main() -> None:
     ap.add_argument("--imgsz", type=int, default=224)
     ap.add_argument("--batch", type=int, default=32, help="turunkan kalau OOM/RAM habis")
     ap.add_argument("--patience", type=int, default=8, help="early stopping")
+    ap.add_argument("--workers", type=int, default=8,
+                    help="worker DataLoader; turunkan ke 2 di Colab/CPU")
+    ap.add_argument("--lr0", type=float, default=None,
+                    help="learning rate awal; untuk fine-tune dari best.pt pakai 0.001")
     ap.add_argument("--device", default="", help="kosong=otomatis, 'cpu', atau '0' (GPU)")
     ap.add_argument("--name", default="model1_yolo11n")
+    ap.add_argument("--data", default=str(M1),
+                    help="folder dataset (train/ val/ test/), default model1")
     ap.add_argument("--cls-pw", type=float, default=None,
                     help="pembobotan kelas (0-1) bila versi Ultralytics mendukung")
     args = ap.parse_args()
@@ -53,16 +59,17 @@ def main() -> None:
     except ImportError:
         raise SystemExit("Ultralytics belum terpasang: pip install ultralytics")
 
-    sanity_check()
+    sanity_check(Path(args.data))
     RUNS.mkdir(parents=True, exist_ok=True)
 
     model = YOLO(args.model)          # ImageNet pretrained = transfer learning
     common = dict(
-        data=str(M1),
+        data=args.data,
         epochs=args.epochs,
         imgsz=args.imgsz,
         batch=args.batch,
         patience=args.patience,
+        workers=args.workers,
         seed=42,                       # reproduksibel untuk laporan
         project=str(RUNS),
         name=args.name,
@@ -70,6 +77,8 @@ def main() -> None:
     )
     if args.device:
         common["device"] = args.device
+    if args.lr0 is not None:
+        common["lr0"] = args.lr0
 
     print(f"\nMulai latih: {args.model} | epochs={args.epochs} | imgsz={args.imgsz}\n")
     if args.cls_pw is not None:

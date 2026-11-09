@@ -20,7 +20,7 @@ ml/
 |   |-- clothing_full.csv             # Aturan pemetaan dataset Clothing Dataset Full
 |   |-- fashion_products.csv          # Aturan pemetaan dataset Fashion Product Images
 |   `-- carousell.csv                 # Aturan pemetaan dataset Carousell Clothes
-|-- scripts/                          # Seluruh script otomatisasi pipeline ML (00 - 08)
+|-- scripts/                          # Seluruh script otomatisasi pipeline ML (00 - 09)
 |   |-- 00_download_data.py           # Unduh otomatis 3 dataset mentah Kaggle ke ml/data/raw/
 |   |-- 01_prepare_model1.py          # Pembersihan, deduplikasi MD5, dan split 70/15/15
 |   |-- 02_balance_train.py           # Penyeimbangan kelas data latih (oversampling train)
@@ -29,7 +29,13 @@ ml/
 |   |-- 05_eval_model1.py             # Evaluasi komprehensif, confusion matrix, per-sumber
 |   |-- 06_export_tflite.py           # Kuantisasi int8 dan ekspor model ke format TFLite
 |   |-- 07_extract_color_kmeans.py    # Modul 2: Ekstraksi 14 warna dominan (K-Means)
-|   `-- 08_train_model3_mlp.py        # Model 3: Pelatihan skor kecocokan outfit (Keras MLP)
+|   |-- 08_train_model3_mlp.py        # Model 3: Pelatihan skor kecocokan outfit (Keras MLP)
+|   |-- 09_prepare_hf.py              # Alternatif 01_: dataset dari Hugging Face (Colab)
+|   |-- 10_eval_field.py             # Uji model pada foto lapangan + objek bukan pakaian
+|   |-- 11_download_negatives.py     # Unduh foto objek bukan pakaian (COCO 2017) untuk kelas other
+|   `-- 12_run_model1_pipeline.py    # Jalankan semua tahap di atas dengan satu perintah
+|-- notebooks/                        # Notebook siap jalan di Google Colab
+|   `-- train_model1_hf_colab.ipynb   # Pipeline penuh dari dataset HF sampai TFLite
 |-- data/                             # Direktori data (diabaikan oleh Git / .gitignore)
 |   |-- raw/                          # Tempat penyimpanan dataset mentah unduhan Kaggle
 |   |   |-- clothing-full/            # Folder ekstrak Clothing Dataset Full
@@ -366,6 +372,64 @@ Jika spesifikasi komputer lokal Anda tidak memiliki GPU diskrit (NVIDIA CUDA) da
    ```
    Pada GPU T4, 40 epoch akan selesai dalam waktu **kurang lebih 15 hingga 20 menit**.
 5. Unduh file `best.pt` yang dihasilkan dari folder `ml/runs/model1_yolo11n/weights/best.pt`, lalu letakkan kembali di folder lokal Anda untuk dievaluasi dan diekspor menggunakan script `05_` dan `06_`.
+
+### 6.1 Jalur Colab tanpa Kaggle: dataset dari Hugging Face
+
+Notebook `ml/notebooks/train_model1_hf_colab.ipynb` menjalankan seluruh pipeline di
+Colab mulai dari `load_dataset` sampai TFLite. Script pendukungnya
+`09_prepare_hf.py`, alternatif `01_prepare_model1.py` yang mengunduh
+`ashraq/fashion-product-images-small`.
+
+```python
+python ml/scripts/09_prepare_hf.py --out ml/data/processed/model1
+python ml/scripts/04_train_yolo11n.py --data ml/data/processed/model1 --device 0
+python ml/scripts/05_eval_model1.py --data ml/data/processed/model1
+python ml/scripts/06_export_tflite.py --data ml/data/processed/model1
+```
+
+Catatan: dataset HF tersebut adalah port dari Kaggle
+`paramaggarwal/fashion-product-images-small`, sumber yang sudah dipakai
+pipeline lama. Melatih ulang dengannya memberi hasil setara, bukan lebih
+tinggi. Untuk kenaikan nyata, tambahkan foto lapangan (E10.2) sebagai data
+latih dan uji.
+
+### 6.2 Kelas "other": menolak objek yang bukan pakaian
+
+Model 9 kelas selalu memaksa memilih salah satu jenis pakaian, sehingga foto
+laptop bisa terbaca "kaos". Solusinya menambah kelas ke-10 `other` berisi foto
+objek bukan pakaian.
+
+```bash
+# 1. Unduh 800 foto objek bukan pakaian dari COCO 2017 (otomatis)
+python ml/scripts/11_download_negatives.py --count 800
+
+# 2. Siapkan dataset 10 kelas
+python ml/scripts/09_prepare_hf.py --force --negatives ml/data/raw/negatives
+# 3. Latih seperti biasa
+python ml/scripts/04_train_yolo11n.py --data ml/data/processed/model1 --device 0
+```
+
+Aplikasi menolak hasil bila kelas `other` terpilih atau confidence di bawah
+`minimumGarmentConfidence` (0.50 di `lib/services/outfit_engine.dart`).
+User masih bisa memilih jenis pakaian manual bila model salah menolak.
+
+### 6.3 Uji pada foto lapangan
+
+Akurasi test katalog tidak mewakili foto HP. Siapkan folder:
+
+```
+ml/data/raw/field/
+  tshirt/   shirt/   long_sleeve/   outerwear/   long_pants/
+  shorts/   skirt/   dress/         shoes/
+  other/    <- foto laptop, meja, tangan, dinding
+```
+
+```bash
+python ml/scripts/10_eval_field.py --weights ml/runs/model1_hf/weights/best.pt
+```
+
+Hasil: akurasi pada foto pakaian, berapa foto pakaian yang salah ditolak, dan
+berapa objek bukan pakaian yang berhasil ditolak.
 
 ---
 

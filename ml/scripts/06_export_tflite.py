@@ -23,6 +23,8 @@ DEFAULT_WEIGHTS = ROOT / "ml" / "runs" / "model1_yolo11n" / "weights" / "best.pt
 def main() -> None:
     ap = argparse.ArgumentParser(description="Ekspor Model 1 ke TFLite int8.")
     ap.add_argument("--weights", default=str(DEFAULT_WEIGHTS))
+    ap.add_argument("--data", default=str(M1),
+                    help="folder dataset untuk kalibrasi int8, default model1")
     ap.add_argument("--imgsz", type=int, default=224)
     ap.add_argument("--out-name", default="model1_yolo11n_v1.tflite")
     args = ap.parse_args()
@@ -43,7 +45,7 @@ def main() -> None:
     for fmt in ("tflite", "litert"):
         try:
             exported = model.export(format=fmt, int8=True, imgsz=args.imgsz,
-                                    data=str(M1))
+                                    data=args.data)
             print(f"Export sukses (format={fmt}) -> {exported}")
             break
         except Exception as e:
