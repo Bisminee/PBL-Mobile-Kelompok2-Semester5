@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
-import '../common/clothing_thumb.dart';
+import '../../models/garment.dart';
+import '../common/garment_photo.dart';
 import '../common/match_ring.dart';
 
-/// Kartu rekomendasi outfit (collage 3 item + judul + skor).
+/// Kartu rekomendasi outfit (foto atasan + bawahan, judul, skor).
 class RecommendationCard extends StatelessWidget {
   const RecommendationCard({
     super.key,
@@ -13,6 +14,8 @@ class RecommendationCard extends StatelessWidget {
     required this.matchLabel,
     required this.score,
     required this.description,
+    required this.top,
+    required this.bottom,
     this.onTap,
   });
 
@@ -20,6 +23,10 @@ class RecommendationCard extends StatelessWidget {
   final String matchLabel;
   final int score;
   final String description;
+
+  /// Item yang benar-benar dipadukan, dipakai untuk menampilkan fotonya.
+  final Garment top;
+  final Garment bottom;
   final VoidCallback? onTap;
 
   @override
@@ -41,24 +48,21 @@ class RecommendationCard extends StatelessWidget {
               height: 170,
               child: Row(
                 children: [
-                  const Expanded(
-                    child: ClothingThumb(kind: ClothingKind.top, iconSize: 48),
+                  Expanded(
+                    child: GarmentPhoto(
+                      imagePath: top.imagePath,
+                      kind: clothingKindOf(top.garmentType, top.slot),
+                      dark: top.isDark,
+                      iconSize: 48,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Column(
-                      children: const [
-                        Expanded(
-                          child: ClothingThumb(
-                            kind: ClothingKind.bottom,
-                            dark: false,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Expanded(
-                          child: ClothingThumb(kind: ClothingKind.shoes),
-                        ),
-                      ],
+                    child: GarmentPhoto(
+                      imagePath: bottom.imagePath,
+                      kind: clothingKindOf(bottom.garmentType, bottom.slot),
+                      dark: bottom.isDark,
+                      iconSize: 48,
                     ),
                   ),
                 ],
