@@ -14,7 +14,7 @@ Diperbarui: 2 November 2026 (branch `dev`)
 | Model 3 (E6) | Aturan harmoni selesai; MLP data sintetis; metrik AUC belum |
 | Integrasi (E7) | Loader TFLite, inferensi, dan mesin rekomendasi jalan; fallback dan latensi tersisa |
 | Fitur aplikasi (E8) | Lemari, Home, Profil, Detail, simpan outfit jalan; Admin dan CRUD lengkap tersisa |
-| QA (E9) | 39 test otomatis lulus; rencana uji formal belum |
+| QA (E9) | 51 test otomatis lulus; rencana uji formal belum |
 | Dokumentasi (E10) | Logbook minggu 1-6, laporan Milestone 1, model card |
 
 ## 2. Yang sudah selesai
@@ -34,10 +34,13 @@ Diperbarui: 2 November 2026 (branch `dev`)
   widget tak terpakai dihapus.
 - Dokumen: logbook minggu 1-6, laporan Milestone 1, timeline, pembagian tugas
   minggu 6.
+- Penolakan objek bukan pakaian (PR baru): kelas ke-10 `other` pada pipeline
+  dataset, `Detection.isGarment` dengan ambang 0,50, layar penolakan di
+  `detection_result_screen.dart`, dan fallback label model lama.
 
 ## 3. Test
 
-- 39 test lulus.
+- 51 test lulus.
 - Cakupan: harmoni warna, garment, label, color extractor, recommender, widget.
 - `flutter analyze` bersih.
 
@@ -50,8 +53,11 @@ Diperbarui: 2 November 2026 (branch `dev`)
    tulis sebagai keterbatasan.
 3. **Uji perangkat belum.** Login, logout, dan hapus akun belum diuji di HP.
 4. **Rencana QA formal belum disusun.**
-5. **Label aplikasi belum sesuai model.** `labels.txt` masih 15 label lama,
-   sedangkan model punya 9 kelas.
+5. **Model 10 kelas belum terpasang di APK.** `assets/models/yolo11n_cls.tflite`
+   masih model lama 15 kelas; `labels.txt` sudah 10 kelas dan
+   `GarmentClassifier` otomatis memakai `labels_legacy_15.txt` selama model
+   belum diganti. Ganti `yolo11n_cls.tflite` dengan hasil ekspor 10 kelas agar
+   penolakan `other` aktif.
 
 ## 5. Langkah berikut
 
@@ -62,7 +68,7 @@ Fokus minggu 6 (2-8 November 2026):
 3. Ekspor TFLite, metrik Model 3, palet warna, dan dokumentasi ML (Bisma).
 4. Rencana QA dan uji perangkat (Bisma).
 5. Halaman Admin dan CRUD lemari lengkap (Izza).
-6. Edit profil, label 9 kelas, dan latensi (Abim).
+6. Edit profil, pasang model 10 kelas, dan latensi (Abim).
 
 Rincian ada di `Pembagian Tugas/pembagian-tugas-minggu-11.md` dan
 `Pembagian Tugas/panduan-kerja-bisma-minggu-6.md`.
