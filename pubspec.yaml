@@ -44,3 +44,4 @@ flutter:
     - assets/db/fashion_app.db
     - assets/models/yolo11n_cls.tflite
     - assets/models/labels.txt
+    - assets/models/labels_legacy_15.txt

@@ -1,9 +1,14 @@
 // YOLO11n-cls (TFLite): jenis pakaian + confidence.
-// Model : assets/models/yolo11n_cls.tflite  (input [1, 3, 224, 224] float32 NCHW, output [1, 15] softmax)
+// Model : assets/models/yolo11n_cls.tflite  (input [1, 3, 224, 224] float32 NCHW, output softmax)
 // Label : assets/models/labels.txt (urutan = names di model)
+//
+// Model terbaru punya 10 kelas (9 jenis pakaian + "other" untuk objek bukan pakaian).
+// Model lama yang mungkin masih terpasang punya 15 kelas. Agar aplikasi tidak mati saat
+// model dan label belum diganti bersamaan, kelas model lama disimpan di labels_legacy_15.txt.
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -63,22 +68,40 @@ class GarmentClassifier {
   final Interpreter _interp;
   final List<String> labels;
 
-  static Future<GarmentClassifier> load() async {
-    final interp = await Interpreter.fromAsset(
-      'assets/models/yolo11n_cls.tflite',
-    );
+  /// Membaca satu berkas label, satu label per baris.
+  static Future<List<String>> _readLabels(String assetPath) async {
     // labels.txt dibuat di Windows sehingga baris berakhir CRLF. Tanpa trim, label menjadi "shoes\r".
-    final raw = await rootBundle.loadString('assets/models/labels.txt');
-    final labels = raw
+    final raw = await rootBundle.loadString(assetPath);
+    return raw
         .split(RegExp(r'\r?\n'))
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
-    final outShape = interp.getOutputTensor(0).shape;
-    if (outShape.last != labels.length) {
-      throw StateError(
-        'Jumlah output model (${outShape.last}) tidak sama dengan jumlah label (${labels.length})',
-      );
+  }
+
+  static Future<GarmentClassifier> load() async {
+    final interp = await Interpreter.fromAsset(
+      'assets/models/yolo11n_cls.tflite',
+    );
+    final kelasModel = interp.getOutputTensor(0).shape.last;
+
+    // Utamakan label baru. Bila model yang terpasang masih model lama,
+    // pakai daftar label lama supaya aplikasi tetap bisa dipakai.
+    var labels = await _readLabels('assets/models/labels.txt');
+    if (labels.length != kelasModel) {
+      final lama = await _readLabels('assets/models/labels_legacy_15.txt');
+      if (lama.length == kelasModel) {
+        debugPrint(
+          'Model masih memakai $kelasModel kelas lama. '
+          'Ganti yolo11n_cls.tflite dengan model 10 kelas agar "other" aktif.',
+        );
+        labels = lama;
+      } else {
+        throw StateError(
+          'Jumlah output model ($kelasModel) tidak sama dengan jumlah label '
+          '(${labels.length} di labels.txt, ${lama.length} di labels_legacy_15.txt).',
+        );
+      }
     }
     return GarmentClassifier._(interp, labels);
   }

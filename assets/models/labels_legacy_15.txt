@@ -1,0 +1,15 @@
+blazer
+body
+dress
+hat
+hoodie
+longsleeve
+outwear
+pants
+polo
+shirt
+shoes
+shorts
+skirt
+t_shirt
+undershirt

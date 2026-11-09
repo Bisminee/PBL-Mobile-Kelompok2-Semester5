@@ -10,6 +10,7 @@ import '../../services/outfit_engine.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
+import '../../widgets/common/clothing_thumb.dart';
 import '../../widgets/common/corner_frame.dart';
 import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/match_ring.dart';
@@ -61,7 +62,7 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            for (final t in slotOfType.keys)
+            for (final t in slotOfType.keys.where((t) => t != notGarmentType))
               ListTile(
                 title: Text(typeLabel(t)),
                 subtitle: Text(slotLabel(slotOfType[t])),
@@ -120,6 +121,17 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
 
     final pct = (d.confidence * 100).round();
     final segments = _segments(d);
+
+    // Model 10 kelas punya kelas "other". Bila itu yang terpilih (atau model sangat
+    // tidak yakin), tampilkan penolakan, bukan hasil pakaian.
+    if (!d.isGarment) {
+      return _NotGarmentView(
+        imagePath: s.imagePath,
+        confidence: pct,
+        onRetry: () => context.go(AppRoutes.camera),
+        onManual: () => _pickOtherType(),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -331,4 +343,85 @@ class _Notice extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// Layar penolakan: foto dianggap bukan pakaian.
+///
+/// User tetap boleh melanjutkan dengan memilih jenis pakaian sendiri,
+/// karena model juga bisa salah menolak foto yang sebenarnya pakaian.
+class _NotGarmentView extends StatelessWidget {
+  const _NotGarmentView({
+    required this.imagePath,
+    required this.confidence,
+    required this.onRetry,
+    required this.onManual,
+  });
+
+  final String? imagePath;
+  final int confidence;
+  final VoidCallback onRetry;
+  final VoidCallback onManual;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: ContentWidth(
+            maxWidth: 520,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                CircleIconButton(icon: Icons.chevron_left, onPressed: onRetry),
+                const SizedBox(height: 18),
+                Container(
+                  height: 300,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBg,
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: CornerFrame(
+                    color: const Color(0xFFB8B8BC),
+                    cornerLength: 24,
+                    child: GarmentPhoto(
+                      imagePath: imagePath,
+                      kind: ClothingKind.top,
+                      radius: 12,
+                      iconSize: 110,
+                      background: Colors.transparent,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Sepertinya ini bukan pakaian',
+                  style: AppTextStyles.display.copyWith(fontSize: 30),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Model tidak menemukan pakaian di foto ini '
+                  '(keyakinan $confidence%). Coba foto satu potong pakaian '
+                  'dengan latar lebih sederhana dan pencahayaan cukup.',
+                  style: AppTextStyles.bodySecondary.copyWith(fontSize: 15),
+                ),
+                const SizedBox(height: 24),
+                AppButton(label: 'Ambil foto ulang', onPressed: onRetry),
+                const SizedBox(height: 10),
+                AppButton(
+                  label: 'Tetap pilih jenis manual',
+                  style: AppButtonStyle.outlined,
+                  onPressed: onManual,
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

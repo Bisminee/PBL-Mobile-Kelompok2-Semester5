@@ -15,6 +15,14 @@ import 'local_db.dart';
 /// hanya sekitar 57%. Ambang ditentukan dari data uji yang sama, jadi angka 94,5% sedikit optimis.
 const double confidentThreshold = 0.97;
 
+/// Nama kelas "bukan pakaian" pada model 10 kelas.
+/// Foto laptop, meja, atau tangan seharusnya jatuh ke kelas ini.
+const String notGarmentType = 'other';
+
+/// Batas bawah agar hasil masih dianggap pakaian.
+/// Di bawah angka ini model dianggap menebak asal, jadi hasil tidak boleh disimpan.
+const double minimumGarmentConfidence = 0.50;
+
 class Detection {
   const Detection({
     required this.type,
@@ -46,6 +54,16 @@ class Detection {
       styles.isEmpty ? null : styles.first['style'] as String?;
 
   bool get isConfident => !manual && confidence >= confidentThreshold;
+
+  /// False bila foto ini sepertinya bukan pakaian.
+  ///
+  /// Ada dua penyebab: model memilih kelas "other", atau model sangat tidak yakin
+  /// (di bawah [minimumGarmentConfidence]). Hasil manual dari user selalu dianggap pakaian.
+  bool get isGarment {
+    if (type == notGarmentType) return false;
+    if (manual) return true;
+    return confidence >= minimumGarmentConfidence;
+  }
 
   Detection copyWith({
     String? type,
@@ -136,6 +154,23 @@ class OutfitEngine {
 
     final preds = classifier.predictInput(input, k: 3);
     final top = preds.first;
+
+    // Kelas "other" berarti objek di foto bukan pakaian. Tabel ml_* tidak punya
+    // jenis ini, jadi formalitas dan style tidak dihitung.
+    if (top.label == notGarmentType) {
+      return Detection(
+        type: notGarmentType,
+        slot: notGarmentType,
+        color: color.family,
+        colorHex: color.hex,
+        formality: 'non_formal',
+        confidence: top.confidence,
+        alternatives: preds,
+        styles: const [],
+        colorShare: color.share,
+      );
+    }
+
     final f = await dbh.predictFormality(top.label, color.family, gender, age);
     final s = await dbh.predictStyles(top.label, color.family, gender, age);
     return Detection(
