@@ -210,12 +210,17 @@ class ClothingDetailScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: g.colorValue,
                           shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.border),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        g.colorName,
-                        style: AppTextStyles.title.copyWith(fontSize: 14),
+                      Flexible(
+                        child: Text(
+                          g.colorName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.title.copyWith(fontSize: 14),
+                        ),
                       ),
                     ],
                   ),
@@ -287,12 +292,18 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 16),
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: AppTextStyles.bodySecondary),
-        DefaultTextStyle(
-          style: AppTextStyles.title.copyWith(fontSize: 14),
-          child: value,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: DefaultTextStyle(
+              style: AppTextStyles.title.copyWith(fontSize: 14),
+              textAlign: TextAlign.end,
+              child: value,
+            ),
+          ),
         ),
       ],
     ),
