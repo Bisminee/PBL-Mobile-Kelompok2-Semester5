@@ -62,10 +62,33 @@ KATEGORI_DALAM_RUANG = {
 }
 
 
-def nama_kategori(ds, row) -> set[str]:
-    """Ambil nama kategori COCO untuk satu baris (ClassLabel bisa berupa int)."""
-    names = ds.features["objects"].feature["category"].names
+def nama_kategori(ds, row) -> set[str] | None:
+    """Ambil nama kategori COCO untuk satu baris.
+
+    Versi `datasets` berbeda-beda dalam menyusun fitur bertingkat: kadang
+    `Sequence.feature`, kadang dict biasa. Bila nama kategori tidak bisa
+    dipetakan, kembalikan None supaya foto tetap diterima, bukan malah
+    membuang semua baris.
+    """
     raw = row.get("objects", {}).get("category", [])
+    if not raw:
+        return set()
+    if all(isinstance(c, str) for c in raw):
+        return set(raw)
+
+    fitur = ds.features["objects"]
+    kandidat = None
+    if hasattr(fitur, "feature"):
+        dalam = fitur.feature
+        kandidat = dalam.get("category") if isinstance(dalam, dict) else None
+    elif isinstance(fitur, dict):
+        kandidat = fitur.get("category")
+        if kandidat is None and isinstance(fitur.get("feature"), dict):
+            kandidat = fitur["feature"].get("category")
+
+    names = getattr(kandidat, "names", None)
+    if not names:
+        return None
     return {names[c] if isinstance(c, int) else c for c in raw}
 
 
@@ -120,7 +143,11 @@ def main() -> None:
         if args.exclude_person_only and kategori == {"person"}:
             dilewati += 1
             continue
-        if args.prefer_indoor and not (kategori & KATEGORI_DALAM_RUANG):
+        if (
+            args.prefer_indoor
+            and kategori is not None
+            and not (kategori & KATEGORI_DALAM_RUANG)
+        ):
             dilewati += 1
             continue
 
