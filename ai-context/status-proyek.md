@@ -9,7 +9,7 @@ Diperbarui: 9 November 2026 (minggu 11, branch `dev`)
 | Aplikasi (UI) | Seluruh layar utama ada dan responsif; galeri dan crop sudah digabung |
 | Penyimpanan (E2) | SQLite aktif; riwayat rekomendasi dan unit test DAO tersisa |
 | Autentikasi (E3) | Login Google, profil Firestore, sesi, logout, hapus akun |
-| Model 1 (E4) | Model v2: dataset HF + COCO negatif, 9 kelas, akurasi test 97,54 persen, macro F1 93,37 persen |
+| Model 1 (E4) | Model v3: dataset HF + COCO negatif, 10 kelas termasuk `long_sleeve`, akurasi test 96,88 persen, macro F1 88,24 persen |
 | Modul warna (E5) | Ekstraksi warna dan palet 14 warna ada; test palet tersisa |
 | Model 3 (E6) | Aturan harmoni selesai; MLP data sintetis; metrik AUC belum |
 | Integrasi (E7) | Loader TFLite, inferensi, mesin rekomendasi jalan; uji latensi tersisa |
@@ -19,12 +19,14 @@ Diperbarui: 9 November 2026 (minggu 11, branch `dev`)
 
 ## 2. Status kode (selesai)
 
-- Model 1 v2 dilatih di Colab: 9 kelas termasuk `other`, 24 epoch, akurasi test
-  97,54 persen, macro F1 93,37 persen, kelas `other` F1 1,000.
-- TFLite int8 1,68 MB, input `[1, 3, 224, 224]`, output `[1, 9]`, sudah
+- Model 1 v3 dilatih di Colab: 10 kelas termasuk `long_sleeve` dan `other`,
+  27 epoch, akurasi test 96,88 persen, macro F1 88,24 persen, kelas `other`
+  F1 1,000.
+- TFLite int8 1,76 MB, input `[1, 3, 224, 224]`, output `[1, 10]`, sudah
   diverifikasi dengan interpreter.
 - Label model dipetakan ke kamus database: `tshirt` menjadi `t_shirt`,
-  `long_pants` menjadi `pants`, `outerwear` menjadi `outwear`.
+  `long_pants` menjadi `pants`, `long_sleeve` menjadi `longsleeve`,
+  `outerwear` menjadi `outwear`.
 - Pipeline ML: `13_prepare_hf.py`, `10_eval_field.py`,
   `11_download_negatives.py`, `12_run_model1_pipeline.py`, dan notebook Colab.
 - Fitur aplikasi: foto Lemari dinamis, titik warna sesuai hasil deteksi, sub-tab
@@ -40,7 +42,7 @@ Diperbarui: 9 November 2026 (minggu 11, branch `dev`)
 | Branch | Isi | Catatan |
 |---|---|---|
 | `ml/model1-v2-pipeline` | Pipeline dataset HF, COCO negatif, notebook Colab | Nomor script 09 diganti 13 agar tidak bentrok dengan `09_eval_model3.py` |
-| `feat/non-clothing-object` | Kelas `other`, label 9 kelas, layar penolakan | Perlu validasi ambang 0,50 dengan model v2 |
+| `feat/non-clothing-object` | Kelas `other`, label 10 kelas sesuai database, model v3, layar penolakan | Ambang 0,50 sudah divalidasi: `other` ditolak 100 persen, pakaian salah ditolak 0,63 persen |
 | `feat/profile-auth` | Login tanpa akun, edit profil, preferensi | Mode uji dibatasi ke debug |
 | `chore/model1-v2-assets` | Model v2, laporan evaluasi, model card | Digabung setelah non-clothing |
 | `docs/status-minggu-6` | Dokumen status ini | - |
@@ -67,12 +69,13 @@ Diperbarui: 9 November 2026 (minggu 11, branch `dev`)
 ## 5. Penghambat
 
 1. **Uji foto lapangan belum dijalankan.** 150 foto lapangan belum terkumpul,
-   sehingga akurasi 97,54 persen baru berlaku pada test katalog.
-2. **Ambang 0,50 belum divalidasi pada model v2.** Perlu sapuan ambang pada
-   test set atau foto lapangan.
-3. **`long_sleeve` tidak ada di model v2.** Dataset Hugging Face tidak
-   menyediakan label itu; atasan lengan panjang masuk ke `shirt`, `tshirt`,
-   atau `outwear`.
+   sehingga akurasi 96,88 persen baru berlaku pada test katalog.
+2. **Ambang 0,50 sudah divalidasi pada model v3.** Hasil: `other` ditolak
+   100 persen, pakaian salah ditolak 0,63 persen, akurasi pakaian diterima
+   97,08 persen. Bukti di `ml/reports/model1_v3_threshold_sweep.csv`.
+3. **Kelas `long_sleeve` masih lemah.** F1 0,758 dengan 84 gambar uji;
+   `outerwear` 0,687 karena data jaket menyusut setelah sweatshirts dan
+   sweaters dipindah ke `long_sleeve`.
 4. **Model 3 masih memakai data sintetis.** AUC tinggi bukan bukti generalisasi.
 5. **Uji perangkat belum menyeluruh.** Login, logout, dan hapus akun belum
    diuji sistematis di HP.
@@ -81,10 +84,10 @@ Diperbarui: 9 November 2026 (minggu 11, branch `dev`)
 ## 6. Langkah berikut (minggu 11)
 
 1. Kumpulkan 150 foto lapangan, jalankan `10_eval_field.py`.
-2. Sapuan ambang 0,30-0,90 pada test set, lalu tetapkan ambang final.
+2. Gunakan ambang 0,50 yang sudah divalidasi; tinjau ulang setelah foto lapangan.
 3. Review dan gabungkan branch ML, non-clothing, profile-auth, dan aset model.
 4. Uji perangkat untuk login, logout, simpan outfit, dan penolakan objek.
-5. Lengkapi laporan evaluasi model v2 dan perbarui model card.
+5. Lengkapi laporan evaluasi model v3 dan perbarui model card.
 6. Rencana QA dan uji regresi sebelum milestone akhir.
 
 ## 7. Catatan branch
