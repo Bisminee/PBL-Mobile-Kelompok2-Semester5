@@ -15,6 +15,18 @@
     "epochs": 35,
     "batch_size": 64
   },
+  "environment": {
+    "python": "3.14.6",
+    "tensorflow": "2.22.0-rc0",
+    "scikit_learn": "1.9.1",
+    "numpy": "2.5.4",
+    "os": "Windows-11-10.0.26300-SP0",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "device": "CPU",
+    "op_determinism": true
+  },
+  "dataset_change": "Sejak PR ini, build_dataset() memakai sorted(NEUTRALS) alih-alih list(NEUTRALS). Urutan list dari set string bergantung pada PYTHONHASHSEED, jadi dataset lama tidak bisa diulang persis. Dataset sekarang deterministik, tetapi berbeda dari dataset yang dipakai saat assets/models/model3_compatibility.tflite dilatih; angka di laporan ini tidak berlaku langsung untuk berkas TFLite tersebut sampai script 08 dijalankan ulang.",
   "precision_at_k_setup": {
     "k": 3,
     "query": "satu atasan unik (jenis + warna) di split uji",
@@ -26,7 +38,7 @@
     "candidates_per_query_min": 9,
     "candidates_per_query_median": 18.0,
     "candidates_per_query_max": 32,
-    "tie_break": "acak dengan seed yang sama"
+    "tie_break": "acak; RNG baru dengan seed yang sama untuk tiap model"
   },
   "models": {
     "mlp_keras": {
@@ -43,7 +55,7 @@
       "precision": 0.8758,
       "recall": 0.9283,
       "f1": 0.9013,
-      "precision_at_3": 0.5152
+      "precision_at_3": 0.5051
     },
     "logistic_regression": {
       "roc_auc": 0.9716,
@@ -59,7 +71,7 @@
       "precision": 0.8065,
       "recall": 1.0,
       "f1": 0.8929,
-      "precision_at_3": 0.4242
+      "precision_at_3": 0.404
     }
   },
   "reference": {
@@ -67,6 +79,10 @@
     "ideal_precision_at_3": 0.8687,
     "note": "ideal adalah batas atas; banyak atasan punya kurang dari 3 pasangan cocok di split uji"
   },
+  "interpretation": [
+    "Random Forest menyamai atau melampaui MLP (AUC 0.978 vs 0.9762, P@3 0.5051 vs 0.4545). Pada data sintetis 20 fitur ini MLP tidak punya keunggulan akurasi; MLP dipilih karena bisa diekspor ke TFLite dan berjalan on-device, bukan karena paling akurat.",
+    "Aturan harmoni saja (satu fitur, tanpa pelatihan) sudah mencapai AUC 0.9118. Selisih MLP terhadap aturan (0.0644) adalah nilai tambah yang sebenarnya dari model terlatih. Karena label sintetis dibangkitkan dari aturan yang sama, AUC tinggi ini sebagian besar mencerminkan kebocoran label, bukan kemampuan menilai selera."
+  ],
   "target": {
     "roc_auc_min": 0.75
   },

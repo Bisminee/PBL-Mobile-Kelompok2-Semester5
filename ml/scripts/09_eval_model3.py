@@ -28,11 +28,14 @@ os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
 import argparse
 import importlib.util
 import json
+import platform
+import sys
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
 import numpy as np
+import sklearn
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -59,6 +62,31 @@ def load_script_08():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def display_path(path):
+    """Tampilkan path relatif terhadap repo bila bisa, selain itu path absolut."""
+    path = Path(path).resolve()
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def environment_info(tf):
+    """Catat versi pustaka dan perangkat agar hasil bisa dibandingkan."""
+    gpus = tf.config.list_physical_devices("GPU")
+    return {
+        "python": platform.python_version(),
+        "tensorflow": tf.__version__,
+        "scikit_learn": sklearn.__version__,
+        "numpy": np.__version__,
+        "os": platform.platform(),
+        "machine": platform.machine(),
+        "processor": platform.processor() or "tidak diketahui",
+        "device": f"GPU ({len(gpus)})" if gpus else "CPU",
+        "op_determinism": True,
+    }
 
 
 def classification_metrics(y_true, y_score, threshold=0.5):
@@ -121,6 +149,33 @@ def reference_precision_at_k(groups, y_true, k):
     return float(np.mean(random_vals)), float(np.mean(ideal_vals))
 
 
+def interpretation(models, k):
+    """Ringkasan tafsiran yang dihitung dari angka, bukan ditulis tetap."""
+    mlp, rf, rule = models["mlp_keras"], models["random_forest"], models["rule_harmony_only"]
+    pk = f"precision_at_{k}"
+    notes = []
+    if rf["roc_auc"] >= mlp["roc_auc"] or rf[pk] >= mlp[pk]:
+        notes.append(
+            f"Random Forest menyamai atau melampaui MLP (AUC {rf['roc_auc']} vs "
+            f"{mlp['roc_auc']}, P@{k} {rf[pk]} vs {mlp[pk]}). Pada data sintetis "
+            "20 fitur ini MLP tidak punya keunggulan akurasi; MLP dipilih karena "
+            "bisa diekspor ke TFLite dan berjalan on-device, bukan karena paling "
+            "akurat."
+        )
+    else:
+        notes.append(
+            f"MLP sedikit di atas Random Forest (AUC {mlp['roc_auc']} vs {rf['roc_auc']})."
+        )
+    notes.append(
+        f"Aturan harmoni saja (satu fitur, tanpa pelatihan) sudah mencapai AUC "
+        f"{rule['roc_auc']}. Selisih MLP terhadap aturan ({round(mlp['roc_auc'] - rule['roc_auc'], 4)}) "
+        "adalah nilai tambah yang sebenarnya dari model terlatih. Karena label "
+        "sintetis dibangkitkan dari aturan yang sama, AUC tinggi ini sebagian "
+        "besar mencerminkan kebocoran label, bukan kemampuan menilai selera."
+    )
+    return notes
+
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluasi Model 3 (E6.5)")
     parser.add_argument("--epochs", type=int, default=35)
@@ -128,6 +183,7 @@ def main():
     parser.add_argument("--k", type=int, default=3)
     parser.add_argument("--out", type=Path, default=REPORT_PATH)
     args = parser.parse_args()
+    args.out = args.out.resolve()
 
     m08 = load_script_08()
     tf = m08.tf
@@ -167,11 +223,13 @@ def main():
 
     groups = group_by_top(X_test)
     k = args.k
-    rng = np.random.default_rng(args.seed)
 
     models = {}
     for name, s in scores.items():
         metrics = classification_metrics(y_test_int, s)
+        # RNG baru per model agar pemecah seri tidak bergantung pada urutan
+        # model di dict ini.
+        rng = np.random.default_rng(args.seed)
         p_at_k, n_groups = precision_at_k(groups, y_test_int, s, k, rng=rng)
         metrics[f"precision_at_{k}"] = round(p_at_k, 4)
         models[name] = metrics
@@ -194,6 +252,14 @@ def main():
             "n_features": int(X_train.shape[1]),
         },
         "training": {"epochs": args.epochs, "batch_size": 64},
+        "environment": environment_info(tf),
+        "dataset_change": "Sejak PR ini, build_dataset() memakai sorted(NEUTRALS) "
+        "alih-alih list(NEUTRALS). Urutan list dari set string bergantung pada "
+        "PYTHONHASHSEED, jadi dataset lama tidak bisa diulang persis. Dataset "
+        "sekarang deterministik, tetapi berbeda dari dataset yang dipakai saat "
+        "assets/models/model3_compatibility.tflite dilatih; angka di laporan ini "
+        "tidak berlaku langsung untuk berkas TFLite tersebut sampai script 08 "
+        "dijalankan ulang.",
         "precision_at_k_setup": {
             "k": k,
             "query": "satu atasan unik (jenis + warna) di split uji",
@@ -205,7 +271,7 @@ def main():
             "candidates_per_query_min": int(min(group_sizes)),
             "candidates_per_query_median": float(np.median(group_sizes)),
             "candidates_per_query_max": int(max(group_sizes)),
-            "tie_break": "acak dengan seed yang sama",
+            "tie_break": "acak; RNG baru dengan seed yang sama untuk tiap model",
         },
         "models": models,
         "reference": {
@@ -214,6 +280,7 @@ def main():
             "note": "ideal adalah batas atas; banyak atasan punya kurang dari "
             f"{k} pasangan cocok di split uji",
         },
+        "interpretation": interpretation(models, k),
         "target": {"roc_auc_min": 0.75},
         "meets_target": models["mlp_keras"]["roc_auc"] >= 0.75,
         "limitations": [
@@ -241,7 +308,7 @@ def main():
     print(f"{'acak (harapan)':<22}{'':>8}{'':>10}{'':>8}{p_random:>8.4f}")
     print(f"{'ideal (batas atas)':<22}{'':>8}{'':>10}{'':>8}{p_ideal:>8.4f}")
     print(f"\n[+] Kueri precision@{k}: {n_groups} dari {len(groups)} atasan")
-    print(f"[+] Hasil disimpan di: {args.out.relative_to(ROOT)}")
+    print(f"[+] Hasil disimpan di: {display_path(args.out)}")
     print("[!] Catatan: data sintetis, bukan validasi nyata.")
 
 
