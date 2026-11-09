@@ -23,11 +23,11 @@ Contoh isi folder negatif:
       ... (bebas, tidak perlu subfolder)
 
 Cara pakai:
-  python ml/scripts/09_prepare_hf.py --dry-run
-  python ml/scripts/09_prepare_hf.py --force
-  python ml/scripts/09_prepare_hf.py --force --negatives ml/data/raw/negatives
-  python ml/scripts/09_prepare_hf.py --limit 3000     # uji cepat sebelum run penuh
-  python ml/scripts/09_prepare_hf.py --out ml/data/processed/model1_hf
+  python ml/scripts/13_prepare_hf.py --dry-run
+  python ml/scripts/13_prepare_hf.py --force
+  python ml/scripts/13_prepare_hf.py --force --negatives ml/data/raw/negatives
+  python ml/scripts/13_prepare_hf.py --limit 3000     # uji cepat sebelum run penuh
+  python ml/scripts/13_prepare_hf.py --out ml/data/processed/model1_hf
 
 Catatan: dataset HF ini adalah port dari Kaggle
 `paramaggarwal/fashion-product-images-small`, isinya sama dengan sumber

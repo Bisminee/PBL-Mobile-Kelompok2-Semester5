@@ -2,8 +2,10 @@
 Sera-Z — Jalankan seluruh pipeline Model 1 dengan satu perintah.
 
 Urutan yang dijalankan:
-  1. Unduh foto objek bukan pakaian dari COCO 2017 (kelas "other").
-  2. Siapkan dataset 10 kelas (9 pakaian + other).
+  1. Siapkan foto objek bukan pakaian (kelas "other"). Default memakai foto
+     sendiri di ml/data/raw/negatives/. Opsi --download-coco memakai COCO 2017
+     yang berlisensi CC BY 4.0 dan hanya boleh dipakai bila proyek menyetujui.
+  2. Siapkan dataset 9 kelas (8 pakaian + other).
   3. Latih YOLOv11n-cls.
   4. Evaluasi pada test set katalog.
   5. Evaluasi pada foto lapangan, bila folder foto lapangan ada.
@@ -11,6 +13,7 @@ Urutan yang dijalankan:
 
 Cara pakai:
   python ml/scripts/12_run_model1_pipeline.py --device 0
+  python ml/scripts/12_run_model1_pipeline.py --device 0 --download-coco
   python ml/scripts/12_run_model1_pipeline.py --device 0 --epochs 40
   python ml/scripts/12_run_model1_pipeline.py --device 0 --finetune
   python ml/scripts/12_run_model1_pipeline.py --device 0 --count-negatives 1200
@@ -112,6 +115,10 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--name", default="model1_hf_v2")
     ap.add_argument("--count-negatives", type=int, default=800)
+    ap.add_argument("--download-coco", action="store_true",
+                    help="unduh foto negatif dari COCO 2017; hanya untuk proyek "
+                         "yang sudah menyetujui lisensi CC BY 4.0. Default: "
+                         "pakai foto sendiri di ml/data/raw/negatives/")
     ap.add_argument("--finetune", action="store_true",
                     help="latih ulang dari best.pt, bukan dari ImageNet")
     ap.add_argument("--lr0", type=float, default=None,
@@ -130,9 +137,17 @@ def main() -> None:
         ada = jumlah_foto(NEGATIVES, "*.jpg")
         if ada >= 100:
             print(f"[negatives] {ada} foto sudah ada, unduh dilewati.")
-        else:
+        elif args.download_coco:
+            print("[negatives] COCO 2017 dipakai atas persetujuan lisensi proyek "
+                  "(anotasi CC BY 4.0, gambar Flickr CC).")
             jalankan("11_download_negatives.py",
                      ["--count", str(args.count_negatives)])
+        else:
+            print("[negatives] Folder negatif kosong. Letakkan foto objek bukan "
+                  "pakaian (laptop, meja, tangan, ruangan) di:")
+            print(f"    {NEGATIVES}")
+            print("  Atau jalankan ulang dengan --download-coco bila proyek "
+                  "menyetujui lisensi COCO.")
 
     # ------------------------------------------------------------- 2. prepare
     if not args.skip_prepare:
@@ -140,9 +155,9 @@ def main() -> None:
         if jumlah_foto(NEGATIVES, "*.jpg") >= 100:
             argumen += ["--negatives", str(NEGATIVES)]
         else:
-            print("[prepare] Folder negatif kosong: dataset akan 9 kelas. "
+            print("[prepare] Tanpa foto negatif: dataset hanya 8 kelas pakaian. "
                   "Hapus baris 'other' dari assets/models/labels.txt.")
-        jalankan("09_prepare_hf.py", argumen)
+        jalankan("13_prepare_hf.py", argumen)
 
     if not M1.exists():
         raise SystemExit(f"Dataset tidak ada: {M1}. Jalankan tanpa --skip-prepare.")

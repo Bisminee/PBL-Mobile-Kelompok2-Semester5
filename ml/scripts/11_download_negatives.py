@@ -7,8 +7,11 @@ dan ruangan. Cocok menjadi contoh "ini bukan pakaian" saat kamera diarahkan
 sembarangan.
 
 Lisensi: anotasi COCO CC BY 4.0; gambar berasal dari Flickr dengan lisensi
-Creative Commons. Aman untuk keperluan akademik, cantumkan sumbernya di
-laporan.
+Creative Commons. Ini BUKAN CC0/MIT seperti dataset utama proyek, sehingga
+penggunaan COCO harus disetujui tim/PIC lisensi dan dicantumkan atribusinya di
+laporan. Bila belum disetujui, gunakan foto sendiri di ml/data/raw/negatives/.
+Karena itu skrip ini tidak dipanggil otomatis oleh 12_run_model1_pipeline.py
+kecuali dengan opsi --download-coco.
 
 Cara pakai:
   python ml/scripts/11_download_negatives.py                 # 800 foto
@@ -17,7 +20,7 @@ Cara pakai:
   python ml/scripts/11_download_negatives.py --no-prefer-indoor
 
 Hasil: file .jpg di ml/data/raw/negatives/, siap dipakai oleh:
-  python ml/scripts/09_prepare_hf.py --negatives ml/data/raw/negatives
+  python ml/scripts/13_prepare_hf.py --negatives ml/data/raw/negatives
 
 Prasyarat: pip install datasets pillow tqdm
 """
@@ -175,7 +178,7 @@ def main() -> None:
     if dilewati:
         print(f"{dilewati} foto dilewati (tidak sesuai filter).")
     print("\nLanjutkan dengan:")
-    print(f"  python ml/scripts/09_prepare_hf.py --force --negatives \"{out}\"")
+    print(f"  python ml/scripts/13_prepare_hf.py --force --negatives \"{out}\"")
 
 
 if __name__ == "__main__":

@@ -30,10 +30,11 @@ ml/
 |   |-- 06_export_tflite.py           # Kuantisasi int8 dan ekspor model ke format TFLite
 |   |-- 07_extract_color_kmeans.py    # Modul 2: Ekstraksi 14 warna dominan (K-Means)
 |   |-- 08_train_model3_mlp.py        # Model 3: Pelatihan skor kecocokan outfit (Keras MLP)
-|   |-- 09_prepare_hf.py              # Alternatif 01_: dataset dari Hugging Face (Colab)
 |   |-- 10_eval_field.py             # Uji model pada foto lapangan + objek bukan pakaian
 |   |-- 11_download_negatives.py     # Unduh foto objek bukan pakaian (COCO 2017) untuk kelas other
-|   `-- 12_run_model1_pipeline.py    # Jalankan semua tahap di atas dengan satu perintah
+|   |-- 12_run_model1_pipeline.py    # Jalankan semua tahap di atas dengan satu perintah
+|   |-- 13_prepare_hf.py             # Alternatif 01_: dataset dari Hugging Face (Colab)
+|   `-- 14_threshold_sweep.py        # Validasi ambang confidence penolakan other
 |-- notebooks/                        # Notebook siap jalan di Google Colab
 |   `-- train_model1_hf_colab.ipynb   # Pipeline penuh dari dataset HF sampai TFLite
 |-- data/                             # Direktori data (diabaikan oleh Git / .gitignore)
@@ -377,11 +378,11 @@ Jika spesifikasi komputer lokal Anda tidak memiliki GPU diskrit (NVIDIA CUDA) da
 
 Notebook `ml/notebooks/train_model1_hf_colab.ipynb` menjalankan seluruh pipeline di
 Colab mulai dari `load_dataset` sampai TFLite. Script pendukungnya
-`09_prepare_hf.py`, alternatif `01_prepare_model1.py` yang mengunduh
+`13_prepare_hf.py`, alternatif `01_prepare_model1.py` yang mengunduh
 `ashraq/fashion-product-images-small`.
 
 ```python
-python ml/scripts/09_prepare_hf.py --out ml/data/processed/model1
+python ml/scripts/13_prepare_hf.py --out ml/data/processed/model1
 python ml/scripts/04_train_yolo11n.py --data ml/data/processed/model1 --device 0
 python ml/scripts/05_eval_model1.py --data ml/data/processed/model1
 python ml/scripts/06_export_tflite.py --data ml/data/processed/model1
@@ -395,23 +396,46 @@ latih dan uji.
 
 ### 6.2 Kelas "other": menolak objek yang bukan pakaian
 
-Model 9 kelas selalu memaksa memilih salah satu jenis pakaian, sehingga foto
-laptop bisa terbaca "kaos". Solusinya menambah kelas ke-10 `other` berisi foto
-objek bukan pakaian.
+Model klasifikasi selalu memaksa memilih salah satu jenis pakaian, sehingga foto
+laptop bisa terbaca "kaos". Solusinya menambah kelas `other` berisi foto objek
+bukan pakaian. Dengan dataset Hugging Face, hasilnya 9 kelas: 8 pakaian +
+`other`.
+
+Sumber foto negatif:
+
+1. **Default: foto sendiri** di `ml/data/raw/negatives/` (bebas lisensi).
+2. **Opsional: COCO 2017** lewat `11_download_negatives.py`. Anotasi COCO
+   CC BY 4.0 dan gambarnya dari Flickr dengan lisensi Creative Commons, jadi
+   **bukan CC0/MIT** seperti dataset utama. Pemakaiannya harus disetujui tim
+   dan dicantumkan atribusinya. Karena itu pipeline tidak mengunduh COCO
+   otomatis.
 
 ```bash
-# 1. Unduh 800 foto objek bukan pakaian dari COCO 2017 (otomatis)
+# 1a. Pakai foto sendiri (disarankan)
+#     taruh di ml/data/raw/negatives/
+
+# 1b. Atau unduh COCO bila sudah disetujui
 python ml/scripts/11_download_negatives.py --count 800
 
-# 2. Siapkan dataset 10 kelas
-python ml/scripts/09_prepare_hf.py --force --negatives ml/data/raw/negatives
+# 2. Siapkan dataset 9 kelas
+python ml/scripts/13_prepare_hf.py --force --negatives ml/data/raw/negatives
+
 # 3. Latih seperti biasa
 python ml/scripts/04_train_yolo11n.py --data ml/data/processed/model1 --device 0
 ```
 
+Pipeline satu perintah: tanpa `--download-coco`, skrip 12 hanya memakai foto
+yang sudah ada di folder negatif.
+
+```bash
+python ml/scripts/12_run_model1_pipeline.py --device 0 --download-coco
+```
+
 Aplikasi menolak hasil bila kelas `other` terpilih atau confidence di bawah
 `minimumGarmentConfidence` (0.50 di `lib/services/outfit_engine.dart`).
-User masih bisa memilih jenis pakaian manual bila model salah menolak.
+Ambang itu perlu divalidasi dengan model v2 memakai
+`ml/scripts/14_threshold_sweep.py`; user masih bisa memilih jenis pakaian
+manual bila model salah menolak.
 
 ### 6.3 Uji pada foto lapangan
 
