@@ -1,3 +1,5 @@
+import 'dart:async' show TimeoutException, unawaited;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,19 +38,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      final credential = await _authService.signInWithGoogle();
+      // Jangan biarkan pengguna tertahan di layar login bila Google atau
+      // jaringan tidak merespons.
+      final credential = await _authService.signInWithGoogle().timeout(
+        const Duration(seconds: 45),
+      );
       final user = credential.user;
       if (user == null) {
         throw StateError('Firebase tidak mengembalikan data pengguna.');
       }
 
-      try {
-        await _userRepository.ensureProfile(user);
-      } catch (error) {
-        // Login tetap dilanjutkan walau penulisan profil gagal, misalnya
-        // karena aturan Firestore belum diatur.
-        debugPrint('Gagal menyimpan profil pengguna: $error');
-      }
+      // Profil cloud ditulis di latar belakang. Jangan menunggu Firestore:
+      // bila aturan atau jaringan bermasalah, login tetap masuk ke beranda.
+      unawaited(
+        _userRepository.ensureProfile(user).catchError((Object error) {
+          debugPrint('Gagal menyimpan profil pengguna: $error');
+        }),
+      );
 
       ref
           .read(authProvider.notifier)
@@ -72,7 +78,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       context.go(AppRoutes.home);
     } on AuthCancelledException {
       if (!mounted) return;
-      setState(() => _error = null);
+      const pesan = 'Login dibatalkan. Coba pilih akun lagi.';
+      setState(() => _error = pesan);
+      _tampilkanError(pesan);
+    } on TimeoutException {
+      if (!mounted) return;
+      const pesan =
+          'Login terlalu lama. Periksa koneksi internet lalu coba lagi.';
+      setState(() => _error = pesan);
+      _tampilkanError(pesan);
     } on GoogleSignInException catch (error) {
       if (!mounted) return;
       final pesan =

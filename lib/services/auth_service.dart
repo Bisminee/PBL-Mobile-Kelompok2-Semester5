@@ -45,8 +45,10 @@ class AuthService {
   /// Google Sign-In versi 7 wajib diinisialisasi sekali sebelum dipakai.
   static Future<void> ensureGoogleInitialized() async {
     if (_googleInitialized) return;
+    debugPrint('Google Sign-In: initialize()...');
     await GoogleSignIn.instance.initialize();
     _googleInitialized = true;
+    debugPrint('Google Sign-In: initialize() selesai');
   }
 
   User? get currentUser => _auth.currentUser;
@@ -59,7 +61,9 @@ class AuthService {
 
     final GoogleSignInAccount account;
     try {
+      debugPrint('Google Sign-In: menampilkan pemilih akun...');
       account = await GoogleSignIn.instance.authenticate();
+      debugPrint('Google Sign-In: akun dipilih');
     } on GoogleSignInException catch (error) {
       if (error.code == GoogleSignInExceptionCode.canceled) {
         throw const AuthCancelledException();
@@ -81,7 +85,10 @@ class AuthService {
     }
 
     final credential = GoogleAuthProvider.credential(idToken: idToken);
-    return _auth.signInWithCredential(credential);
+    debugPrint('Google Sign-In: menukar token ke Firebase...');
+    final hasil = await _auth.signInWithCredential(credential);
+    debugPrint('Google Sign-In: Firebase user=${hasil.user?.uid}');
+    return hasil;
   }
 
   /// Keluar dari Firebase dan Google.
