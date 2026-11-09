@@ -1,86 +1,100 @@
 # Status Proyek
 
-Diperbarui: 2 November 2026 (branch `dev`)
+Diperbarui: 9 November 2026 (minggu 11, branch `dev`)
 
 ## 1. Ringkasan
 
 | Area | Kondisi |
 |---|---|
-| Aplikasi (UI) | Fondasi selesai, seluruh layar utama ada dan responsif |
-| Penyimpanan (E2) | SQLite aktif; riwayat rekomendasi dan test DAO tersisa |
-| Autentikasi (E3) | Selesai: login Google, profil Firestore, sesi, logout, hapus akun |
-| Model 1 (E4) | Dataset 33.667 gambar, baseline 89,37 persen, YOLOv11n-cls 94,34 persen test |
-| Modul warna (E5) | Ekstraksi warna ada; palet 14 warna dan test tersisa |
+| Aplikasi (UI) | Seluruh layar utama ada dan responsif; galeri dan crop sudah digabung |
+| Penyimpanan (E2) | SQLite aktif; riwayat rekomendasi dan unit test DAO tersisa |
+| Autentikasi (E3) | Login Google, profil Firestore, sesi, logout, hapus akun |
+| Model 1 (E4) | Model v2: dataset HF + COCO negatif, 9 kelas, akurasi test 97,54 persen, macro F1 93,37 persen |
+| Modul warna (E5) | Ekstraksi warna dan palet 14 warna ada; test palet tersisa |
 | Model 3 (E6) | Aturan harmoni selesai; MLP data sintetis; metrik AUC belum |
-| Integrasi (E7) | Loader TFLite, inferensi, dan mesin rekomendasi jalan; fallback dan latensi tersisa |
-| Fitur aplikasi (E8) | Lemari, Home, Profil, Detail, simpan outfit jalan; Admin dan CRUD lengkap tersisa |
-| QA (E9) | 51 test otomatis lulus; rencana uji formal belum |
-| Dokumentasi (E10) | Logbook minggu 1-6, laporan Milestone 1, model card |
+| Integrasi (E7) | Loader TFLite, inferensi, mesin rekomendasi jalan; uji latensi tersisa |
+| Fitur aplikasi (E8) | Lemari, Home, Profil, Detail, simpan outfit, pencarian, dan filter jalan |
+| QA (E9) | 80 test otomatis lulus; rencana uji formal belum |
+| Dokumentasi (E10) | Logbook minggu 1-10, laporan Milestone 1, model card v1 dan v2 |
 
-## 2. Yang sudah selesai
+## 2. Status kode (selesai)
 
-- E1 fondasi aplikasi: tema, 14 rute, `StatefulShellRoute` Home/Lemari, kamera.
-- UI Figma dan layout responsif (PR #4), termasuk 26 widget test.
-- Aturan harmoni warna CIELCh dan 17 unit test (PR #2).
-- E3 autentikasi Firebase (PR #8-#12): login Google, profil `users` dan
-  `profiles`, sesi persisten, logout, hapus akun.
-- E4 Model 1 (PR #6 dan #7): dataset 33.667 gambar dari tiga sumber bebas,
-  split 70/15/15, baseline MobileNetV2 89,37 persen, YOLOv11n-cls 94,34 persen
-  pada test dengan macro F1 89,48 persen, laporan evaluasi, dan model card.
-- Integrasi SQLite dan TFLite (PR #13): aset `fashion_app.db`, CRUD lemari,
-  simpan outfit, pemuat TFLite, klasifikasi jenis, ekstraksi warna, mesin
-  rekomendasi.
-- Pembersihan kode mati (PR #14): aturan harmoni dipakai pada alasan rekomendasi,
-  widget tak terpakai dihapus.
-- Dokumen: logbook minggu 1-6, laporan Milestone 1, timeline, pembagian tugas
-  minggu 6.
-- Penolakan objek bukan pakaian (PR baru): kelas ke-10 `other` pada pipeline
-  dataset, `Detection.isGarment` dengan ambang 0,50, layar penolakan di
-  `detection_result_screen.dart`, dan fallback label model lama.
+- Model 1 v2 dilatih di Colab: 9 kelas termasuk `other`, 24 epoch, akurasi test
+  97,54 persen, macro F1 93,37 persen, kelas `other` F1 1,000.
+- TFLite int8 1,68 MB, input `[1, 3, 224, 224]`, output `[1, 9]`, sudah
+  diverifikasi dengan interpreter.
+- Label model dipetakan ke kamus database: `tshirt` menjadi `t_shirt`,
+  `long_pants` menjadi `pants`, `outerwear` menjadi `outwear`.
+- Pipeline ML: `13_prepare_hf.py`, `10_eval_field.py`,
+  `11_download_negatives.py`, `12_run_model1_pipeline.py`, dan notebook Colab.
+- Fitur aplikasi: foto Lemari dinamis, titik warna sesuai hasil deteksi, sub-tab
+  Outfit Tersimpan dengan search dan filter, foto outfit dinamis di Home,
+  maksimal 4 item terbaru, kartu jumlah kategori.
+- Autentikasi: mode uji dibatasi ke build debug atau `DEV_SKIP_AUTH`, login
+  Google dengan pesan error yang jelas, edit nama profil, preferensi notifikasi
+  tersimpan lokal, logout mode uji diperbaiki.
+- Ikon aplikasi memakai logo Sera-Z dan nama aplikasi `Sera-Z`.
 
-## 3. Test
+## 3. Menunggu review
 
-- 51 test lulus.
-- Cakupan: harmoni warna, garment, label, color extractor, recommender, widget.
-- `flutter analyze` bersih.
+| Branch | Isi | Catatan |
+|---|---|---|
+| `ml/model1-v2-pipeline` | Pipeline dataset HF, COCO negatif, notebook Colab | Nomor script 09 diganti 13 agar tidak bentrok dengan `09_eval_model3.py` |
+| `feat/non-clothing-object` | Kelas `other`, label 9 kelas, layar penolakan | Perlu validasi ambang 0,50 dengan model v2 |
+| `feat/profile-auth` | Login tanpa akun, edit profil, preferensi | Mode uji dibatasi ke debug |
+| `chore/model1-v2-assets` | Model v2, laporan evaluasi, model card | Digabung setelah non-clothing |
+| `docs/status-minggu-6` | Dokumen status ini | - |
 
-## 4. Penghambat
+## 4. Sudah digabung ke `dev`
 
-1. **Ekspor TFLite model sendiri gagal di Windows.** Ultralytics 8.4 menghapus
-   dukungan TFLite di Windows; jalur `onnx2tf` pada 8.3 melewati batas waktu.
-   Solusi: ekspor lewat Colab atau Linux.
-2. **Model 3 masih memakai data sintetis.** AUC tinggi bukan bukti generalisasi;
-   tulis sebagai keterbatasan.
-3. **Uji perangkat belum.** Login, logout, dan hapus akun belum diuji di HP.
-4. **Rencana QA formal belum disusun.**
-5. **Model 10 kelas belum terpasang di APK.** `assets/models/yolo11n_cls.tflite`
-   masih model lama 15 kelas; `labels.txt` sudah 10 kelas dan
-   `GarmentClassifier` otomatis memakai `labels_legacy_15.txt` selama model
-   belum diganti. Ganti `yolo11n_cls.tflite` dengan hasil ekspor 10 kelas agar
-   penolakan `other` aktif.
+| PR | Isi |
+|---|---|
+| #33 | Dokumen ML per anggota dan status minggu 7 |
+| #29 | Ikon aplikasi Sera-Z |
+| #28 | Perbaikan overflow teks dan baris info |
+| #27 | Foto outfit dinamis dan ringkasan kategori Home |
+| #25 | Simpan outfit, daftar outfit, pencarian dan filter Lemari |
+| #24 | Tombol galeri di layar kamera dan Photo Picker |
+| #21 | Halaman crop 1:1 untuk foto galeri |
+| #20 | Impor galeri |
+| #18 | Palet 14 warna dan unit test |
+| #17 | Profil sesuai akun Google |
+| #16 | Perapian UI autentikasi |
+| #15 | Fallback rekomendasi aturan |
+| #14 | Pembersihan kode mati |
+| #13 | Integrasi SQLite dan TFLite |
 
-## 5. Langkah berikut
+## 5. Penghambat
 
-Fokus minggu 6 (2-8 November 2026):
+1. **Uji foto lapangan belum dijalankan.** 150 foto lapangan belum terkumpul,
+   sehingga akurasi 97,54 persen baru berlaku pada test katalog.
+2. **Ambang 0,50 belum divalidasi pada model v2.** Perlu sapuan ambang pada
+   test set atau foto lapangan.
+3. **`long_sleeve` tidak ada di model v2.** Dataset Hugging Face tidak
+   menyediakan label itu; atasan lengan panjang masuk ke `shirt`, `tshirt`,
+   atau `outwear`.
+4. **Model 3 masih memakai data sintetis.** AUC tinggi bukan bukti generalisasi.
+5. **Uji perangkat belum menyeluruh.** Login, logout, dan hapus akun belum
+   diuji sistematis di HP.
+6. **Rencana QA formal belum disusun.**
 
-1. Riwayat rekomendasi dan unit test DAO (Bisma).
-2. Fallback aturan dan rapikan UI autentikasi (Bisma).
-3. Ekspor TFLite, metrik Model 3, palet warna, dan dokumentasi ML (Bisma).
-4. Rencana QA dan uji perangkat (Bisma).
-5. Halaman Admin dan CRUD lemari lengkap (Izza).
-6. Edit profil, pasang model 10 kelas, dan latensi (Abim).
+## 6. Langkah berikut (minggu 11)
 
-Rincian ada di `Pembagian Tugas/pembagian-tugas-minggu-11.md` dan
-`Pembagian Tugas/panduan-kerja-bisma-minggu-6.md`.
+1. Kumpulkan 150 foto lapangan, jalankan `10_eval_field.py`.
+2. Sapuan ambang 0,30-0,90 pada test set, lalu tetapkan ambang final.
+3. Review dan gabungkan branch ML, non-clothing, profile-auth, dan aset model.
+4. Uji perangkat untuk login, logout, simpan outfit, dan penolakan objek.
+5. Lengkapi laporan evaluasi model v2 dan perbarui model card.
+6. Rencana QA dan uji regresi sebelum milestone akhir.
 
-## 6. Catatan branch
+## 7. Catatan branch
 
 | Branch | Isi |
 |---|---|
-| `main` | Versi stabil, `4082938` |
-| `dev` | Satu-satunya jalur integrasi, berisi seluruh pekerjaan sampai PR #14 |
-| `data-training` | Branch lama, PR #5 ditutup; boleh dihapus |
+| `main` | Versi stabil |
+| `dev` | Jalur integrasi, sudah memuat PR #13-#33 |
+| `wip/backup` | Cadangan lokal semua perubahan, tidak di-push |
+| `feat/gallery-camera` | Sudah digantikan PR #24, boleh dihapus |
+| `fix/google-login` | Sudah digantikan `feat/profile-auth`, boleh dihapus |
 | `ml/model1-pipeline` | Branch lama, PR #3 ditutup; boleh dihapus |
 | `pras` | Branch sampah; boleh dihapus |
-
-`dev-ml` sudah digabung ke `dev` dan dihapus pada 2 November 2026.
