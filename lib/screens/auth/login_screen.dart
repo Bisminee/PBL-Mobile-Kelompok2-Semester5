@@ -7,6 +7,7 @@ import '../../config/app_assets.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
 import '../../services/providers.dart';
 import '../../services/user_repository.dart';
@@ -36,24 +37,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final credential = await _authService.signInWithGoogle();
       final user = credential.user;
-      if (user != null) {
-        try {
-          await _userRepository.ensureProfile(user);
-        } catch (error) {
-          // Login tetap dilanjutkan walau penulisan profil gagal, misalnya
-          // karena aturan Firestore belum diatur.
-          debugPrint('Gagal menyimpan profil pengguna: $error');
-        }
-        ref.read(authProvider.notifier).setUser(
-              AppUser(
-                name: user.displayName ??
-                    user.email?.split('@').first ??
-                    'Pengguna',
-                email: user.email ?? '',
-                photoUrl: user.photoURL,
-              ),
-            );
+      if (user == null) {
+        throw StateError('Firebase tidak mengembalikan data pengguna.');
       }
+
+      try {
+        await _userRepository.ensureProfile(user);
+      } catch (error) {
+        // Login tetap dilanjutkan walau penulisan profil gagal, misalnya
+        // karena aturan Firestore belum diatur.
+        debugPrint('Gagal menyimpan profil pengguna: $error');
+      }
+
+      ref
+          .read(authProvider.notifier)
+          .setUser(
+            AppUser(
+              name:
+                  user.displayName ??
+                  user.email?.split('@').first ??
+                  'Pengguna',
+              email: user.email ?? '',
+              photoUrl: user.photoURL,
+            ),
+          );
+
+      // Tandai login lebih dulu, baru pindah halaman. Kalau menunggu aliran
+      // authStateChanges, GoRouter bisa menganggap belum login dan
+      // mengembalikan pengguna ke halaman ini.
+      authListenable.setSignedIn(true);
+
       if (!mounted) return;
       context.go(AppRoutes.home);
     } on AuthCancelledException {
@@ -61,14 +74,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() => _error = null);
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
-      setState(() => _error = _pesanError(error));
+      final pesan = _pesanError(error);
+      setState(() => _error = pesan);
+      _tampilkanError(pesan);
+      debugPrint('Login Firebase gagal: ${error.code} ${error.message}');
     } catch (error) {
       if (!mounted) return;
-      setState(() => _error = 'Gagal masuk. Periksa koneksi lalu coba lagi.');
+      const pesan = 'Gagal masuk. Periksa koneksi lalu coba lagi.';
+      setState(() => _error = pesan);
+      _tampilkanError(pesan);
       debugPrint('Login gagal: $error');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  /// Error juga ditampilkan sebagai snackbar agar tidak terlewat.
+  void _tampilkanError(String pesan) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(pesan)));
   }
 
   String _pesanError(FirebaseAuthException error) {

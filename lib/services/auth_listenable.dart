@@ -17,6 +17,17 @@ class AuthListenable extends ChangeNotifier {
 
   bool get isSignedIn => _signedIn;
 
+  /// Menyamakan status login secara langsung setelah proses login berhasil.
+  ///
+  /// Tanpa ini, `context.go('/home')` bisa dievaluasi GoRouter sebelum aliran
+  /// `authStateChanges()` sempat memperbarui status, sehingga pengguna
+  /// terlempar kembali ke halaman login.
+  void setSignedIn(bool value) {
+    if (_signedIn == value) return;
+    _signedIn = value;
+    notifyListeners();
+  }
+
   void _bind() {
     try {
       _signedIn = FirebaseAuth.instance.currentUser != null;
