@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
-import '../common/clothing_thumb.dart';
+import '../../models/garment.dart';
+import '../common/garment_photo.dart';
 import '../common/match_ring.dart';
 import '../common/pill_chip.dart';
 
-/// Kartu outfit ringkas: thumbnail kiri, info kanan.
+/// Kartu outfit ringkas: thumbnail foto item di kiri, info di kanan.
 class OutfitCompactCard extends StatelessWidget {
   const OutfitCompactCard({
     super.key,
@@ -15,6 +16,8 @@ class OutfitCompactCard extends StatelessWidget {
     required this.items,
     required this.description,
     required this.tags,
+    required this.top,
+    required this.bottom,
     this.onTap,
   });
 
@@ -23,6 +26,10 @@ class OutfitCompactCard extends StatelessWidget {
   final String items;
   final String description;
   final List<String> tags;
+
+  /// Item yang dipadukan, dipakai untuk menampilkan foto asli.
+  final Garment top;
+  final Garment bottom;
   final VoidCallback? onTap;
 
   @override
@@ -44,35 +51,23 @@ class OutfitCompactCard extends StatelessWidget {
                 SizedBox(
                   width: 112,
                   height: 140,
-                  child: Row(
+                  child: Column(
                     children: [
-                      const Expanded(
-                        child: ClothingThumb(
-                          kind: ClothingKind.top,
+                      Expanded(
+                        child: GarmentPhoto(
+                          imagePath: top.imagePath,
+                          kind: clothingKindOf(top.garmentType, top.slot),
+                          dark: top.isDark,
                           iconSize: 28,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(height: 6),
                       Expanded(
-                        child: Column(
-                          children: const [
-                            Expanded(
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: ClothingThumb(
-                                  kind: ClothingKind.bottom,
-                                  dark: false,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 6),
-                            Expanded(
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: ClothingThumb(kind: ClothingKind.shoes),
-                              ),
-                            ),
-                          ],
+                        child: GarmentPhoto(
+                          imagePath: bottom.imagePath,
+                          kind: clothingKindOf(bottom.garmentType, bottom.slot),
+                          dark: bottom.isDark,
+                          iconSize: 28,
                         ),
                       ),
                     ],
