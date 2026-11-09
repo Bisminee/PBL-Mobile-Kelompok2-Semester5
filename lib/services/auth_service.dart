@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'user_repository.dart';
@@ -34,8 +35,8 @@ class AuthNotSignedInException implements Exception {
 /// ulang tidak diperlukan selama pengguna belum keluar.
 class AuthService {
   AuthService({FirebaseAuth? auth, UserRepository? userRepository})
-      : _auth = auth ?? FirebaseAuth.instance,
-        _userRepository = userRepository ?? UserRepository();
+    : _auth = auth ?? FirebaseAuth.instance,
+      _userRepository = userRepository ?? UserRepository();
 
   final FirebaseAuth _auth;
   final UserRepository _userRepository;
@@ -67,10 +68,14 @@ class AuthService {
     }
 
     final idToken = account.authentication.idToken;
+    debugPrint(
+      'Google Sign-In: ${account.email} | idToken ada: ${idToken != null}',
+    );
     if (idToken == null) {
       throw FirebaseAuthException(
         code: 'missing-id-token',
-        message: 'Google tidak memberikan ID token. Periksa SHA-1 dan '
+        message:
+            'Google tidak memberikan ID token. Periksa SHA-1 dan '
             'konfigurasi Firebase.',
       );
     }

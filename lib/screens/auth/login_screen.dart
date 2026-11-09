@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../config/app_assets.dart';
 import '../../config/app_colors.dart';
@@ -72,6 +73,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on AuthCancelledException {
       if (!mounted) return;
       setState(() => _error = null);
+    } on GoogleSignInException catch (error) {
+      if (!mounted) return;
+      final pesan =
+          'Login Google gagal (${error.code.name}). '
+          '${error.description ?? 'Tidak ada keterangan dari Google.'}';
+      setState(() => _error = pesan);
+      _tampilkanError(pesan);
+      debugPrint(
+        'GoogleSignInException: code=${error.code} '
+        'description=${error.description} details=${error.details}',
+      );
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
       final pesan = _pesanError(error);
