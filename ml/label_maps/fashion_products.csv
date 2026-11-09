@@ -2,8 +2,8 @@ source_label,target
 Tshirts,tshirt
 Tops,tshirt
 Shirts,shirt
-Sweatshirts,outerwear
-Sweaters,outerwear
+Sweatshirts,long_sleeve
+Sweaters,long_sleeve
 Jackets,outerwear
 Blazers,outerwear
 Rain Jacket,outerwear

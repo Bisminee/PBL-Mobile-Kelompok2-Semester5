@@ -398,8 +398,9 @@ latih dan uji.
 
 Model klasifikasi selalu memaksa memilih salah satu jenis pakaian, sehingga foto
 laptop bisa terbaca "kaos". Solusinya menambah kelas `other` berisi foto objek
-bukan pakaian. Dengan dataset Hugging Face, hasilnya 9 kelas: 8 pakaian +
-`other`.
+bukan pakaian. Dengan dataset Hugging Face, hasilnya 10 kelas: 9 pakaian +
+`other`. Kelas `long_sleeve` diambil dari `Sweatshirts` dan `Sweaters` yang
+berlengan panjang.
 
 Sumber foto negatif:
 

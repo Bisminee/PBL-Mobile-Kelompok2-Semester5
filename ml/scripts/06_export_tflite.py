@@ -80,12 +80,13 @@ def main() -> None:
         inp = it.get_input_details()[0]
         out = it.get_output_details()[0]
         print(f"Verifikasi OK. Input {inp['shape']} {inp['dtype']} | "
-              f"Output {out['shape']} {out['dtype']} (9 kelas)")
+              f"Output {out['shape']} {out['dtype']} "
+              f"({out['shape'][-1]} kelas)")
     except Exception as e:
         print(f"(Verifikasi TF dilewati: {e})")
 
     print("\nSerahkan ke E7.1 bersama model card: input 224x224 RGB, "
-          "output urutan 9 kelas (urut abjad folder), metrik dari 05_eval.")
+          "output urutan kelas (urut abjad folder), metrik dari 05_eval.")
 
 
 if __name__ == "__main__":

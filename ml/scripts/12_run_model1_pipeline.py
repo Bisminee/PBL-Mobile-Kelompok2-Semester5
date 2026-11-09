@@ -5,7 +5,7 @@ Urutan yang dijalankan:
   1. Siapkan foto objek bukan pakaian (kelas "other"). Default memakai foto
      sendiri di ml/data/raw/negatives/. Opsi --download-coco memakai COCO 2017
      yang berlisensi CC BY 4.0 dan hanya boleh dipakai bila proyek menyetujui.
-  2. Siapkan dataset 9 kelas (8 pakaian + other).
+  2. Siapkan dataset 10 kelas (9 pakaian + other).
   3. Latih YOLOv11n-cls.
   4. Evaluasi pada test set katalog.
   5. Evaluasi pada foto lapangan, bila folder foto lapangan ada.
@@ -155,7 +155,7 @@ def main() -> None:
         if jumlah_foto(NEGATIVES, "*.jpg") >= 100:
             argumen += ["--negatives", str(NEGATIVES)]
         else:
-            print("[prepare] Tanpa foto negatif: dataset hanya 8 kelas pakaian. "
+            print("[prepare] Tanpa foto negatif: dataset hanya 9 kelas pakaian. "
                   "Hapus baris 'other' dari assets/models/labels.txt.")
         jalankan("13_prepare_hf.py", argumen)
 

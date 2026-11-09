@@ -1,5 +1,10 @@
 # Bukti Run Model 1 v2 — 9 November 2026
 
+> Catatan: run ini menghasilkan **9 kelas**. Setelah peta label diperbarui
+> (`Sweatshirts` dan `Sweaters` dipindah ke `long_sleeve`), dataset menjadi
+> **10 kelas** dan model perlu dilatih ulang. Angka di bawah berlaku untuk
+> versi 9 kelas dan dipakai sebagai pembanding.
+
 Satu kali run penuh di Google Colab, GPU Tesla T4.
 
 ## 1. Lingkungan
