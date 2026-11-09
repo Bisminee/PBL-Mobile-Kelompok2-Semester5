@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 import '../common/clothing_thumb.dart';
+import '../common/garment_photo.dart';
 
 /// Satu baris item (nama, kategori, warna) di detail outfit.
 class OutfitItemRow extends StatelessWidget {
@@ -13,6 +14,7 @@ class OutfitItemRow extends StatelessWidget {
     required this.badge,
     required this.kind,
     required this.dark,
+    this.imagePath,
     this.badgeFilled = false,
   });
 
@@ -22,6 +24,9 @@ class OutfitItemRow extends StatelessWidget {
   final bool badgeFilled;
   final ClothingKind kind;
   final bool dark;
+
+  /// Path foto asli item. Null = pakai ikon pengganti.
+  final String? imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,8 @@ class OutfitItemRow extends StatelessWidget {
           SizedBox(
             width: 52,
             height: 52,
-            child: ClothingThumb(
+            child: GarmentPhoto(
+              imagePath: imagePath,
               kind: kind,
               dark: dark,
               radius: 12,

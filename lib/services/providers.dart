@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/garment.dart';
 import '../models/outfit.dart';
+import '../models/saved_outfit.dart';
 import '../models/scan_source.dart';
 import 'local_db.dart';
 import 'outfit_engine.dart';
@@ -299,6 +300,16 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
 final wardrobeProvider = NotifierProvider<WardrobeNotifier, List<Garment>>(
   WardrobeNotifier.new,
 );
+
+/// Outfit yang disimpan pengguna dari layar detail. Dibaca dari SQLite.
+/// Panggil `ref.invalidate(savedOutfitsProvider)` setelah menyimpan outfit baru.
+final savedOutfitsProvider = FutureProvider<List<SavedOutfit>>((ref) async {
+  try {
+    return await ref.read(localDbProvider).savedOutfits();
+  } catch (_) {
+    return const <SavedOutfit>[];
+  }
+});
 
 // ===========================================================================
 // Rekomendasi
