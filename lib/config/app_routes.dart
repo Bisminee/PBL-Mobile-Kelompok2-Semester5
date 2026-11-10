@@ -19,4 +19,5 @@ class AppRoutes {
   static const recommendationHistory = '/recommendation-history';
   static const detail = '/detail';
   static const clothingDetail = '/clothing-detail';
+  static const adminMaster = '/admin-master';
 }
