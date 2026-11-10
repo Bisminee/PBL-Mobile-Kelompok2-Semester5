@@ -1,103 +1,82 @@
 # Peta Tugas dan PIC
 
-Diperbarui: 9 November 2026 (branch `dev`, commit `f67732a`)
+Diperbarui: 10 November 2026 (branch `dev`, commit `b00b3e5`)
 
-Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md` (rincian jobdesk),
-`Pembagian Tugas/pembagian-tugas.md` (cara mengambil tugas),
-`Pembagian Tugas/Epics/` (satu berkas per epic).
+Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md`,
+`Pembagian Tugas/pembagian-tugas-minggu-11.md`, dan
+`Pembagian Tugas/tugas-ml-per-anggota.md`.
 
 ## 1. Epic dan status
 
-| Epic | Nama | Estimasi | Status |
-|---|---|---:|---|
-| E1 | Fondasi aplikasi | 7 | Selesai |
-| E2 | Penyimpanan dan data | 7 | Sebagian (E2.4 dan E2.6 belum) |
-| E3 | Autentikasi dan cloud | 5 | Selesai |
-| E4 | Model 1 klasifikasi jenis pakaian | 8 | Terlatih dan evaluasi selesai; E4.6 belum |
-| E5 | Modul 2 ekstraksi warna | 5 | Sebagian (E5.2 dan E5.4 belum) |
-| E6 | Model 3 skor kecocokan | 8,5 | Sebagian (E6.4 selesai, E6.5 menunggu review, E6.1 dan E6.6 belum) |
-| E7 | Integrasi on-device | 9,5 | Sebagian (E7.1 sampai E7.5 jalan, E7.6 belum) |
-| E8 | Penyelesaian fitur | 11,5 | Sebagian (Admin, CRUD lengkap, profil terbuka) |
-| E9 | QA dan pengujian | 11 | Sebagian (80 test dan QA plan; uji lapangan belum) |
-| E10 | Dokumentasi | 11,5 | Berjalan |
+| Epic | Nama | Status |
+|---|---|---|
+| E1 | Fondasi aplikasi | Selesai |
+| E2 | Penyimpanan dan data | Sebagian (E2.4 dan E2.6 belum) |
+| E3 | Autentikasi dan cloud | Selesai |
+| E4 | Model 1 klasifikasi jenis | Model 9 kelas selesai; E4.6 dan pemasangan model belum |
+| E5 | Modul 2 ekstraksi warna | Palet 14 selesai; E5.2 K-Means dan E5.4 test belum |
+| E6 | Model 3 skor kecocokan | Aturan dan skor pasangan jalan; data nyata dan ekspor MLP belum |
+| E7 | Integrasi on-device | E7.1 sampai E7.5 jalan; E7.6 latensi belum |
+| E8 | Penyelesaian fitur | Sebagian; Admin dan CRUD lengkap belum |
+| E9 | QA dan pengujian | 80 test dan QA plan ada; uji perangkat dan fungsional belum |
+| E10 | Dokumentasi | Berjalan |
 
-## 2. Daftar jobdesk ringkas
+## 2. Arahan ML per 10 November 2026
 
-### E2 Penyimpanan (7 ho)
-E2.1 setup `sqflite` + `path_provider` (1) · E2.2 CRUD `wardrobe_items` (1,5) ·
-E2.3 simpan foto, hanya path di DB (1) · E2.4 tabel `outfits` +
-`recommendation_history` (1,5) · E2.5 muat data saat start (1) ·
-E2.6 unit test DAO (1).
+Arahan dosen: klasifikasi jenis pakaian memakai satu dataset, sedangkan
+kombinasi warna menjadi pekerjaan ML terpisah.
 
-### E3 Autentikasi (5 ho)
-E3.1 login Google (2) · E3.2 record cloud `users` + `profiles` (1) ·
-E3.3 sesi persisten (1) · E3.4 sign out + hapus akun (1).
+| Kode | Tugas ML | Isi | Data | PIC | Status |
+|---|---|---|---|---|---|
+| T1 | Klasifikasi jenis pakaian | Satu model, satu label jenis | Satu dataset, belum dipilih | Bisma dan Abim | Perlu disusun ulang |
+| T2 | Ekstraksi warna | Warna dominan per item, terpisah dari jenis | Gambar item | Izza dan Bisma | Sebagian: HSV dan palet selesai, K-Means Dart belum |
+| T3 | Kombinasi warna | Skor cocok atau tidaknya dua warna | Dataset pasangan warna atau outfit | Ahmad dan Bisma | Prototipe sintetis, belum data nyata |
+| T4 | Penolakan non-cloth | Menerima pakaian atau menolak objek lain | Foto pakaian dan negatif | Abim | PR #32, model TFLite belum valid |
 
-### E4 Model 1 (8 ho)
-E4.1 unduh dataset + EDA + buang kelas ambigu (1) · E4.2 gabung kelas +
-mapping + split 70/15/15 (1) · E4.3 baseline MobileNetV2 (1,5) ·
-E4.4 latih YOLOv11n-cls + fine-tune (2,5) · E4.5 evaluasi, target akurasi
-minimal 80 persen (1) · E4.6 ekspor TFLite int8 (1).
+Keputusan yang belum diambil:
 
-### E5 Modul 2 (5 ho)
-E5.1 crop tengah + thresholding latar (1) · E5.2 K-Means k=3-5 di ruang
-Lab/HSV dengan Dart (2) · E5.3 pemetaan palet 14 nama warna (1) ·
-E5.4 unit test warna (1).
+1. Dataset tunggal untuk T1: Fashion Product Images Small, Carousell, atau Clothing Dataset Full.
+2. `other` menjadi kelas ke-10 atau gate terpisah.
+3. Cakupan T3: penilaian pasangan warna, ekstraksi warna, atau keduanya.
 
-### E6 Model 3 (8,5 ho)
-E6.1 dataset pasangan + negative sampling (2) · E6.2 feature builder (1) ·
-E6.3 latih MLP + pembanding (2) · E6.4 aturan harmoni warna, **selesai** (1,5) ·
-E6.5 evaluasi AUC + precision@3 (1) · E6.6 ekspor MLP TFLite (1).
+## 3. PIC tugas saat ini
 
-### E7 Integrasi (9,5 ho)
-E7.1 loader TFLite + isolate (1,5) · E7.2 inferensi Model 1 (2) ·
-E7.3 ganti atribut placeholder (1,5) · E7.4 skor Model 3 di rekomendasi (1,5) ·
-E7.5 fallback aturan (1) · E7.6 ukur latensi dan ukuran model (1).
+| Anggota | Tugas utama | Berkas atau PR | Status |
+|---|---|---|---|
+| Bisma | Pipeline Model 1, palet, dokumentasi ML, integrasi rekomendasi | `ml/scripts/`, PR #18, #33 | Model 9 kelas selesai; E4.6 belum |
+| Pras | Integrasi TFLite, mesin outfit, harmoni, database ML | PR #13, `garment_classifier.dart`, `outfit_engine.dart` | Selesai |
+| Abim | Pipeline 10 kelas, penolakan objek, database pendukung | PR #31 dan #32 | PR terbuka; TFLite v3 belum valid |
+| Ahmad | Evaluasi Model 3, riset dataset aksesoris | PR #22 dan #23 | Perbaikan selesai, menunggu review |
+| Izza | Unit test warna, dokumentasi metode ML | Belum ada branch | Belum ada bukti di GitHub |
 
-### E8 Fitur aplikasi (11,5 ho)
-E8.1 CRUD UI Lemari (2) · E8.2 simpan outfit (1,5) · E8.3 ranking +
-explainability (1,5) · E8.4 konten Home (1,5) · E8.5 tab Detail (1,5) ·
-E8.6 halaman Admin (2) · E8.7 halaman Profil (1,5).
+## 4. Tugas aplikasi yang tersisa
 
-### E9 QA (11 ho)
-E9.1 rencana uji + minimal 20 test case (2) · E9.2 eksekusi fungsional (2) ·
-E9.3 uji performa (1) · E9.4 uji kompatibilitas minimal 3 perangkat (1) ·
-E9.5 konsolidasi evaluasi ML (1) · E9.6 usability + SUS, 10-20 responden (2) ·
-E9.7 pelacakan bug + regression (2).
+| Tugas | PIC | Status |
+|---|---|---|
+| E2.4 Riwayat rekomendasi | Pras | Belum |
+| E2.6 Unit test DAO | Pras | Belum |
+| E7.6 Latensi dan ukuran model | Abim | Belum |
+| E8.1 CRUD UI Lemari lengkap | Izza | Sebagian, pencarian dan daftar sudah ada |
+| E8.6 Halaman Admin | Izza | Belum |
+| E8.3 Ranking dan explainability | Pras | Belum |
+| E5.2 K-Means di Dart | Belum ada PIC | Belum |
+| E5.4 Unit test warna | Izza | Belum |
+| Dokumentasi metode ML | Izza | Belum |
+| E10.2 Foto lapangan | Pras | Belum |
+| Uji perangkat | Bisma | Belum |
 
-### E10 Dokumentasi (11,5 ho)
-E10.1 logbook mingguan (3) · E10.2 150 foto lapangan (2) · E10.3 tabulasi
-kuesioner (1,5) · E10.4 laporan milestone dan akhir (3) · E10.5 dokumentasi
-fitur (2).
+## 5. Aturan pengambilan tugas
 
-## 3. Aturan pengambilan tugas
-
-1. Ambil tugas yang **prasyaratnya sudah selesai**; cek kolom prasyarat di
-   `feature-breakdown-id.md`.
-2. Maksimal **2 tugas aktif** per orang.
+1. Ambil tugas yang prasyaratnya sudah selesai.
+2. Maksimal dua tugas aktif per orang.
 3. Satu tugas = satu branch = satu PR.
-4. Tugas boleh ditukar, tetapi laporkan di grup agar tidak dobel.
-5. Status di papan Notion diperbarui setiap hari.
+4. Branch dari `dev`, PR ke `dev`.
+5. Perbarui status di logbook dan papan tugas.
 
-## 4. Jobdesk minggu 5 (27 Oktober - 1 November 2026)
-
-Prinsip: mobile dulu, ML menyusul. Rincian per tugas dan kriteria selesai ada di
-`Pembagian Tugas/jobdesk-per-anggota.md`.
-
-| Anggota | Tugas minggu 5 | ho |
-|---|---|---:|
-| Faatihurrizki Prasojo | E2.1 setup DB, E2.2 CRUD lemari, E2.3 simpan foto | 3,5 |
-| Ahmad Falahi | E2.4 outfit + riwayat, E2.5 muat saat start, E2.6 test DAO | 3,5 |
-| Bisma Adhiaksa | E3.1 login Google, E3.2 record cloud, E3.3 sesi, E3.4 sign out | 5,0 |
-| Izza Dhafira Fanani | E8.6 halaman Admin, E8.1 CRUD UI Lemari | 4,0 |
-| Abim Mustawa | E8.7 halaman Profil, E8.2 simpan outfit, E8.4 konten Home | 4,5 |
-
-Daftar kerja harian: `Pembagian Tugas/pembagian-tugas-minggu-5.md`.
-Jadwal 10 minggu dan prioritas: `Pembagian Tugas/timeline.md`.
-
-## 5. Definisi selesai
+## 6. Definisi selesai
 
 1. Berjalan di perangkat Android nyata lewat alur utama.
-2. Test terkait lulus (unit, widget, atau metrik model).
-3. Digabung lewat PR yang direview ke `dev` (bukan ke `main`).
-4. Tercatat di `docs/features/` atau laporan ML.
+2. Test terkait lulus, termasuk uji inferensi model bila menyentuh ML.
+3. Digabung lewat PR yang direview ke `dev`.
+4. Tercatat di laporan ML atau dokumentasi fitur.
+5. Untuk model: metrik diukur pada data uji yang tidak dipakai melatih.

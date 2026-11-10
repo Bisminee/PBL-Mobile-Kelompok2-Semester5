@@ -15,9 +15,9 @@ Tiga komponen ML:
 
 | Komponen | Isi | Status |
 |---|---|---|
-| Model 1 | YOLOv11n-cls, klasifikasi jenis pakaian | pipeline siap (PR #3), belum dilatih |
-| Modul 2 | K-Means di Dart, 14 nama warna | belum mulai |
-| Model 3 | MLP skor kecocokan + aturan harmoni | aturan harmoni selesai, MLP belum |
+| Model 1 | YOLOv11n-cls, klasifikasi jenis pakaian | Model 9 kelas selesai (94,34 persen); aset aplikasi masih 15 kelas; model 10 kelas di PR #32 belum valid |
+| Modul 2 | Warna dominan dan palet 14 warna | HSV dan palet selesai; K-Means di Dart belum |
+| Model 3 | MLP skor kecocokan + aturan harmoni | Aturan dan tabel skor jalan; MLP masih data sintetis |
 
 ## 2. Perintah penting
 
@@ -84,13 +84,21 @@ Splash → Onboarding → Login/SignUp → Home (tab Home dan Lemari) → Kamera
 Preview → Analyzing → Detection Result → Rekomendasi → Detail.
 Profil dibuka dari navigasi utama.
 
-## 7. Status singkat (26 Oktober 2026)
+## 7. Status singkat (10 November 2026)
 
-- Fondasi UI selesai dan sudah digabung ke `main` (PR #4). 18 test lulus.
-- Pipeline Model 1 diajukan lewat PR #3, menunggu review.
-- Dataset E4.1 belum terunduh sehingga pelatihan model belum bisa mulai.
-- Penyimpanan (E2), autentikasi (E3), dan modul warna (E5) baru akan dimulai.
+- `dev` berada di `b00b3e5`; 80 test lulus dan `flutter analyze` bersih.
+- Model 1 9 kelas selesai dilatih dan dievaluasi, tetapi aset aplikasi masih
+  model 15 kelas.
+- Arahan dosen 10 November: klasifikasi jenis memakai satu dataset, kombinasi
+  warna menjadi pekerjaan ML terpisah. Keputusan dataset dan kelas `other`
+  belum final.
+- Model 10 kelas di PR #32 belum valid: TFLite hanya benar 3 dari 270 foto
+  dengan preprocessing aplikasi.
+- PR #22, #23, #26, dan #31 sudah diperbaiki dan menunggu review. PR #30 dan
+  #32 masih perlu perbaikan.
 - Rincian status dan penghambat: `ai-context/status-proyek.md`.
+- Rincian tugas ML dan cara kerja model:
+  `Pembagian Tugas/tugas-ml-per-anggota.md`.
 
 ## 8. Dokumen lanjutan
 
