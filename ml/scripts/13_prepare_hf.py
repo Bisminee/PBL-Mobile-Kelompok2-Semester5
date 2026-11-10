@@ -58,9 +58,13 @@ NEGATIVE_CLASS = "other"
 IMG_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 
 
-def load_mapping() -> dict[str, str]:
-    """Baca kamus label yang sudah dipakai pipeline lama."""
-    df = pd.read_csv(LABEL_MAPS / "fashion_products.csv")
+def load_mapping(name: str) -> dict[str, str]:
+    """Baca kamus label dari ml/label_maps/<name>.
+
+    Dipisahkan dari fashion_products.csv agar pipeline lama (01_prepare_model1)
+    tetap memakai pemetaan aslinya.
+    """
+    df = pd.read_csv(LABEL_MAPS / name)
     return dict(zip(df["source_label"].astype(str), df["target"].astype(str)))
 
 
@@ -208,6 +212,9 @@ def main() -> None:
                     help="folder hasil (default: ml/data/processed/model1)")
     ap.add_argument("--negatives", default=None,
                     help="folder foto objek bukan pakaian (kelas 'other')")
+    ap.add_argument("--label-map", default="fashion_products_v3.csv",
+                    help="kamus label di ml/label_maps/ (default: versi 10 kelas "
+                         "dengan long_sleeve)")
     ap.add_argument("--val", type=float, default=0.15)
     ap.add_argument("--test", type=float, default=0.15)
     ap.add_argument("--limit", type=int, default=None,
@@ -228,7 +235,7 @@ def main() -> None:
         else:
             raise SystemExit(f"{out} sudah ada. Pakai --force untuk menimpa.")
 
-    mapping = load_mapping()
+    mapping = load_mapping(args.label_map)
     meta = build_index(args.repo_id)
     print(f"Total baris dataset: {len(meta)}")
 

@@ -402,6 +402,10 @@ bukan pakaian. Dengan dataset Hugging Face, hasilnya 10 kelas: 9 pakaian +
 `other`. Kelas `long_sleeve` diambil dari `Sweatshirts` dan `Sweaters` yang
 berlengan panjang.
 
+Pemetaan 10 kelas ada di `ml/label_maps/fashion_products_v3.csv`.
+`fashion_products.csv` milik pipeline lama tidak diubah, sehingga
+`01_prepare_model1.py` tetap berjalan seperti sebelumnya.
+
 Sumber foto negatif:
 
 1. **Default: foto sendiri** di `ml/data/raw/negatives/` (bebas lisensi).
