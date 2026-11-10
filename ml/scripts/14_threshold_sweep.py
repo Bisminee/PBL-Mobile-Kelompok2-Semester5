@@ -8,11 +8,11 @@ Menjalankan model pada test set, lalu menghitung untuk beberapa ambang:
 
 Cara pakai:
   python ml/scripts/14_threshold_sweep.py
-  python ml/scripts/14_threshold_sweep.py --weights ml/runs/model1_hf_v2/weights/best.pt
+  python ml/scripts/14_threshold_sweep.py --weights ml/runs/model1_hf_v3/weights/best.pt
   python ml/scripts/14_threshold_sweep.py --data ml/data/processed/model1
 
 Output:
-  ml/reports/model1_v2_threshold_sweep.csv
+  ml/reports/model1_v3_threshold_sweep.csv
   tabel ringkas di terminal
 
 Prasyarat: ultralytics, pandas, tqdm. Dataset test harus punya metadata.csv.
@@ -28,7 +28,7 @@ from tqdm import tqdm
 ROOT = Path(__file__).resolve().parents[2]
 M1 = ROOT / "ml" / "data" / "processed" / "model1"
 REPORTS = ROOT / "ml" / "reports"
-DEFAULT_WEIGHTS = ROOT / "ml" / "runs" / "model1_hf_v2" / "weights" / "best.pt"
+DEFAULT_WEIGHTS = ROOT / "ml" / "runs" / "model1_hf_v3" / "weights" / "best.pt"
 NOT_GARMENT = "other"
 
 
@@ -37,7 +37,7 @@ def main() -> None:
         description="Sapuan ambang confidence untuk kelas other.")
     ap.add_argument("--data", default=str(M1))
     ap.add_argument("--weights", default=str(DEFAULT_WEIGHTS))
-    ap.add_argument("--out", default=str(REPORTS / "model1_v2_threshold_sweep.csv"))
+    ap.add_argument("--out", default=str(REPORTS / "model1_v3_threshold_sweep.csv"))
     ap.add_argument("--chunk", type=int, default=64)
     args = ap.parse_args()
 
