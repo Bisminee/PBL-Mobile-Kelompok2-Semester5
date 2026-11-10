@@ -37,8 +37,6 @@ ml/
 |   `-- 14_threshold_sweep.py        # Validasi ambang confidence penolakan other
 |-- notebooks/                        # Notebook siap jalan di Google Colab
 |   `-- train_model1_hf_colab.ipynb   # Pipeline penuh dari dataset HF sampai TFLite
-|-- docs/                             # Dokumentasi alur dan kode pipeline
-|   `-- pipeline-model1-10-kelas.md   # Penjelasan per baris pipeline 10 kelas
 |-- data/                             # Direktori data (diabaikan oleh Git / .gitignore)
 |   |-- raw/                          # Tempat penyimpanan dataset mentah unduhan Kaggle
 |   |   |-- clothing-full/            # Folder ekstrak Clothing Dataset Full
