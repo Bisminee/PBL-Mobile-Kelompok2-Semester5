@@ -5,6 +5,7 @@ import '../models/crop_args.dart';
 import '../models/garment.dart';
 import '../models/outfit.dart';
 import '../models/scan_source.dart';
+import '../screens/admin/admin_master_data_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -111,6 +112,10 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.clothingDetail,
       builder: (context, state) =>
           ClothingDetailScreen(garment: state.extra as Garment?),
+    ),
+    GoRoute(
+      path: AppRoutes.adminMaster,
+      builder: (context, state) => const AdminMasterDataScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>

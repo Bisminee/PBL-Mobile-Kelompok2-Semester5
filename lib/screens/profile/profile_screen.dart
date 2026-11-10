@@ -182,6 +182,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       icon: Icons.grid_view_rounded,
                       title: 'Admin Panel',
                       badge: 'ADMIN',
+                      onTap: () => context.push(AppRoutes.adminMaster),
                     ),
                   ],
                 ),
