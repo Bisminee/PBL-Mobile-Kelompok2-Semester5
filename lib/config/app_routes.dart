@@ -18,4 +18,5 @@ class AppRoutes {
   static const savedOutfits = '/saved-outfits';
   static const detail = '/detail';
   static const clothingDetail = '/clothing-detail';
+  static const adminMaster = '/admin-master';
 }
