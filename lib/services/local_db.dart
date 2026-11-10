@@ -21,8 +21,9 @@ class LocalDb {
   // diganti (model baru), uninstall aplikasi dulu. Wardrobe user ikut hilang karena satu file.
   // Untuk rilis, pisahkan data user dan tabel ML menjadi dua file DB.
   // Versi 2 menambah tabel app_preference untuk pengaturan lokal profil.
+  // Versi 3: Menambahkan tabel master data (ref_garment_type dan ref_color) untuk tugas E8.6
   // Catatan: versi 1 adalah skema di assets/db/fashion_app.db.
-  static const _version = 2;
+  static const _version = 3;
 
   // Satu Future dipakai bersama: pemanggil pertama (preload engine dan WardrobeNotifier jalan
   // hampir bersamaan) tidak boleh sama-sama menyalin file asset.
@@ -45,19 +46,41 @@ class LocalDb {
       // lewat onUpgrade (pengguna lama) atau onCreate (pemasangan baru, karena
       // user_version di asset masih 0).
       onCreate: (d, versi) async {
+        // Pembuatan tabel untuk versi 2
         await d.execute(
           'CREATE TABLE IF NOT EXISTS app_preference ('
           'key TEXT PRIMARY KEY, value TEXT NOT NULL)',
         );
+        await _createMasterTables(d);
       },
       onUpgrade: (d, versiLama, versiBaru) async {
+        // Jika sebelumnya pengguna berada di versi 1, jalankan migrasi versi 2
         if (versiLama < 2) {
           await d.execute(
             'CREATE TABLE IF NOT EXISTS app_preference ('
             'key TEXT PRIMARY KEY, value TEXT NOT NULL)',
           );
         }
+        // Migrasi untuk pengguna lama yang akan naik ke versi 3 (Menambah master data)
+        if (versiLama < 3) {
+          await _createMasterTables(d);
+        }
       },
+    );
+  }
+
+  /// Membuat tabel master data (versi 3). Dipakai onCreate dan onUpgrade
+  /// supaya skemanya hanya ditulis di satu tempat.
+  Future<void> _createMasterTables(Database d) async {
+    await d.execute(
+      'CREATE TABLE IF NOT EXISTS ref_garment_type ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+      'name TEXT NOT NULL, slot TEXT NOT NULL)',
+    );
+    await d.execute(
+      'CREATE TABLE IF NOT EXISTS ref_color ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+      'color_family TEXT NOT NULL, hex_code TEXT)',
     );
   }
 
@@ -254,5 +277,215 @@ class LocalDb {
       GROUP BY c.garment_type, c.color_family ORDER BY score DESC LIMIT ?''',
       [...selectedIds, slot, formality, if (filterGender) gender, age, k],
     );
+  }
+  
+  // ---------- Master data / Admin (E8.6) ----------
+  // Tabel referensi ref_garment_type dan ref_color yang dikelola lewat halaman Admin.
+ 
+  // Penanda di app_preference bahwa master data sudah pernah diisi awal.
+  // Dengan penanda ini, data yang sengaja dihapus admin tidak muncul lagi.
+  static const _seedKey = 'master_seeded';
+ 
+  // Kode warna bawaan. Nama warna yang tidak ada di sini disimpan tanpa hex
+  // dan bisa diisi admin lewat halaman Admin.
+  static const _defaultHex = <String, String>{
+    'black': '#000000',
+    'white': '#FFFFFF',
+    'gray': '#808080',
+    'grey': '#808080',
+    'beige': '#F5F5DC',
+    'brown': '#8B4513',
+    'red': '#D32F2F',
+    'orange': '#F57C00',
+    'yellow': '#FBC02D',
+    'green': '#388E3C',
+    'olive': '#808000',
+    'blue': '#1976D2',
+    'navy': '#1A237E',
+    'purple': '#7B1FA2',
+    'pink': '#EC407A',
+  };
+ 
+  // Cadangan bila catalog_item kosong atau tidak terbaca.
+  // Urutan 9 kelas sama dengan urutan training model.
+  static const _fallbackTypes = <String, String>{
+    'dress': 'dress',
+    'long_pants': 'bottom',
+    'long_sleeve': 'top',
+    'outerwear': 'outer',
+    'shirt': 'top',
+    'shoes': 'shoes',
+    'shorts': 'bottom',
+    'skirt': 'bottom',
+    'tshirt': 'top',
+  };
+ 
+  /// Mengisi master data awal SATU KALI dari catalog_item (tabel hasil ML), agar nama
+  /// tipe, slot, dan warna konsisten dengan model rekomendasi. Aman dipanggil berulang;
+  /// dipanggil dari halaman Admin sebelum memuat data.
+  Future<void> ensureMasterSeeded() async {
+    final d = await db;
+    final done = await d.query(
+      'app_preference',
+      where: 'key = ?',
+      whereArgs: [_seedKey],
+      limit: 1,
+    );
+    if (done.isNotEmpty) return;
+ 
+    // Baca di luar transaksi; bila catalog_item bermasalah, pakai data cadangan.
+    var types = <Map<String, dynamic>>[];
+    var colors = <Map<String, dynamic>>[];
+    try {
+      types = await d.rawQuery(
+        'SELECT DISTINCT garment_type AS name, slot FROM catalog_item '
+        'ORDER BY garment_type',
+      );
+      colors = await d.rawQuery(
+        'SELECT DISTINCT color_family FROM catalog_item ORDER BY color_family',
+      );
+    } catch (_) {
+      // lanjut ke data cadangan
+    }
+ 
+    final typeRows = types.isNotEmpty
+        ? [
+            for (final t in types)
+              {'name': t['name'] as String, 'slot': t['slot'] as String},
+          ]
+        : [
+            for (final e in _fallbackTypes.entries)
+              {'name': e.key, 'slot': e.value},
+          ];
+    final colorNames = colors.isNotEmpty
+        ? [for (final c in colors) c['color_family'] as String]
+        : _defaultHex.keys.where((k) => k != 'grey').toList();
+ 
+    await d.transaction((t) async {
+      // Isi hanya bila tabel masih kosong, agar tidak menimpa data yang sudah ada.
+      final nType =
+          Sqflite.firstIntValue(
+            await t.rawQuery('SELECT COUNT(*) FROM ref_garment_type'),
+          ) ??
+          0;
+      if (nType == 0) {
+        for (final r in typeRows) {
+          await t.insert('ref_garment_type', r);
+        }
+      }
+      final nColor =
+          Sqflite.firstIntValue(
+            await t.rawQuery('SELECT COUNT(*) FROM ref_color'),
+          ) ??
+          0;
+      if (nColor == 0) {
+        for (final name in colorNames) {
+          await t.insert('ref_color', {
+            'color_family': name,
+            'hex_code': _defaultHex[name.toLowerCase()],
+          });
+        }
+      }
+      await t.insert('app_preference', {
+        'key': _seedKey,
+        'value': '1',
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+  }
+ 
+  // -- Tipe pakaian (ref_garment_type) --
+ 
+  /// Semua tipe pakaian, urut nama.
+  Future<List<Map<String, dynamic>>> getMasterGarmentTypes() async {
+    final d = await db;
+    return d.query('ref_garment_type', orderBy: 'name ASC');
+  }
+ 
+  /// True bila nama tipe sudah dipakai (huruf besar/kecil diabaikan).
+  /// [exceptId] diisi saat mengubah data agar baris itu sendiri tidak dihitung.
+  Future<bool> masterGarmentTypeExists(String name, {int? exceptId}) async {
+    final d = await db;
+    final rows = await d.query(
+      'ref_garment_type',
+      columns: ['id'],
+      where: 'LOWER(name) = LOWER(?) AND id != ?',
+      whereArgs: [name.trim(), exceptId ?? -1],
+      limit: 1,
+    );
+    return rows.isNotEmpty;
+  }
+ 
+  /// Menambah tipe pakaian baru (contoh: name 'shirt', slot 'top').
+  Future<int> insertMasterGarmentType(String name, String slot) async {
+    final d = await db;
+    return d.insert('ref_garment_type', {'name': name, 'slot': slot});
+  }
+ 
+  /// Mengubah nama dan slot tipe pakaian berdasarkan id.
+  Future<int> updateMasterGarmentType(int id, String name, String slot) async {
+    final d = await db;
+    return d.update(
+      'ref_garment_type',
+      {'name': name, 'slot': slot},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+ 
+  /// Menghapus tipe pakaian berdasarkan id.
+  Future<void> deleteMasterGarmentType(int id) async {
+    final d = await db;
+    await d.delete('ref_garment_type', where: 'id = ?', whereArgs: [id]);
+  }
+ 
+  // -- Warna (ref_color) --
+ 
+  /// Semua warna, urut nama.
+  Future<List<Map<String, dynamic>>> getMasterColors() async {
+    final d = await db;
+    return d.query('ref_color', orderBy: 'color_family ASC');
+  }
+ 
+  /// True bila nama warna sudah dipakai (huruf besar/kecil diabaikan).
+  Future<bool> masterColorExists(String colorFamily, {int? exceptId}) async {
+    final d = await db;
+    final rows = await d.query(
+      'ref_color',
+      columns: ['id'],
+      where: 'LOWER(color_family) = LOWER(?) AND id != ?',
+      whereArgs: [colorFamily.trim(), exceptId ?? -1],
+      limit: 1,
+    );
+    return rows.isNotEmpty;
+  }
+ 
+  /// Menambah warna baru (contoh: colorFamily 'red', hexCode '#D32F2F').
+  Future<int> insertMasterColor(String colorFamily, String? hexCode) async {
+    final d = await db;
+    return d.insert('ref_color', {
+      'color_family': colorFamily,
+      'hex_code': hexCode,
+    });
+  }
+ 
+  /// Mengubah nama dan kode hex warna berdasarkan id.
+  Future<int> updateMasterColor(
+    int id,
+    String colorFamily,
+    String? hexCode,
+  ) async {
+    final d = await db;
+    return d.update(
+      'ref_color',
+      {'color_family': colorFamily, 'hex_code': hexCode},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+ 
+  /// Menghapus warna berdasarkan id.
+  Future<void> deleteMasterColor(int id) async {
+    final d = await db;
+    await d.delete('ref_color', where: 'id = ?', whereArgs: [id]);
   }
 }
