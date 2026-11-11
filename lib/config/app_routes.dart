@@ -16,6 +16,7 @@ class AppRoutes {
   static const detectionResult = '/detection-result';
   static const recommendation = '/recommendation';
   static const savedOutfits = '/saved-outfits';
+  static const recommendationHistory = '/recommendation-history';
   static const detail = '/detail';
   static const clothingDetail = '/clothing-detail';
 }

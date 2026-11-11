@@ -10,6 +10,7 @@ import '../screens/auth/signup_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/outfit/detail_screen.dart';
+import '../screens/outfit/recommendation_history_screen.dart';
 import '../screens/outfit/recommendation_screen.dart';
 import '../screens/outfit/saved_outfits_screen.dart';
 import '../screens/profile/profile_screen.dart';
@@ -98,6 +99,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.recommendation,
       builder: (context, state) => const RecommendationScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.recommendationHistory,
+      builder: (context, state) => const RecommendationHistoryScreen(),
     ),
     GoRoute(
       path: AppRoutes.savedOutfits,
