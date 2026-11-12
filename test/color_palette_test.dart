@@ -1,3 +1,5 @@
+/// File pengujian untuk memvalidasi stabilitas pemetaan 14 palet warna.
+/// Memastikan output warna dari ekstraktor diterjemahkan ke UI dengan konsisten.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sera_z/services/color_extractor.dart';
 import 'package:sera_z/services/color_palette.dart';
