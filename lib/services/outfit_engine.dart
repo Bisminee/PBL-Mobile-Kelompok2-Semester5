@@ -67,6 +67,9 @@ class Detection {
   );
 }
 
+/// Core engine utama aplikasi Sera-Z.
+/// Berfungsi menghubungkan hasil deteksi gambar (YOLO) dengan 
+/// evaluasi parameter outfit (formalitas, style, kecocokan) via SQLite.
 class OutfitEngine {
   OutfitEngine(this.classifier, this.dbh);
 
