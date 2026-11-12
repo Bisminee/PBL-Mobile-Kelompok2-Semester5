@@ -5,6 +5,10 @@ import '../models/garment_labels.dart';
 import '../models/outfit.dart';
 import 'color_harmony.dart';
 
+/// Layanan penyusun rekomendasi pakaian (Recommender).
+/// Mengelola algoritma pencocokan atasan dan bawahan menggunakan
+/// skor dari model ML, harmoni warna, dan aturan tingkat formalitas.
+
 /// Warna yang mudah dipadukan dengan hampir semua warna lain.
 const Set<String> neutralColors = {'black', 'white', 'gray', 'beige', 'brown'};
 
