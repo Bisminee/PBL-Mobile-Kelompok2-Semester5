@@ -36,12 +36,14 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
 
     void openDetail(Outfit o) => context.push(AppRoutes.detail, extra: o);
 
-    Widget card(Outfit o) => OutfitCompactCard(
+    Widget card(Outfit o, int rank) => OutfitCompactCard(
       title: o.title,
       score: (o.score * 100).round(),
+      rank: rank,
       items:
           '${typeLabel(o.top.garmentType)} · ${typeLabel(o.bottom.garmentType)}',
       description: describeOutfit(o),
+      reasons: o.reasons,
       tags: [formalityLabel(o.formality), 'Lemarimu'],
       top: o.top,
       bottom: o.bottom,
@@ -150,8 +152,8 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
                           spacing: gap,
                           runSpacing: gap,
                           children: [
-                            for (final o in list)
-                              SizedBox(width: w, child: card(o)),
+                            for (var i = 0; i < list.length; i++)
+                              SizedBox(width: w, child: card(list[i], i + 1)),
                           ],
                         );
                       }
@@ -159,7 +161,7 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
                         children: [
                           for (var i = 0; i < list.length; i++) ...[
                             if (i > 0) const SizedBox(height: gap),
-                            card(list[i]),
+                            card(list[i], i + 1),
                           ],
                         ],
                       );
