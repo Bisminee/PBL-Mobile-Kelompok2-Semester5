@@ -29,7 +29,8 @@ ml/
 |   |-- 05_eval_model1.py             # Evaluasi komprehensif, confusion matrix, per-sumber
 |   |-- 06_export_tflite.py           # Kuantisasi int8 dan ekspor model ke format TFLite
 |   |-- 07_extract_color_kmeans.py    # Modul 2: Ekstraksi 14 warna dominan (K-Means)
-|   `-- 08_train_model3_mlp.py        # Model 3: Pelatihan skor kecocokan outfit (Keras MLP)
+|   |-- 08_train_model3_mlp.py        # Model 3: Pelatihan skor kecocokan outfit (Keras MLP)
+|   `-- 09_eval_model3.py             # Model 3: Evaluasi ROC-AUC dan precision@3 (E6.5)
 |-- data/                             # Direktori data (diabaikan oleh Git / .gitignore)
 |   |-- raw/                          # Tempat penyimpanan dataset mentah unduhan Kaggle
 |   |   |-- clothing-full/            # Folder ekstrak Clothing Dataset Full
@@ -96,6 +97,12 @@ ml/
    - **Fungsi:** Implementasi Model 3 (Epic E6) untuk memprediksi tingkat kecocokan kombinasi pakaian (atasan dan bawahan).
    - **Cara Kerja:** Membangun arsitektur jaringan saraf tiruan *Keras Multi-Layer Perceptron (MLP)* dengan 20 fitur input (vektor kategori pakaian, representasi HSV, selisih delta warna, teori harmoni roda warna, dan indikator warna netral).
    - **Output:** Model terkuantisasi `assets/models/model3_compatibility.tflite` (berukuran ~7.6 KB) dan metadata fitur `assets/models/model3_metadata.json`.
+
+9. **`09_eval_model3.py`**
+   - **Fungsi:** Evaluasi Model 3 untuk Epic E6.5.
+   - **Cara Kerja:** Memakai ulang dataset sintetis, fitur, dan arsitektur MLP dari script 08 dengan seed tetap, lalu menghitung ROC-AUC, akurasi, precision, recall, F1, dan precision@3. Precision@3 dihitung per atasan (jenis + warna): kandidat bawahan diurutkan menurut skor, lalu diukur proporsi pasangan cocok di tiga teratas. Pembandingnya Random Forest, Logistic Regression, aturan harmoni saja, urutan acak, dan batas atas urutan ideal.
+   - **Output:** `ml/reports/model3_metrics.json`. Script ini tidak menulis ke `assets/models/`.
+   - **Keterbatasan:** Label berasal dari generator sintetis berbasis aturan harmoni, sehingga angka ini bukan validasi terhadap penilaian manusia.
 
 ---
 
@@ -266,6 +273,33 @@ python ml/scripts/08_train_model3_mlp.py
 Script melatih jaringan neural Keras MLP dengan 20 fitur aturan estetika warna dan mengekspor model serta metadata langsung ke:
 - `assets/models/model3_compatibility.tflite`
 - `assets/models/model3_metadata.json`
+
+---
+
+### Langkah 9: Evaluasi Model 3 (E6.5)
+
+```powershell
+python ml/scripts/09_eval_model3.py
+```
+Script melatih ulang MLP dan pembandingnya dengan seed 42, lalu menyimpan ROC-AUC dan precision@3 ke `ml/reports/model3_metrics.json`. Opsi `--out` menerima path di luar repo. Laporan juga mencatat versi Python, TensorFlow, scikit-learn, NumPy, sistem operasi, dan perangkat (CPU/GPU), karena hasil MLP bisa sedikit berbeda antarversi TensorFlow. Pemecah seri precision@3 memakai RNG baru dengan seed yang sama untuk tiap model.
+
+Hasil saat ini (seed 42, Python 3.14.6, TensorFlow 2.22.0-rc0, CPU):
+
+| Model | ROC-AUC | Precision@3 |
+|---|---|---|
+| MLP Keras | 0,976 | 0,455 |
+| Random Forest | 0,978 | 0,505 |
+| Logistic Regression | 0,972 | 0,414 |
+| Aturan harmoni saja | 0,912 | 0,404 |
+| Acak (harapan) | - | 0,173 |
+| Ideal (batas atas) | - | 0,869 |
+
+Cara membaca hasil:
+
+- **Random Forest sedikit lebih baik dari MLP** pada AUC dan precision@3. MLP tetap dipakai karena bisa diekspor ke TFLite dan berjalan on-device, bukan karena paling akurat.
+- **Aturan harmoni saja sudah mencapai AUC 0,91** tanpa pelatihan. Nilai tambah MLP hanya sekitar 0,06 AUC di atas aturan. Label sintetis dibangkitkan dari aturan yang sama, jadi AUC tinggi sebagian besar mencerminkan kebocoran label, bukan kemampuan menilai selera pengguna.
+
+**Perubahan dataset:** `build_dataset()` di script 08 kini memakai `sorted(NEUTRALS)` alih-alih `list(NEUTRALS)`. Urutan list dari set string bergantung pada `PYTHONHASHSEED`, sehingga dataset lama tidak bisa diulang persis. Dataset sekarang deterministik, tetapi berbeda dari dataset yang dipakai saat `assets/models/model3_compatibility.tflite` dilatih. Angka di atas tidak berlaku langsung untuk berkas TFLite itu sampai script 08 dijalankan ulang.
 
 ---
 
