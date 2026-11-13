@@ -3,6 +3,7 @@
 // Asset: assets/db/fashion_app.db (didaftarkan di pubspec.yaml).
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -15,14 +16,19 @@ class LocalDb {
   LocalDb._();
   static final LocalDb instance = LocalDb._();
 
+  /// Memakai database yang sudah terbuka, mis. database sementara pada test.
+  @visibleForTesting
+  LocalDb.withDatabase(Database database) : _opening = Future.value(database);
+
   static const _assetPath = 'assets/db/fashion_app.db';
 
   // Asset hanya disalin SEKALI, saat file belum ada di perangkat. Bila fashion_app.db di asset
   // diganti (model baru), uninstall aplikasi dulu. Wardrobe user ikut hilang karena satu file.
   // Untuk rilis, pisahkan data user dan tabel ML menjadi dua file DB.
   // Versi 2 menambah tabel app_preference untuk pengaturan lokal profil.
+  // Versi 3 menambah tabel recommendation_history untuk riwayat rekomendasi.
   // Catatan: versi 1 adalah skema di assets/db/fashion_app.db.
-  static const _version = 2;
+  static const _version = 3;
 
   // Satu Future dipakai bersama: pemanggil pertama (preload engine dan WardrobeNotifier jalan
   // hampir bersamaan) tidak boleh sama-sama menyalin file asset.
@@ -39,26 +45,52 @@ class LocalDb {
     }
     return openDatabase(
       path,
-      version: _version,
-      onConfigure: (d) => d.execute('PRAGMA foreign_keys = ON'),
-      // Database dari asset sudah berisi skema versi 1. Tabel baru ditambahkan
-      // lewat onUpgrade (pengguna lama) atau onCreate (pemasangan baru, karena
-      // user_version di asset masih 0).
-      onCreate: (d, versi) async {
-        await d.execute(
-          'CREATE TABLE IF NOT EXISTS app_preference ('
-          'key TEXT PRIMARY KEY, value TEXT NOT NULL)',
-        );
-      },
-      onUpgrade: (d, versiLama, versiBaru) async {
-        if (versiLama < 2) {
-          await d.execute(
-            'CREATE TABLE IF NOT EXISTS app_preference ('
-            'key TEXT PRIMARY KEY, value TEXT NOT NULL)',
-          );
-        }
-      },
+      version: openOptions.version,
+      onConfigure: openOptions.onConfigure,
+      onCreate: openOptions.onCreate,
+      onUpgrade: openOptions.onUpgrade,
     );
+  }
+
+  /// Konfigurasi pembukaan database. Dipisah agar test memakai migrasi yang sama.
+  ///
+  /// Database dari asset sudah berisi skema versi 1. Tabel baru ditambahkan
+  /// lewat onUpgrade (pengguna lama) atau onCreate (pemasangan baru, karena
+  /// user_version di asset masih 0).
+  @visibleForTesting
+  static final OpenDatabaseOptions openOptions = OpenDatabaseOptions(
+    version: _version,
+    onConfigure: (d) => d.execute('PRAGMA foreign_keys = ON'),
+    onCreate: (d, versi) => _buatTabelBaru(d, 0, versi),
+    onUpgrade: _buatTabelBaru,
+  );
+
+  static Future<void> _buatTabelBaru(
+    Database d,
+    int versiLama,
+    int versiBaru,
+  ) async {
+    if (versiLama < 2) {
+      await d.execute(
+        'CREATE TABLE IF NOT EXISTS app_preference ('
+        'key TEXT PRIMARY KEY, value TEXT NOT NULL)',
+      );
+    }
+    if (versiLama < 3) {
+      // Satu baris per pasangan atasan-bawahan; dilihat lagi berarti baris baru
+      // menggantikan yang lama sehingga urutan id menunjukkan yang terbaru.
+      await d.execute(
+        'CREATE TABLE IF NOT EXISTS recommendation_history ('
+        'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'top_item_id INTEGER NOT NULL REFERENCES wardrobe_item(id) ON DELETE CASCADE, '
+        'bottom_item_id INTEGER NOT NULL REFERENCES wardrobe_item(id) ON DELETE CASCADE, '
+        'title TEXT NOT NULL, '
+        'target_formality TEXT NOT NULL, '
+        'match_score REAL, '
+        "created_at TEXT NOT NULL DEFAULT (datetime('now')), "
+        'UNIQUE (top_item_id, bottom_item_id))',
+      );
+    }
   }
 
   // ---------- Lookup ML (hasil model sklearn yang sudah dihitung untuk semua kombinasi) ----------
@@ -204,6 +236,69 @@ class LocalDb {
               DateTime.tryParse((o['created_at'] as String?) ?? '') ??
               DateTime.now(),
           items: itemsPerOutfit[o['id']] ?? const <Garment>[],
+        ),
+    ];
+  }
+
+  // ---------- Riwayat rekomendasi ----------
+
+  /// Mencatat bahwa pengguna melihat rekomendasi atasan + bawahan ini.
+  /// Pasangan yang sama tidak digandakan; catatan lama diganti yang terbaru.
+  Future<void> logRecommendation({
+    required int topId,
+    required int bottomId,
+    required String title,
+    required String formality,
+    required double score,
+  }) async {
+    final d = await db;
+    await d.insert('recommendation_history', {
+      'top_item_id': topId,
+      'bottom_item_id': bottomId,
+      'title': title,
+      'target_formality': formality,
+      'match_score': score,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  /// Riwayat rekomendasi, terbaru lebih dulu. Item yang sudah dihapus dari
+  /// lemari ikut hilang dari riwayat.
+  Future<List<SavedOutfit>> recommendationHistory({int limit = 50}) async {
+    final d = await db;
+    final rows = await d.query(
+      'recommendation_history',
+      orderBy: 'id DESC',
+      limit: limit,
+    );
+    if (rows.isEmpty) return <SavedOutfit>[];
+
+    final ids = {
+      for (final r in rows) ...[
+        r['top_item_id'] as int,
+        r['bottom_item_id'] as int,
+      ],
+    }.toList();
+    final items = await d.query(
+      'wardrobe_item',
+      where: 'id IN (${List.filled(ids.length, '?').join(',')})',
+      whereArgs: ids,
+    );
+    final byId = {for (final r in items) r['id'] as int: Garment.fromRow(r)};
+
+    return [
+      for (final r in rows)
+        SavedOutfit(
+          id: r['id'] as int,
+          name: r['title'] as String,
+          formality: r['target_formality'] as String,
+          score: (r['match_score'] as num?)?.toDouble() ?? 0,
+          createdAt:
+              DateTime.tryParse((r['created_at'] as String?) ?? '') ??
+              DateTime.now(),
+          items: [
+            byId[r['top_item_id']],
+            byId[r['bottom_item_id']],
+          ].whereType<Garment>().toList(),
         ),
     ];
   }

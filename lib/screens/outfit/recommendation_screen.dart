@@ -65,7 +65,17 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
                       icon: Icons.chevron_left,
                       onPressed: () => context.pop(),
                     ),
-                    const CircleIconButton(icon: Icons.tune),
+                    Row(
+                      children: [
+                        CircleIconButton(
+                          icon: Icons.history,
+                          onPressed: () =>
+                              context.push(AppRoutes.recommendationHistory),
+                        ),
+                        const SizedBox(width: 8),
+                        const CircleIconButton(icon: Icons.tune),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),

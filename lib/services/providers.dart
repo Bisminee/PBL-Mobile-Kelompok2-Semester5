@@ -311,6 +311,17 @@ final savedOutfitsProvider = FutureProvider<List<SavedOutfit>>((ref) async {
   }
 });
 
+/// Riwayat rekomendasi yang pernah dibuka pengguna, terbaru lebih dulu.
+/// autoDispose: dibaca ulang dari SQLite setiap layar riwayat dibuka.
+final recommendationHistoryProvider =
+    FutureProvider.autoDispose<List<SavedOutfit>>((ref) async {
+      try {
+        return await ref.read(localDbProvider).recommendationHistory();
+      } catch (_) {
+        return const <SavedOutfit>[];
+      }
+    });
+
 // ===========================================================================
 // Rekomendasi
 // ===========================================================================

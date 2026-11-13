@@ -40,7 +40,10 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     super.initState();
     // Tandai tombol sudah tersimpan bila outfit ini pernah disimpan.
     final o = widget.outfit;
-    if (o != null) _cekSudahDisimpan(o);
+    if (o != null) {
+      _cekSudahDisimpan(o);
+      _catatRiwayat(o);
+    }
   }
 
   List<int> _itemIds(Outfit o) => [
@@ -56,6 +59,25 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       if (mounted && sudah) setState(() => _saved = true);
     } catch (_) {
       // Database belum siap: biarkan tombol aktif.
+    }
+  }
+
+  /// Membuka detail dihitung sebagai melihat rekomendasi; dicatat ke riwayat.
+  Future<void> _catatRiwayat(Outfit o) async {
+    final ids = _itemIds(o);
+    if (ids.length < 2) return;
+    try {
+      await ref
+          .read(localDbProvider)
+          .logRecommendation(
+            topId: ids[0],
+            bottomId: ids[1],
+            title: o.title,
+            formality: o.formality ?? 'non_formal',
+            score: o.score,
+          );
+    } catch (_) {
+      // Riwayat bersifat pelengkap; kegagalan mencatat tidak boleh mengganggu detail.
     }
   }
 
