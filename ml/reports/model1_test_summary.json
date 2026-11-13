@@ -1,53 +1,47 @@
 {
-  "weights": "ml\\runs\\model1_yolo11n\\weights\\best.pt",
-  "n_test": 5051,
-  "accuracy": 0.9434,
-  "macro_f1": 0.8948,
+  "weights": "ml/runs/model1_hf_v3/weights/best.pt",
+  "n_test": 3460,
+  "accuracy": 0.9688,
+  "macro_f1": 0.8824,
   "per_source": [
     {
-      "source": "carousell",
-      "n": 1114,
-      "accuracy": 0.8779,
-      "macro_f1": 0.839
+      "source": "fashion_products_hf",
+      "n": 3340,
+      "accuracy": 0.9677,
+      "macro_f1": 0.8693
     },
     {
-      "source": "clothing_full",
-      "n": 560,
-      "accuracy": 0.9071,
-      "macro_f1": 0.8846
-    },
-    {
-      "source": "fashion_products",
-      "n": 3377,
-      "accuracy": 0.971,
-      "macro_f1": 0.916
+      "source": "negatives",
+      "n": 120,
+      "accuracy": 1.0,
+      "macro_f1": 1.0
     }
   ],
   "top_confusions": [
     {
-      "count": 29,
+      "count": 16,
+      "true": "tshirt",
+      "pred": "long_sleeve"
+    },
+    {
+      "count": 13,
+      "true": "tshirt",
+      "pred": "shirt"
+    },
+    {
+      "count": 11,
       "true": "tshirt",
       "pred": "dress"
     },
     {
-      "count": 24,
-      "true": "outerwear",
+      "count": 11,
+      "true": "shirt",
       "pred": "tshirt"
     },
     {
-      "count": 23,
-      "true": "shirt",
-      "pred": "outerwear"
-    },
-    {
-      "count": 19,
-      "true": "tshirt",
-      "pred": "shirt"
-    },
-    {
-      "count": 19,
+      "count": 11,
       "true": "outerwear",
-      "pred": "shirt"
+      "pred": "long_sleeve"
     }
   ]
 }
