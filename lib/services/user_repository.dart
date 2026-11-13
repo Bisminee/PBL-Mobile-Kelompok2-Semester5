@@ -8,9 +8,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// - `profiles/{uid}`: data profil yang bisa diubah pengguna
 class UserRepository {
   UserRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestoreOverride = firestore;
 
-  final FirebaseFirestore _firestore;
+  // Sama seperti AuthService: jangan akses FirebaseFirestore.instance di
+  // konstruktor agar layar login tetap bisa dibuka tanpa Firebase.
+  final FirebaseFirestore? _firestoreOverride;
+
+  FirebaseFirestore get _firestore =>
+      _firestoreOverride ?? FirebaseFirestore.instance;
 
   /// Membuat dokumen pengguna bila belum ada. Tidak menimpa data lama.
   Future<void> ensureProfile(User user) async {
@@ -21,7 +26,8 @@ class UserRepository {
     final profiles = _firestore.collection('profiles').doc(user.uid);
     final now = FieldValue.serverTimestamp();
     final email = user.email ?? '';
-    final displayName = user.displayName ??
+    final displayName =
+        user.displayName ??
         (email.contains('@') ? email.split('@').first : 'Pengguna');
 
     final batch = _firestore.batch();
@@ -48,6 +54,21 @@ class UserRepository {
     await _firestore.collection('users').doc(user.uid).update({
       'last_login_at': FieldValue.serverTimestamp(),
     });
+  }
+
+  /// Mengubah nama tampilan di `users/{uid}` dan `profiles/{uid}`.
+  Future<void> updateDisplayName(String uid, String displayName) async {
+    final now = FieldValue.serverTimestamp();
+    final batch = _firestore.batch();
+    batch.update(_firestore.collection('users').doc(uid), {
+      'display_name': displayName,
+      'updated_at': now,
+    });
+    batch.update(_firestore.collection('profiles').doc(uid), {
+      'display_name': displayName,
+      'updated_at': now,
+    });
+    await batch.commit();
   }
 
   /// Menghapus dokumen pengguna dan profil dari Firestore.

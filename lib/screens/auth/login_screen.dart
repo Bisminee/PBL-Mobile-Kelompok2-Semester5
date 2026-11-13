@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,11 +8,16 @@ import '../../config/app_assets.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
 import '../../services/providers.dart';
 import '../../services/user_repository.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/responsive.dart';
+
+/// Hanya aktif pada build uji tanpa Firebase
+/// (`flutter build apk --dart-define=DEV_SKIP_AUTH=true`).
+const bool _devSkipAuth = bool.fromEnvironment('DEV_SKIP_AUTH');
 
 /// Halaman masuk dengan Google.
 class LoginScreen extends ConsumerStatefulWidget {
@@ -26,6 +32,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final UserRepository _userRepository = UserRepository();
   bool _loading = false;
   String? _error;
+
+  /// Mode uji aktif bila flag build dipasang, atau bila Firebase gagal dimuat
+  /// (mis. google-services.json belum ada). Jadi `flutter run` biasa pun tetap
+  /// bisa dipakai untuk mencoba aplikasi.
+  bool get _modeUji => kDebugMode || _devSkipAuth;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_modeUji) {
+      debugPrint(
+        'Mode uji tanpa Firebase aktif: tombol "Masuk tanpa akun" tersedia.',
+      );
+    }
+  }
 
   Future<void> _signInWithGoogle() async {
     setState(() {
@@ -44,9 +65,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           // karena aturan Firestore belum diatur.
           debugPrint('Gagal menyimpan profil pengguna: $error');
         }
-        ref.read(authProvider.notifier).setUser(
+        ref
+            .read(authProvider.notifier)
+            .setUser(
               AppUser(
-                name: user.displayName ??
+                name:
+                    user.displayName ??
                     user.email?.split('@').first ??
                     'Pengguna',
                 email: user.email ?? '',
@@ -64,11 +88,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() => _error = _pesanError(error));
     } catch (error) {
       if (!mounted) return;
-      setState(() => _error = 'Gagal masuk. Periksa koneksi lalu coba lagi.');
+      setState(
+        () => _error = _modeUji
+            ? 'Firebase belum dikonfigurasi di build ini. Pakai tombol '
+                  '"Masuk tanpa akun" di atas.'
+            : 'Gagal masuk. Periksa koneksi lalu coba lagi.',
+      );
       debugPrint('Login gagal: $error');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  /// Masuk sebagai tamu untuk build uji tanpa Firebase.
+  /// Tidak menulis apa pun ke cloud; hanya membuka kunci rute aplikasi.
+  void _continueWithoutLogin() {
+    authListenable.debugSignIn();
+    ref
+        .read(authProvider.notifier)
+        .setUser(const AppUser(name: 'Mode Uji', email: 'tanpa-akun'));
+    // Pindah eksplisit; jangan hanya bergantung pada redirect router.
+    context.go(AppRoutes.home);
   }
 
   String _pesanError(FirebaseAuthException error) {
@@ -113,6 +153,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   'Masuk untuk melanjutkan ke lemarimu.',
                   style: AppTextStyles.bodySecondary,
                 ),
+                if (_modeUji) ...[
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBg,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.accent),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'MODE UJI TANPA FIREBASE',
+                          style: AppTextStyles.mono(10),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Login Google tidak aktif di build ini. Masuk tanpa akun '
+                          'untuk mencoba kamera, lemari, dan rekomendasi.',
+                          style: AppTextStyles.label.copyWith(fontSize: 12),
+                        ),
+                        const SizedBox(height: 12),
+                        AppButton(
+                          label: 'Masuk tanpa akun',
+                          onPressed: _continueWithoutLogin,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 36),
                 Text(
                   'Masuk memakai akun Google. Login email dan password belum tersedia.',

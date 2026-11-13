@@ -99,11 +99,15 @@ class _Row extends StatelessWidget {
                 child: Text(item.badge!, style: AppTextStyles.mono(9)),
               ),
             if (item.value != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Text(
-                  item.value!,
-                  style: AppTextStyles.label.copyWith(fontSize: 13),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    item.value!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.label.copyWith(fontSize: 13),
+                  ),
                 ),
               ),
             item.trailing ??

@@ -14,6 +14,7 @@ import 'services/garment_classifier.dart';
 import 'services/local_db.dart';
 import 'services/outfit_engine.dart';
 import 'services/providers.dart';
+import 'services/runtime_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,9 @@ Future<void> main() async {
   // Google tidak akan berfungsi.
   try {
     await Firebase.initializeApp();
+    firebaseReady = true;
   } catch (error) {
+    firebaseReady = false;
     debugPrint('Firebase belum dikonfigurasi: $error');
   }
 

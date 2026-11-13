@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
+import '../../services/profile_prefs.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -25,10 +27,95 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _notif = true;
   bool _busy = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _muatPreferensi();
+  }
+
+  /// Preferensi disimpan di SQLite lokal (tabel app_preference), bukan di cloud,
+  /// supaya tetap ada walau pengguna sedang offline.
+  Future<void> _muatPreferensi() async {
+    try {
+      final nilai = await ref.read(localDbProvider).preference('notif_enabled');
+      if (mounted) {
+        setState(() => _notif = parseBoolPreference(nilai));
+      }
+    } catch (_) {
+      // Database belum siap: pakai nilai bawaan.
+    }
+  }
+
+  Future<void> _ubahNotif(bool value) async {
+    setState(() => _notif = value);
+    try {
+      await ref
+          .read(localDbProvider)
+          .setPreference('notif_enabled', encodeBoolPreference(value));
+    } catch (error) {
+      debugPrint('Gagal menyimpan preferensi notifikasi: $error');
+    }
+  }
+
+  /// Dialog ubah nama tampilan. Menulis ke Firebase Auth dan `profiles/{uid}`.
+  Future<void> _editName(AppUser? user) async {
+    final controller = TextEditingController(text: user?.name ?? '');
+    final nama = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Edit Profil'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(labelText: 'Nama tampilan'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(dialogContext, controller.text.trim()),
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+
+    if (nama == null || nama.isEmpty || nama == user?.name) return;
+    final rapi = normalizeDisplayName(nama);
+    if (rapi == null || rapi == user?.name) return;
+    setState(() => _busy = true);
+    try {
+      final terbaru = await _authService.updateDisplayName(rapi);
+      ref
+          .read(authProvider.notifier)
+          .setUser(
+            AppUser(
+              name: terbaru.displayName ?? rapi,
+              email: terbaru.email ?? user?.email ?? '',
+              photoUrl: terbaru.photoURL,
+            ),
+          );
+      _showMessage('Nama berhasil diubah.');
+    } on AuthNotSignedInException {
+      _showMessage('Login dulu untuk mengubah profil.');
+    } catch (error) {
+      _showMessage('Gagal mengubah nama. Coba lagi.');
+      debugPrint('Edit nama gagal: $error');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _signOut() async {
     setState(() => _busy = true);
     try {
       await _authService.signOut();
+      authListenable.setSignedIn(false);
       ref.read(authProvider.notifier).signOut();
       ref.read(wardrobeProvider.notifier).clear();
       if (mounted) context.go(AppRoutes.login);
@@ -70,6 +157,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     try {
       await _authService.deleteAccount();
+      authListenable.setSignedIn(false);
       ref.read(authProvider.notifier).signOut();
       ref.read(wardrobeProvider.notifier).clear();
       if (mounted) context.go(AppRoutes.login);
@@ -94,10 +182,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           width: 90,
           height: 90,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Text(
-            user?.initials ?? '?',
-            style: AppTextStyles.h1,
-          ),
+          errorBuilder: (context, error, stackTrace) =>
+              Text(user?.initials ?? '?', style: AppTextStyles.h1),
         ),
       );
     }
@@ -106,13 +192,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider);
+    final jumlahOutfit =
+        ref.watch(savedOutfitsProvider).valueOrNull?.length ?? 0;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -164,19 +253,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const SizedBox(height: 12),
                 Text(user?.name ?? 'Pengguna', style: AppTextStyles.h2),
                 const SizedBox(height: 4),
-                Text(user?.email ?? 'Belum login',
-                    style: AppTextStyles.bodySecondary),
+                Text(
+                  user?.email ?? 'Belum login',
+                  style: AppTextStyles.bodySecondary,
+                ),
                 const SizedBox(height: 28),
-                const ProfileSectionLabel('ACCOUNT'),
+                ProfileSectionLabel('ACCOUNT'),
                 ProfileMenuGroup(
                   items: [
                     ProfileMenuItem(
                       icon: Icons.person_outline,
                       title: 'Edit Profile',
+                      onTap: _busy ? null : () => _editName(user),
+                    ),
+                    ProfileMenuItem(
+                      icon: Icons.bookmark_border,
+                      title: 'Outfit Tersimpan',
+                      value: '$jumlahOutfit',
+                      onTap: () => context.push(AppRoutes.savedOutfits),
                     ),
                     ProfileMenuItem(
                       icon: Icons.lock_outline,
                       title: 'Change Password',
+                      onTap: () => _showMessage(
+                        'Akun ini memakai login Google, jadi kata sandi diatur di akun Google.',
+                      ),
                     ),
                     ProfileMenuItem(
                       icon: Icons.grid_view_rounded,
@@ -196,7 +297,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         value: _notif,
                         activeThumbColor: Colors.white,
                         activeTrackColor: AppColors.accent,
-                        onChanged: (v) => setState(() => _notif = v),
+                        onChanged: _ubahNotif,
                       ),
                     ),
                     ProfileMenuItem(
