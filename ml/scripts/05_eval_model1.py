@@ -51,13 +51,16 @@ def predict_files(model, files: list[Path], chunk: int = 64):
 def main() -> None:
     ap = argparse.ArgumentParser(description="Evaluasi Model 1 pada test set.")
     ap.add_argument("--weights", default=str(DEFAULT_WEIGHTS))
+    ap.add_argument("--data", default=str(M1),
+                    help="folder dataset (berisi metadata.csv), default model1")
     args = ap.parse_args()
 
     weights = Path(args.weights)
+    data = Path(args.data)
     if not weights.exists():
         raise SystemExit(f"Weights tidak ditemukan: {weights}\n"
                          f"Latih dulu (04_train_yolo11n.py) atau isi --weights.")
-    if not (M1 / "metadata.csv").exists():
+    if not (data / "metadata.csv").exists():
         raise SystemExit("metadata.csv tidak ada — jalankan 01_prepare_model1.py dulu.")
 
     try:
@@ -70,15 +73,15 @@ def main() -> None:
 
     # --- Top-1/Top-5 resmi dari Ultralytics (kalau didukung) ------------------
     try:
-        metrics = model.val(data=str(M1), split="test")
+        metrics = model.val(data=str(data), split="test")
         print(f"Ultralytics val: top1={metrics.top1:.4f} top5={metrics.top5:.4f}")
     except Exception as e:
         print(f"(Lewati model.val: {e})")
 
     # --- Prediksi lengkap pada test set ---------------------------------------
-    meta = pd.read_csv(M1 / "metadata.csv")
+    meta = pd.read_csv(data / "metadata.csv")
     test = meta[meta["split"] == "test"].copy()
-    test["abs"] = test["file"].map(lambda f: M1 / f)
+    test["abs"] = test["file"].map(lambda f: data / f)
     test = test[test["abs"].map(Path.exists)].reset_index(drop=True)
     if test.empty:
         raise SystemExit("Test set kosong — periksa metadata.csv (split='test').")
