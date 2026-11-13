@@ -1,3 +1,4 @@
+/// Memastikan komponen kartu grid lemari merender thumbnail dan placeholder dengan bena
 import 'package:flutter/material.dart';
 
 import '../../config/app_colors.dart';
