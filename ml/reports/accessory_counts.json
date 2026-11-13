@@ -1,0 +1,195 @@
+{
+  "generated": "2026-11-09",
+  "script": "ml/scripts/count_accessory_dataset.py",
+  "fashion_product_images": {
+    "styles_rows": 44446,
+    "rows_with_extra_comma": 22,
+    "accessories_all_gender": 11289,
+    "accessories_adult": 11244,
+    "accessories_adult_with_image": 11244,
+    "accessories_dropped_by_strict_csv": 15,
+    "accessories_seen_by_01_prepare": 11229,
+    "by_subcategory": {
+      "Bags": 3053,
+      "Watches": 2518,
+      "Jewellery": 1079,
+      "Eyewear": 1070,
+      "Wallets": 933,
+      "Belts": 811,
+      "Socks": 685,
+      "Headwear": 291,
+      "Ties": 258,
+      "Accessories": 143,
+      "Scarves": 118,
+      "Cufflinks": 108,
+      "Stoles": 90,
+      "Mufflers": 38,
+      "Shoe Accessories": 24,
+      "Gloves": 8,
+      "Water Bottle": 7,
+      "Umbrellas": 6,
+      "Sports Accessories": 3,
+      "Perfumes": 1
+    },
+    "by_article_type": {
+      "Watches": 2518,
+      "Handbags": 1757,
+      "Sunglasses": 1070,
+      "Wallets": 935,
+      "Belts": 810,
+      "Backpacks": 720,
+      "Socks": 685,
+      "Earrings": 416,
+      "Clutches": 289,
+      "Caps": 281,
+      "Ties": 258,
+      "Pendant": 176,
+      "Necklace and Chains": 160,
+      "Scarves": 118,
+      "Ring": 118,
+      "Accessory Gift Set": 111,
+      "Cufflinks": 106,
+      "Stoles": 90,
+      "Duffel Bag": 88,
+      "Bangle": 85,
+      "Laptop Bag": 81,
+      "Bracelet": 66,
+      "Jewellery Set": 58,
+      "Mobile Pouch": 47,
+      "Messenger Bag": 44,
+      "Mufflers": 38,
+      "Shoe Accessories": 23,
+      "Waist Pouch": 17,
+      "Travel Accessory": 16,
+      "Water Bottle": 11,
+      "Rucksacks": 11,
+      "Gloves": 8,
+      "Headband": 7,
+      "Umbrellas": 6,
+      "Trolley Bag": 3,
+      "Wristbands": 3,
+      "Tablet Sleeve": 3,
+      "Hat": 3,
+      "Ties and Cufflinks": 2,
+      "Key chain": 2,
+      "Shoe Laces": 1,
+      "Hair Accessory": 1,
+      "Perfume and Body Mist": 1,
+      "Tshirts": 1
+    }
+  },
+  "clothing_full": {
+    "hat_adult_with_image": 161
+  },
+  "proposed_classes": {
+    "bag": {
+      "fashion_products": 3989,
+      "clothing_full": 0,
+      "total": 3989,
+      "article_types": [
+        "Handbags",
+        "Backpacks",
+        "Clutches",
+        "Duffel Bag",
+        "Laptop Bag",
+        "Messenger Bag",
+        "Mobile Pouch",
+        "Rucksacks",
+        "Waist Pouch",
+        "Wallets"
+      ]
+    },
+    "watch": {
+      "fashion_products": 2518,
+      "clothing_full": 0,
+      "total": 2518,
+      "article_types": [
+        "Watches"
+      ]
+    },
+    "eyewear": {
+      "fashion_products": 1070,
+      "clothing_full": 0,
+      "total": 1070,
+      "article_types": [
+        "Sunglasses"
+      ]
+    },
+    "belt": {
+      "fashion_products": 810,
+      "clothing_full": 0,
+      "total": 810,
+      "article_types": [
+        "Belts"
+      ]
+    },
+    "hat": {
+      "fashion_products": 284,
+      "clothing_full": 161,
+      "total": 445,
+      "article_types": [
+        "Caps",
+        "Hat"
+      ]
+    }
+  },
+  "open_images_v7": {
+    "class_ids": {
+      "Handbag": "/m/080hkjn",
+      "Backpack": "/m/01940j",
+      "Belt": "/m/0176mf",
+      "Glasses": "/m/0jyfg",
+      "Sunglasses": "/m/017ftj",
+      "Hat": "/m/02dl1y",
+      "Sun hat": "/m/02wbtzl",
+      "Fedora": "/m/02fq_6",
+      "Cowboy hat": "/m/025rp__",
+      "Watch": "/m/0gjkl",
+      "Necklace": "/m/01llwg",
+      "Scarf": "/m/02h19r",
+      "Tie": "/m/01rkbr",
+      "Glove": "/m/0174n1",
+      "Fashion accessory": "/m/0463sg",
+      "Briefcase": "/m/0584n8"
+    },
+    "missing_classes": [],
+    "images_per_split": {
+      "validation": {
+        "Handbag": 61,
+        "Backpack": 24,
+        "Belt": 11,
+        "Glasses": 258,
+        "Sunglasses": 134,
+        "Hat": 145,
+        "Sun hat": 60,
+        "Fedora": 67,
+        "Cowboy hat": 40,
+        "Watch": 29,
+        "Necklace": 56,
+        "Scarf": 26,
+        "Tie": 97,
+        "Glove": 49,
+        "Fashion accessory": 999,
+        "Briefcase": 5
+      },
+      "test": {
+        "Handbag": 198,
+        "Backpack": 74,
+        "Belt": 33,
+        "Glasses": 819,
+        "Sunglasses": 439,
+        "Hat": 393,
+        "Sun hat": 254,
+        "Fedora": 213,
+        "Cowboy hat": 160,
+        "Watch": 90,
+        "Necklace": 160,
+        "Scarf": 83,
+        "Tie": 320,
+        "Glove": 142,
+        "Fashion accessory": 3014,
+        "Briefcase": 17
+      }
+    }
+  }
+}
