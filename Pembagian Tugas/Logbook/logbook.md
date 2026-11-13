@@ -174,34 +174,37 @@ Rencana QA dengan 34 test case juga sudah disusun.
 
 ---
 
-## Minggu 7 â€“ 9 s.d. 15 Nov 2026 (minggu 12 akademik)
+## Minggu 7 - 9 s.d. 15 Nov 2026 (minggu 12 akademik)
 
 **Status:** Berjalan
-**Fokus:** Integrasi galeri dan crop, penutupan PR fitur, review PR ML, lanjutan ekspor model.
+**Fokus:** Integrasi galeri dan crop, penutupan PR fitur, review PR ML, dan perbaikan model.
 
 | Tanggal | Agenda | Kegiatan | Kendala | Rencana | Bukti/Link |
 |---------|--------|----------|---------|---------|------------|
-| 9 Nov | Galeri dan crop | Impor foto dari galeri (PR #20): image_picker, batas 2048 px, normalisasi EXIF, folder sementara `scan_tmp`. Halaman crop 1:1 (PR #21): crop_your_image, tombol Putar dan Reset, tombol Sesuaikan area khusus galeri | Uji pemilih foto di perangkat belum | Uji galeri di HP | PR #20, #21 |
-| 9 Nov | Kamera | Tombol kiri layar kamera menjadi tombol galeri (PR #24). `useAndroidPhotoPicker` diaktifkan agar Android 13 sampai 15 tidak menampilkan "Buka dari" | Android 11 dan 12 tetap memakai pemilih sistem lama | Cek tampilan pemilih di perangkat | PR #24 |
-| 9 Nov | Penutupan PR fitur | Menggabungkan simpan outfit dan pencarian lemari (PR #25), foto asli kartu outfit dan ringkasan Home (PR #27), perbaikan overflow (PR #28), ikon aplikasi (PR #29). Test naik dari 76 menjadi 80 dan analyze bersih | Outfit lama bisa tertinggal tanpa item setelah item lemari dihapus | Tambahkan pembersihan outfit kosong | PR #25, #27, #28, #29 |
-| 9 Nov | Review PR anggota | Review delapan PR: #22, #23, #25, #26, #27, #28, #29, #30, #31, #32. Empat PR digabung. Enam PR diminta perbaikan: #22, #23, #26, #30, #31, #32 | PR #26 memuat seluruh isi #25 | Minta rebase #26 setelah #25 masuk | Komentar review di GitHub |
-| 9 Nov | Audit ML | Membandingkan aset aplikasi 15 kelas dengan model latihan 9 kelas pada 270 foto test. Aset aplikasi benar 65,6 persen, model latihan 86,7 persen pada sampel yang sama. Mengecek ekspor float32 5,91 MB, float16 2,99 MB, dan int8 dynamic range 1,53 MB | Layout input model latihan NHWC, sedangkan aplikasi NCHW | Putuskan model final dan layout input | `ml/runs/model1_yolo11n/weights/best_saved_model/` |
-| 9 Nov | Dokumentasi ML dan status | Menyusun `tugas-ml-per-anggota.md`: tugas ML tiap anggota, letak berkas, dan cara kerja Model 1, Modul 2, dan Model 3. Memperbarui logbook dan dokumen status | Nama minggu di logbook dan dokumen tugas berbeda | Samakan penomoran minggu | `Pembagian Tugas/tugas-ml-per-anggota.md` |
-| 10â€“15 Nov | Rencana lanjutan | Putuskan E4.6 (9 atau 10 kelas), pasang model final, uji perangkat, perbaiki PR yang diminta perubahan, kerjakan E5.2, E5.4, E7.6 | Ekspor final dan uji perangkat belum | Selesaikan minimal dua tugas aktif per orang | - |
+| 9 Nov | Galeri dan crop | Impor foto dari galeri (PR #20), halaman crop 1:1 (PR #21), tombol galeri kamera dan Photo Picker (PR #24) | Uji pemilih foto di perangkat belum | Uji galeri di HP | PR #20, #21, #24 |
+| 9 Nov | Penutupan PR fitur | Simpan outfit dan pencarian lemari (PR #25), foto outfit dan ringkasan Home (PR #27), perbaikan overflow (PR #28), ikon aplikasi (PR #29). Test naik dari 76 menjadi 80 | Outfit lama bisa tertinggal tanpa item | Bersihkan outfit kosong | PR #25, #27, #28, #29 |
+| 9 Nov | Audit ML | Aset aplikasi 15 kelas dibandingkan model latihan 9 kelas pada 270 foto: 65,6 persen lawan 86,7 persen. Ekspor float32, float16, dan int8 dynamic range diperiksa | Layout input NHWC lawan NCHW | Putuskan model final | `ml/runs/model1_yolo11n/weights/best_saved_model/` |
+| 10 Nov | Arahan dosen dan AI context | Mencatat arahan dosen: klasifikasi jenis memakai satu dataset, kombinasi warna menjadi pekerjaan ML terpisah. Memperbarui `ai-context` dan `AGENTS.md` | Keputusan dataset dan kelas `other` belum final | Susun ulang pembagian tugas ML | PR #35 |
+| 11 Nov | PR fitur baru | Pras mengajukan riwayat rekomendasi (PR #37), ranking dan explainability (PR #38), serta unit test DAO (PR #39). Izza mengajukan halaman Admin (PR #36) | Belum direview | Review dan uji | PR #36 sampai #39 |
+| 12 Nov | PR dokumentasi dan test | Izza mengajukan unit test model (PR #41), dokumentasi ML engine (PR #42), test palet (PR #43), dokumentasi metode ML (PR #44), verifikasi CRUD lemari (PR #45), dan komentar thumbnail (PR #46) | Beberapa PR hanya menambah komentar atau kosong | Periksa isi sebelum merge | PR #41 sampai #46 |
+| 13 Nov | Review dan merge | Menggabungkan #22 (evaluasi Model 3), #23 (riset aksesoris), #26 (profil/auth), #37 (riwayat), #38 (ranking), #39 (test DAO), dan #42 (dokumentasi ML engine). Test naik dari 80 menjadi 111 dan analyze bersih | #30, #31, dan #36 konflik setelah perubahan dev. #32 belum dipakai karena TFLite model v3 salah pada 3 dari 270 foto | Minta rebase #30, #31, #36; perbaiki model #32 | PR #22, #23, #26, #37, #38, #39, #42 |
+| 14-15 Nov | Rencana lanjutan | Selesaikan konflik #30, #31, #36; perbaiki atau ekspor ulang model #32; kerjakan E4.6, E5.2, E5.4, E7.6; uji perangkat | Model final dan uji perangkat belum | Selesaikan dua tugas aktif per orang | - |
 
-**Ringkasan capaian:** tujuh PR digabung pada minggu ini, yaitu #20, #21, #24,
-#25, #27, #28, dan #29. Test otomatis naik dari 72 menjadi 80 dan
-`flutter analyze` bersih. Enam PR dari Ahmad dan Abim sudah direview dan
-diminta perbaikan. Audit ML menemukan bahwa aset aplikasi masih model 15 kelas
-dan akurasinya 65,6 persen pada sampel data kita.
+**Ringkasan capaian:** tujuh PR digabung pada 13 November, yaitu #22, #23,
+#26, #37, #38, #39, dan #42. Test otomatis naik dari 80 menjadi 111 dan
+`flutter analyze` bersih. Arahan dosen sudah dicatat di `ai-context`.
+Pemeriksaan TFLite model v3 menunjukkan model belum akurat dengan
+preprocessing aplikasi.
 
 **Kendala terbuka:**
-1. Aset model aplikasi masih 15 kelas; model latihan 9 kelas belum dipasang.
-2. E4.6 ekspor final dan pemetaan label belum selesai.
-3. Modul 2 K-Means di Dart (E5.2) belum dikerjakan.
-4. Model 3 masih memakai data sintetis.
-5. Uji perangkat untuk galeri, crop, login, dan hapus akun belum.
-6. Enam PR masih menunggu perbaikan.
+1. Aset aplikasi masih model 15 kelas; model latihan 9 kelas belum dipasang.
+2. Model 10 kelas v3 di PR #32 gagal pada uji aplikasi: 3 dari 270 foto benar.
+3. PR #30, #31, dan #36 konflik setelah dev berubah dan perlu rebase.
+4. E4.6 ekspor final dan pemetaan label belum selesai.
+5. Modul 2 K-Means di Dart (E5.2) belum dikerjakan.
+6. Model 3 masih memakai data sintetis.
+7. Uji perangkat untuk galeri, crop, login, dan hapus akun belum.
+8. Beberapa PR baru hanya menambah komentar atau tidak memiliki perubahan.
 
 ---
 
