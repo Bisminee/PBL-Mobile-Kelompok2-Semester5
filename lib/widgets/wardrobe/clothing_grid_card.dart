@@ -1,4 +1,4 @@
-/// Memastikan komponen kartu grid lemari merender thumbnail dan placeholder dengan bena
+﻿// Memastikan komponen kartu grid lemari merender thumbnail dan placeholder dengan benar
 import 'package:flutter/material.dart';
 
 import '../../config/app_colors.dart';
@@ -82,7 +82,7 @@ class ClothingGridCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '  ·  ',
+                        '  Â·  ',
                         style: AppTextStyles.label.copyWith(fontSize: 11),
                       ),
                       Container(
@@ -115,3 +115,5 @@ class ClothingGridCard extends StatelessWidget {
     );
   }
 }
+
+
