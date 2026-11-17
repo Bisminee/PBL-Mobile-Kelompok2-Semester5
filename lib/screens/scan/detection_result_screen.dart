@@ -267,6 +267,46 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                       ),
                   ],
                 ),
+                const SizedBox(height: 22),
+                Text(
+                  'Style',
+                  style: AppTextStyles.title.copyWith(fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final st in styleValues)
+                      PillChip(
+                        label: styleLabel(st),
+                        selected: st == d.topStyle,
+                        onTap: () => ref
+                            .read(scanSessionProvider.notifier)
+                            .chooseStyle(st),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                Text(
+                  'Warna dominan',
+                  style: AppTextStyles.title.copyWith(fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final c in colorValues)
+                      PillChip(
+                        label: colorLabel(c),
+                        selected: c == d.color,
+                        onTap: () => ref
+                            .read(scanSessionProvider.notifier)
+                            .chooseColor(c),
+                      ),
+                  ],
+                ),
                 if (segments.isNotEmpty) ...[
                   const SizedBox(height: 22),
                   Row(

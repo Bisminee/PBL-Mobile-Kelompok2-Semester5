@@ -124,6 +124,10 @@ const Map<String, int> _colorValue = {
 /// Urutan formalitas dari paling santai ke paling resmi.
 const List<String> formalityValues = ['non_formal', 'semi_formal', 'formal'];
 
+/// Pilihan style dan warna untuk koreksi manual, diambil dari kunci peta label.
+final List<String> styleValues = _styleLabel.keys.toList();
+final List<String> colorValues = _colorLabel.keys.toList();
+
 const Map<String, int> _formalityLevel = {
   'non_formal': 1,
   'semi_formal': 2,
