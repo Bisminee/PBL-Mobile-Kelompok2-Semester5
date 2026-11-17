@@ -10,65 +10,95 @@ import '../common/garment_photo.dart';
 ///
 /// Dipakai di layar Outfit Tersimpan dan sub-tab Lemari. Dibuat aman dari
 /// overflow dengan Expanded + Wrap, karena jumlah item bisa lebih dari dua.
+/// Menu ubah nama dan hapus hanya muncul bila callback-nya diisi.
 class SavedOutfitCard extends StatelessWidget {
-  const SavedOutfitCard({super.key, required this.outfit});
+  const SavedOutfitCard({
+    super.key,
+    required this.outfit,
+    this.onTap,
+    this.onRename,
+    this.onDelete,
+  });
 
   final SavedOutfit outfit;
+  final VoidCallback? onTap;
+  final VoidCallback? onRename;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
     final persen = (outfit.score * 100).round();
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.secondaryBg,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final g in outfit.items)
-                      SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: GarmentPhoto(
-                          imagePath: g.imagePath,
-                          kind: clothingKindOf(g.garmentType, g.slot),
-                          dark: g.isDark,
-                          radius: 12,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.secondaryBg,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final g in outfit.items)
+                        SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: GarmentPhoto(
+                            imagePath: g.imagePath,
+                            kind: clothingKindOf(g.garmentType, g.slot),
+                            dark: g.isDark,
+                            radius: 12,
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text('$persen%', style: AppTextStyles.h3),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            outfit.title,
-            style: AppTextStyles.labelBold,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${formalityLabel(outfit.formality)} · ${formatDateId(outfit.createdAt)}',
-            style: AppTextStyles.mono(10),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+                const SizedBox(width: 10),
+                Text('$persen%', style: AppTextStyles.h3),
+                if (onRename != null || onDelete != null)
+                  PopupMenuButton<VoidCallback>(
+                    icon: const Icon(Icons.more_horiz),
+                    onSelected: (aksi) => aksi(),
+                    itemBuilder: (_) => [
+                      if (onRename != null)
+                        PopupMenuItem(
+                          value: onRename,
+                          child: const Text('Ubah nama'),
+                        ),
+                      if (onDelete != null)
+                        PopupMenuItem(
+                          value: onDelete,
+                          child: const Text('Hapus'),
+                        ),
+                    ],
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              outfit.name,
+              style: AppTextStyles.labelBold,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${formalityLabel(outfit.formality)} · ${formatDateId(outfit.createdAt)}',
+              style: AppTextStyles.mono(10),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }

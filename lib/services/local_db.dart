@@ -240,6 +240,17 @@ class LocalDb {
     ];
   }
 
+  Future<void> renameOutfit(int id, String name) async => (await db).update(
+    'outfit',
+    {'name': name},
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+
+  /// Menghapus outfit beserta keterkaitan itemnya (ON DELETE CASCADE). Item lemari tetap ada.
+  Future<void> deleteOutfit(int id) async =>
+      (await db).delete('outfit', where: 'id = ?', whereArgs: [id]);
+
   // ---------- Riwayat rekomendasi ----------
 
   /// Mencatat bahwa pengguna melihat rekomendasi atasan + bawahan ini.

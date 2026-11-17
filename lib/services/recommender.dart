@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/garment.dart';
 import '../models/garment_labels.dart';
 import '../models/outfit.dart';
+import '../models/saved_outfit.dart';
 import 'color_harmony.dart';
 
 /// Layanan penyusun rekomendasi pakaian (Recommender).
@@ -57,7 +58,6 @@ List<Outfit> buildOutfits({
       if (raw == null) continue;
       final pct = toPercentile(raw);
       final formality = lowerFormality(t.formality, b.formality);
-      final harmony = ColorHarmony.evaluate(t.colorValue, b.colorValue);
       hasil.add((
         raw: raw,
         outfit: Outfit(
@@ -68,12 +68,7 @@ List<Outfit> buildOutfits({
           bottom: b,
           score: pct,
           formality: formality,
-          reasons: [
-            '${harmony.label}: ${harmony.detail}',
-            _formalityReason(t, b),
-            'Skor pasangan lebih tinggi dari ${(pct * 100).round()}% kombinasi '
-                'atasan-bawahan lain di data outfit stylist.',
-          ],
+          reasons: pairReasons(t, b, pct),
         ),
       ));
     }
@@ -121,6 +116,36 @@ List<Outfit> buildRuleOutfits({
   }
   hasil.sort((a, b) => b.score.compareTo(a.score));
   return hasil.take(limit).map((e) => e.outfit).toList();
+}
+
+/// Alasan standar sebuah pasangan atasan-bawahan: harmoni warna, formalitas, lalu skor [pct] (0..1).
+/// Dipakai rekomendasi dan outfit tersimpan agar layar detail menampilkan teks yang sama.
+List<String> pairReasons(Garment t, Garment b, double pct) {
+  final harmony = ColorHarmony.evaluate(t.colorValue, b.colorValue);
+  return [
+    '${harmony.label}: ${harmony.detail}',
+    _formalityReason(t, b),
+    'Skor pasangan lebih tinggi dari ${(pct * 100).round()}% kombinasi '
+        'atasan-bawahan lain di data outfit stylist.',
+  ];
+}
+
+/// Mengubah outfit tersimpan menjadi [Outfit] agar bisa dibuka di layar detail.
+/// Null bila outfit tidak punya atasan dan bawahan (mis. item sudah dihapus dari lemari).
+Outfit? outfitFromSaved(SavedOutfit s) {
+  final top = s.items.where((g) => g.slot == 'top').firstOrNull;
+  final bottom = s.items.where((g) => g.slot == 'bottom').firstOrNull;
+  if (top == null || bottom == null) return null;
+  return Outfit(
+    id: 'saved-${s.id}',
+    title: s.name,
+    subtitle: formalityLabel(s.formality),
+    top: top,
+    bottom: bottom,
+    score: s.score,
+    formality: s.formality,
+    reasons: pairReasons(top, bottom, s.score),
+  );
 }
 
 String _formalityReason(Garment t, Garment b) {
