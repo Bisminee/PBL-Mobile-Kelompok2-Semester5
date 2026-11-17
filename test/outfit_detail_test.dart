@@ -135,7 +135,7 @@ void main() {
   });
 
   group('DetailScreen', () {
-    Future<void> pump(WidgetTester tester) async {
+    Future<void> pump(WidgetTester tester, {Outfit? outfit}) async {
       // Lebar 360 dp (HP kecil); tinggi dibuat besar agar seluruh isi tab
       // terbangun tanpa perlu menggulir.
       tester.view.physicalSize = const Size(1080, 7200);
@@ -144,11 +144,51 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [wardrobeProvider.overrideWith(_FakeWardrobe.new)],
-          child: MaterialApp(home: DetailScreen(outfit: _outfit)),
+          child: MaterialApp(home: DetailScreen(outfit: outfit ?? _outfit)),
         ),
       );
       await tester.pump();
     }
+
+    testWidgets(
+      'menu ⋯ membuka aksi hapus pakaian; rekomendasi tanpa hapus outfit',
+      (tester) async {
+        await pump(tester);
+        await tester.tap(find.byIcon(Icons.more_horiz));
+        await tester.pumpAndSettle();
+        expect(find.text('Hapus atasan'), findsOneWidget);
+        expect(find.text('Hapus bawahan'), findsOneWidget);
+        expect(find.text('Hapus outfit'), findsNothing);
+
+        await tester.tap(find.text('Hapus atasan'));
+        await tester.pumpAndSettle();
+        expect(find.text('Hapus dari lemari?'), findsOneWidget);
+      },
+    );
+
+    testWidgets('outfit tersimpan punya aksi hapus outfit', (tester) async {
+      await pump(
+        tester,
+        outfit: Outfit(
+          id: 'saved-7',
+          title: _outfit.title,
+          subtitle: _outfit.subtitle,
+          top: _top,
+          bottom: _bottom,
+          score: _outfit.score,
+          formality: _outfit.formality,
+          savedId: 7,
+          reasons: _outfit.reasons,
+        ),
+      );
+      await tester.tap(find.byIcon(Icons.more_horiz));
+      await tester.pumpAndSettle();
+      expect(find.text('Hapus outfit'), findsOneWidget);
+
+      await tester.tap(find.text('Hapus outfit'));
+      await tester.pumpAndSettle();
+      expect(find.text('Hapus outfit ini?'), findsOneWidget);
+    });
 
     testWidgets('tab Warna tampil lebih dulu dengan data warna item', (
       tester,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/saved_outfit.dart';
 import '../../services/providers.dart';
+import '../common/konfirmasi_hapus.dart';
 
 /// Aksi ubah nama dan hapus untuk outfit tersimpan. Dipakai layar Outfit Tersimpan dan tab Lemari.
 Future<void> ubahNamaOutfit(
@@ -31,24 +32,12 @@ Future<void> hapusOutfit(
   WidgetRef ref,
   SavedOutfit o,
 ) async {
-  final ok = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('Hapus outfit ini?'),
-      content: Text('"${o.name}" akan dihapus dari outfit tersimpan.'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(false),
-          child: const Text('Batal'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(true),
-          child: const Text('Hapus'),
-        ),
-      ],
-    ),
+  final ok = await konfirmasiHapus(
+    context,
+    judul: 'Hapus outfit ini?',
+    isi: '"${o.name}" akan dihapus dari outfit tersimpan.',
   );
-  if (ok != true) return;
+  if (!ok) return;
   try {
     await ref.read(localDbProvider).deleteOutfit(o.id);
     ref.invalidate(savedOutfitsProvider);

@@ -144,6 +144,7 @@ Outfit? outfitFromSaved(SavedOutfit s) {
     bottom: bottom,
     score: s.score,
     formality: s.formality,
+    savedId: s.id,
     reasons: pairReasons(top, bottom, s.score),
   );
 }
