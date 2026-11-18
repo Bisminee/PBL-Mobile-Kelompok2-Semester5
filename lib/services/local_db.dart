@@ -50,6 +50,7 @@ class LocalDb {
       onConfigure: openOptions.onConfigure,
       onCreate: openOptions.onCreate,
       onUpgrade: openOptions.onUpgrade,
+      onOpen: openOptions.onOpen,
     );
   }
 
@@ -61,9 +62,10 @@ class LocalDb {
   @visibleForTesting
   static final OpenDatabaseOptions openOptions = OpenDatabaseOptions(
     version: _version,
-    onConfigure: (d) => d.execute('PRAGMA foreign_keys = ON'),
+    onConfigure: (d) => d.execute('PRAGMA foreign_keys = OFF'),
     onCreate: (d, versi) => _buatTabelBaru(d, 0, versi),
     onUpgrade: _buatTabelBaru,
+    onOpen: (d) => d.execute('PRAGMA foreign_keys = ON'),
   );
 
   static Future<void> _buatTabelBaru(
@@ -100,16 +102,79 @@ class LocalDb {
   /// Membuat tabel master data (versi 4). Dipakai onCreate dan onUpgrade
   /// supaya skemanya hanya ditulis di satu tempat.
   static Future<void> _createMasterTables(Database d) async {
-    await d.execute(
-      'CREATE TABLE IF NOT EXISTS ref_garment_type ('
-      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-      'name TEXT NOT NULL, slot TEXT NOT NULL)',
-    );
-    await d.execute(
-      'CREATE TABLE IF NOT EXISTS ref_color ('
-      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-      'color_family TEXT NOT NULL, hex_code TEXT)',
-    );
+    await d.execute('PRAGMA legacy_alter_table = ON');
+    try {
+      final typeCols = await d.rawQuery('PRAGMA table_info(ref_garment_type)');
+      final hasTypeName = typeCols.any((c) => c['name'] == 'name');
+      final hasGarmentType = typeCols.any((c) => c['name'] == 'garment_type');
+      final hasSlot = typeCols.any((c) => c['name'] == 'slot');
+
+      if (typeCols.isNotEmpty && !hasTypeName) {
+        await d.execute(
+          'ALTER TABLE ref_garment_type RENAME TO _old_ref_garment_type',
+        );
+        await d.execute(
+          'CREATE TABLE ref_garment_type ('
+          'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+          'name TEXT NOT NULL, '
+          'garment_type TEXT UNIQUE, '
+          'slot TEXT NOT NULL)',
+        );
+        if (hasGarmentType && hasSlot) {
+          await d.execute(
+            'INSERT INTO ref_garment_type (name, garment_type, slot) '
+            'SELECT garment_type, garment_type, slot FROM _old_ref_garment_type',
+          );
+        }
+        await d.execute('DROP TABLE _old_ref_garment_type');
+      } else {
+        await d.execute(
+          'CREATE TABLE IF NOT EXISTS ref_garment_type ('
+          'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+          'name TEXT NOT NULL, '
+          'garment_type TEXT UNIQUE, '
+          'slot TEXT NOT NULL)',
+        );
+      }
+
+      final colorCols = await d.rawQuery('PRAGMA table_info(ref_color)');
+      final hasColorId = colorCols.any((c) => c['name'] == 'id');
+      final hasColorFamily = colorCols.any((c) => c['name'] == 'color_family');
+      final hasHexCode = colorCols.any((c) => c['name'] == 'hex_code');
+
+      if (colorCols.isNotEmpty && (!hasColorId || !hasHexCode)) {
+        await d.execute(
+          'ALTER TABLE ref_color RENAME TO _old_ref_color',
+        );
+        await d.execute(
+          'CREATE TABLE ref_color ('
+          'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+          'color_family TEXT NOT NULL UNIQUE, '
+          'hex_code TEXT)',
+        );
+        if (hasColorFamily && hasHexCode) {
+          await d.execute(
+            'INSERT INTO ref_color (color_family, hex_code) '
+            'SELECT color_family, hex_code FROM _old_ref_color',
+          );
+        } else if (hasColorFamily) {
+          await d.execute(
+            'INSERT INTO ref_color (color_family) '
+            'SELECT color_family FROM _old_ref_color',
+          );
+        }
+        await d.execute('DROP TABLE _old_ref_color');
+      } else {
+        await d.execute(
+          'CREATE TABLE IF NOT EXISTS ref_color ('
+          'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+          'color_family TEXT NOT NULL UNIQUE, '
+          'hex_code TEXT)',
+        );
+      }
+    } finally {
+      await d.execute('PRAGMA legacy_alter_table = OFF');
+    }
   }
 
   // ---------- Lookup ML (hasil model sklearn yang sudah dihitung untuk semua kombinasi) ----------
@@ -509,7 +574,11 @@ class LocalDb {
   /// Menambah tipe pakaian baru (contoh: name 'shirt', slot 'top').
   Future<int> insertMasterGarmentType(String name, String slot) async {
     final d = await db;
-    return d.insert('ref_garment_type', {'name': name, 'slot': slot});
+    return d.insert('ref_garment_type', {
+      'name': name,
+      'garment_type': name,
+      'slot': slot,
+    });
   }
  
   /// Mengubah nama dan slot tipe pakaian berdasarkan id.
@@ -517,7 +586,7 @@ class LocalDb {
     final d = await db;
     return d.update(
       'ref_garment_type',
-      {'name': name, 'slot': slot},
+      {'name': name, 'garment_type': name, 'slot': slot},
       where: 'id = ?',
       whereArgs: [id],
     );

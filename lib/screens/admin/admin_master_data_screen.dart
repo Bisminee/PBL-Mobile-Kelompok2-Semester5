@@ -6,9 +6,6 @@ import 'package:flutter/material.dart';
 import '../../services/local_db.dart';
 
 /// Pilihan slot untuk tipe pakaian.
-/// PENTING: samakan dengan nilai slot di tabel catalog_item. Cek lewat:
-///   SELECT DISTINCT slot FROM catalog_item;
-/// Nilai yang sudah ada di database tetap muncul di dropdown walau tidak ada di daftar ini.
 const List<String> kSlotOptions = ['top', 'bottom', 'outer', 'shoes', 'dress'];
 
 /// Format hex yang diterima: #RRGGBB.
@@ -83,23 +80,33 @@ class _GarmentTypeTab extends StatefulWidget {
 }
 
 class _GarmentTypeTabState extends State<_GarmentTypeTab> {
-  late Future<List<Map<String, dynamic>>> _future;
+  var _rows = List.empty();
+  bool _loading = true;
+  Object? _error;
 
   @override
   void initState() {
     super.initState();
-    _future = _fetch();
+    _reload();
   }
 
-  /// Pastikan master data sudah terisi awal, lalu ambil daftar tipe.
-  Future<List<Map<String, dynamic>>> _fetch() async {
-    await LocalDb.instance.ensureMasterSeeded();
-    return LocalDb.instance.getMasterGarmentTypes();
-  }
-
-  /// Muat ulang daftar setelah ada perubahan data.
-  void _reload() {
-    setState(() => _future = _fetch());
+  Future<void> _reload() async {
+    try {
+      await LocalDb.instance.ensureMasterSeeded();
+      final data = await LocalDb.instance.getMasterGarmentTypes();
+      if (!mounted) return;
+      setState(() {
+        _rows = data;
+        _loading = false;
+        _error = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = e;
+      });
+    }
   }
 
   /// Buka form. [row] null = tambah baru, terisi = ubah.
@@ -108,24 +115,55 @@ class _GarmentTypeTabState extends State<_GarmentTypeTab> {
       context: context,
       builder: (_) => _TypeFormDialog(row: row),
     );
-    if (result == null) return; // dibatalkan
-    if (row == null) {
-      await LocalDb.instance.insertMasterGarmentType(result.name, result.slot);
-    } else {
-      await LocalDb.instance.updateMasterGarmentType(
-        row['id'] as int,
-        result.name,
-        result.slot,
+    if (result == null) return;
+    try {
+      if (row == null) {
+        await LocalDb.instance.insertMasterGarmentType(
+          result.name,
+          result.slot,
+        );
+      } else {
+        await LocalDb.instance.updateMasterGarmentType(
+          row['id'] as int,
+          result.name,
+          result.slot,
+        );
+      }
+      await _reload();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            row == null
+                ? 'Tipe pakaian ditambahkan'
+                : 'Tipe pakaian diperbarui',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan data: $e')),
       );
     }
-    if (mounted) _reload();
   }
 
   Future<void> _delete(Map<String, dynamic> row) async {
     final ok = await _confirmDelete(context, row['name'] as String);
     if (!ok) return;
-    await LocalDb.instance.deleteMasterGarmentType(row['id'] as int);
-    if (mounted) _reload();
+    try {
+      await LocalDb.instance.deleteMasterGarmentType(row['id'] as int);
+      await _reload();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tipe pakaian dihapus')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menghapus data: $e')),
+      );
+    }
   }
 
   @override
@@ -138,26 +176,23 @@ class _GarmentTypeTabState extends State<_GarmentTypeTab> {
         icon: const Icon(Icons.add),
         label: const Text('Tambah tipe'),
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
+      body: Builder(
+        builder: (context) {
+          if (_loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snap.hasError) {
-            return Center(child: Text('Gagal memuat data: ${snap.error}'));
+          if (_error != null) {
+            return Center(child: Text('Gagal memuat data: $_error'));
           }
-          final rows = snap.data ?? const <Map<String, dynamic>>[];
-          if (rows.isEmpty) {
+          if (_rows.isEmpty) {
             return const Center(child: Text('Belum ada tipe pakaian.'));
           }
           return ListView.separated(
-            // Padding bawah supaya item terakhir tidak tertutup tombol FAB.
             padding: const EdgeInsets.only(bottom: 88),
-            itemCount: rows.length,
+            itemCount: _rows.length,
             separatorBuilder: (context, index) => const Divider(height: 1),
             itemBuilder: (context, i) {
-              final r = rows[i];
+              final r = _rows[i];
               return ListTile(
                 title: Text(r['name'] as String),
                 subtitle: Text('Slot: ${r['slot']}'),
@@ -185,8 +220,6 @@ class _GarmentTypeTabState extends State<_GarmentTypeTab> {
   }
 }
 
-/// Dialog form tipe pakaian. Dibuat sebagai widget sendiri agar controller
-/// dibuang dengan aman saat dialog ditutup.
 class _TypeFormDialog extends StatefulWidget {
   const _TypeFormDialog({this.row});
   final Map<String, dynamic>? row;
@@ -199,7 +232,7 @@ class _TypeFormDialogState extends State<_TypeFormDialog> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameC;
   late String _slot;
-  String? _nameError; // error hasil cek duplikat (async)
+  String? _nameError;
   bool _saving = false;
 
   @override
@@ -221,25 +254,32 @@ class _TypeFormDialogState extends State<_TypeFormDialog> {
       _saving = true;
       _nameError = null;
     });
-    final name = _nameC.text.trim();
-    final dup = await LocalDb.instance.masterGarmentTypeExists(
-      name,
-      exceptId: widget.row?['id'] as int?,
-    );
-    if (!mounted) return;
-    if (dup) {
+    try {
+      final name = _nameC.text.trim();
+      final dup = await LocalDb.instance.masterGarmentTypeExists(
+        name,
+        exceptId: widget.row?['id'] as int?,
+      );
+      if (!mounted) return;
+      if (dup) {
+        setState(() {
+          _saving = false;
+          _nameError = 'Nama sudah dipakai';
+        });
+        return;
+      }
+      Navigator.pop(context, (name: name, slot: _slot));
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
         _saving = false;
-        _nameError = 'Nama sudah dipakai';
+        _nameError = 'Terjadi kesalahan: $e';
       });
-      return;
     }
-    Navigator.pop(context, (name: name, slot: _slot));
   }
 
   @override
   Widget build(BuildContext context) {
-    // Gabungkan slot standar dengan slot milik baris ini (bila beda).
     final slotItems = {...kSlotOptions, _slot}.toList();
     return AlertDialog(
       title: Text(
@@ -301,22 +341,33 @@ class _ColorTab extends StatefulWidget {
 }
 
 class _ColorTabState extends State<_ColorTab> {
-  late Future<List<Map<String, dynamic>>> _future;
+  var _rows = List.empty();
+  bool _loading = true;
+  Object? _error;
 
   @override
   void initState() {
     super.initState();
-    _future = _fetch();
+    _reload();
   }
 
-  /// Pastikan master data sudah terisi awal, lalu ambil daftar warna.
-  Future<List<Map<String, dynamic>>> _fetch() async {
-    await LocalDb.instance.ensureMasterSeeded();
-    return LocalDb.instance.getMasterColors();
-  }
-
-  void _reload() {
-    setState(() => _future = _fetch());
+  Future<void> _reload() async {
+    try {
+      await LocalDb.instance.ensureMasterSeeded();
+      final data = await LocalDb.instance.getMasterColors();
+      if (!mounted) return;
+      setState(() {
+        _rows = data;
+        _loading = false;
+        _error = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = e;
+      });
+    }
   }
 
   Future<void> _openForm({Map<String, dynamic>? row}) async {
@@ -325,23 +376,49 @@ class _ColorTabState extends State<_ColorTab> {
       builder: (_) => _ColorFormDialog(row: row),
     );
     if (result == null) return;
-    if (row == null) {
-      await LocalDb.instance.insertMasterColor(result.name, result.hex);
-    } else {
-      await LocalDb.instance.updateMasterColor(
-        row['id'] as int,
-        result.name,
-        result.hex,
+    try {
+      if (row == null) {
+        await LocalDb.instance.insertMasterColor(result.name, result.hex);
+      } else {
+        await LocalDb.instance.updateMasterColor(
+          row['id'] as int,
+          result.name,
+          result.hex,
+        );
+      }
+      await _reload();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            row == null ? 'Warna ditambahkan' : 'Warna diperbarui',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan warna: $e')),
       );
     }
-    if (mounted) _reload();
   }
 
   Future<void> _delete(Map<String, dynamic> row) async {
     final ok = await _confirmDelete(context, row['color_family'] as String);
     if (!ok) return;
-    await LocalDb.instance.deleteMasterColor(row['id'] as int);
-    if (mounted) _reload();
+    try {
+      await LocalDb.instance.deleteMasterColor(row['id'] as int);
+      await _reload();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Warna dihapus')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menghapus warna: $e')),
+      );
+    }
   }
 
   @override
@@ -354,28 +431,25 @@ class _ColorTabState extends State<_ColorTab> {
         icon: const Icon(Icons.add),
         label: const Text('Tambah warna'),
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
+      body: Builder(
+        builder: (context) {
+          if (_loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snap.hasError) {
-            return Center(child: Text('Gagal memuat data: ${snap.error}'));
+          if (_error != null) {
+            return Center(child: Text('Gagal memuat data: $_error'));
           }
-          final rows = snap.data ?? const <Map<String, dynamic>>[];
-          if (rows.isEmpty) {
+          if (_rows.isEmpty) {
             return const Center(child: Text('Belum ada warna.'));
           }
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 88),
-            itemCount: rows.length,
+            itemCount: _rows.length,
             separatorBuilder: (context, index) => const Divider(height: 1),
             itemBuilder: (context, i) {
-              final r = rows[i];
+              final r = _rows[i];
               final hex = r['hex_code'] as String?;
               return ListTile(
-                // Lingkaran pratinjau warna; abu-abu bila hex kosong/tidak valid.
                 leading: CircleAvatar(
                   backgroundColor:
                       _parseHex(hex) ??
@@ -449,25 +523,32 @@ class _ColorFormDialogState extends State<_ColorFormDialog> {
       _saving = true;
       _nameError = null;
     });
-    final name = _nameC.text.trim();
-    final dup = await LocalDb.instance.masterColorExists(
-      name,
-      exceptId: widget.row?['id'] as int?,
-    );
-    if (!mounted) return;
-    if (dup) {
+    try {
+      final name = _nameC.text.trim();
+      final dup = await LocalDb.instance.masterColorExists(
+        name,
+        exceptId: widget.row?['id'] as int?,
+      );
+      if (!mounted) return;
+      if (dup) {
+        setState(() {
+          _saving = false;
+          _nameError = 'Nama warna sudah dipakai';
+        });
+        return;
+      }
+      final hex = _hexC.text.trim();
+      Navigator.pop(context, (
+        name: name,
+        hex: hex.isEmpty ? null : hex.toUpperCase(),
+      ));
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
         _saving = false;
-        _nameError = 'Nama warna sudah dipakai';
+        _nameError = 'Terjadi kesalahan: $e';
       });
-      return;
     }
-    final hex = _hexC.text.trim();
-    // Hex disimpan huruf besar agar seragam; kosong disimpan sebagai null.
-    Navigator.pop(context, (
-      name: name,
-      hex: hex.isEmpty ? null : hex.toUpperCase(),
-    ));
   }
 
   @override
@@ -500,7 +581,7 @@ class _ColorFormDialogState extends State<_ColorFormDialog> {
               ),
               validator: (v) {
                 final t = v?.trim() ?? '';
-                if (t.isEmpty) return null; // opsional
+                if (t.isEmpty) return null;
                 return _hexPattern.hasMatch(t)
                     ? null
                     : 'Format harus #RRGGBB';
