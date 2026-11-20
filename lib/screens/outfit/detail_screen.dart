@@ -15,6 +15,7 @@ import '../../services/recommender.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/garment_photo.dart';
+import '../../widgets/common/konfirmasi_hapus.dart';
 import '../../widgets/common/match_ring.dart';
 import '../../widgets/common/responsive.dart';
 import '../../widgets/outfit/outfit_item_row.dart';
@@ -81,6 +82,42 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     }
   }
 
+  Future<void> _aksi(Outfit o, String aksi) => switch (aksi) {
+    'hapus-outfit' => _hapusOutfit(o),
+    'hapus-atasan' => _hapusPakaian(o.top),
+    'hapus-bawahan' => _hapusPakaian(o.bottom),
+    _ => Future.value(),
+  };
+
+  Future<void> _hapusOutfit(Outfit o) async {
+    final id = o.savedId;
+    if (id == null) return;
+    final ok = await konfirmasiHapus(
+      context,
+      judul: 'Hapus outfit ini?',
+      isi: '"${o.title}" akan dihapus dari outfit tersimpan.',
+    );
+    if (!ok || !mounted) return;
+    await ref.read(localDbProvider).deleteOutfit(id);
+    ref.invalidate(savedOutfitsProvider);
+    if (!mounted) return;
+    context.pop();
+  }
+
+  /// Menghapus pakaian dari lemari. Outfit yang memuatnya ikut hilang dari layar ini.
+  Future<void> _hapusPakaian(Garment g) async {
+    final ok = await konfirmasiHapus(
+      context,
+      judul: 'Hapus dari lemari?',
+      isi:
+          '${g.title} akan dihapus dari lemari dan tidak masuk rekomendasi lagi.',
+    );
+    if (!ok || !mounted) return;
+    ref.read(wardrobeProvider.notifier).remove(g.id);
+    ref.invalidate(savedOutfitsProvider);
+    context.pop();
+  }
+
   Future<void> _saveOutfit(Outfit o) async {
     if (_saved) return;
     final ids = _itemIds(o);
@@ -137,7 +174,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                 maxWidth: 720,
                 child: NestedScrollView(
                   headerSliverBuilder: (context, _) => [
-                    SliverToBoxAdapter(child: _Header(o)),
+                    SliverToBoxAdapter(
+                      child: _Header(o, onAksi: (aksi) => _aksi(o, aksi)),
+                    ),
                     const SliverPersistentHeader(
                       pinned: true,
                       delegate: _TabBarHeader(),
@@ -192,8 +231,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
 
 /// Bagian atas yang ikut tergulir: tombol kembali, foto, judul, skor, fakta.
 class _Header extends StatelessWidget {
-  const _Header(this.o);
+  const _Header(this.o, {required this.onAksi});
   final Outfit o;
+  final ValueChanged<String> onAksi;
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +250,25 @@ class _Header extends StatelessWidget {
                 icon: Icons.chevron_left,
                 onPressed: () => context.pop(),
               ),
-              const CircleIconButton(icon: Icons.more_horiz),
+              PopupMenuButton<String>(
+                onSelected: onAksi,
+                itemBuilder: (_) => [
+                  if (o.savedId != null)
+                    const PopupMenuItem(
+                      value: 'hapus-outfit',
+                      child: Text('Hapus outfit'),
+                    ),
+                  const PopupMenuItem(
+                    value: 'hapus-atasan',
+                    child: Text('Hapus atasan'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'hapus-bawahan',
+                    child: Text('Hapus bawahan'),
+                  ),
+                ],
+                child: const CircleIconButton(icon: Icons.more_horiz),
+              ),
             ],
           ),
           const SizedBox(height: 14),

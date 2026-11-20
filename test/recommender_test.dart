@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sera_z/models/garment.dart';
+import 'package:sera_z/models/saved_outfit.dart';
 import 'package:sera_z/services/recommender.dart';
 
 Garment _g(int id, String type, String slot, String color, String formality) =>
@@ -107,6 +108,44 @@ void main() {
     test('lemari tanpa atasan atau bawahan menghasilkan daftar kosong', () {
       expect(buildRuleOutfits(wardrobe: [wardrobe[0]]), isEmpty);
       expect(buildRuleOutfits(wardrobe: [wardrobe[1]]), isEmpty);
+    });
+  });
+
+  group('outfitFromSaved', () {
+    test('atasan dan bawahan diambil dari item tersimpan', () {
+      final s = SavedOutfit(
+        id: 7,
+        name: 'Paduan',
+        formality: 'semi_formal',
+        score: 0.8,
+        createdAt: DateTime(2026),
+        items: [
+          _g(3, 'pants', 'bottom', 'blue', 'semi_formal'),
+          _g(2, 'shirt', 'top', 'white', 'formal'),
+        ],
+      );
+
+      final o = outfitFromSaved(s)!;
+
+      expect(o.top.id, '2');
+      expect(o.bottom.id, '3');
+      expect(o.title, 'Paduan');
+      expect(o.score, 0.8);
+      expect(o.reasons.length, 3);
+      expect(o.reasons.last, contains('80%'));
+    });
+
+    test('null bila tidak ada bawahan (item sudah dihapus dari lemari)', () {
+      final s = SavedOutfit(
+        id: 8,
+        name: 'Hilang',
+        formality: 'non_formal',
+        score: 0.5,
+        createdAt: DateTime(2026),
+        items: [_g(2, 'shirt', 'top', 'white', 'formal')],
+      );
+
+      expect(outfitFromSaved(s), isNull);
     });
   });
 }

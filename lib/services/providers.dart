@@ -185,6 +185,33 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
     );
   }
 
+  /// User mengoreksi warna dominan. Formalitas dan style dihitung ulang dari warna itu.
+  Future<void> chooseColor(String color) async {
+    final d = state.detection;
+    final engine = ref.read(engineProvider);
+    if (d == null || engine == null || d.color == color) return;
+    final nd = await engine.withColor(
+      d,
+      color,
+      gender: ref.read(genderProvider),
+    );
+    state = ScanSession(
+      imagePath: state.imagePath,
+      source: state.source,
+      detection: nd,
+    );
+  }
+
+  void chooseStyle(String style) {
+    final d = state.detection;
+    if (d == null) return;
+    state = ScanSession(
+      imagePath: state.imagePath,
+      source: state.source,
+      detection: d.copyWith(manualStyle: style),
+    );
+  }
+
   /// Simpan hasil ke lemari (SQLite) lalu reset sesi. Melempar galat bila penyimpanan gagal.
   Future<Garment?> save() async {
     final path = state.imagePath;

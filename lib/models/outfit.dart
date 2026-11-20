@@ -11,6 +11,7 @@ class Outfit {
     required this.score,
     required this.reasons,
     this.formality,
+    this.savedId,
   });
 
   final String id;
@@ -28,6 +29,9 @@ class Outfit {
 
   /// non_formal | semi_formal | formal. Null untuk outfit placeholder.
   final String? formality;
+
+  /// Id baris di tabel outfit bila outfit ini berasal dari Outfit Tersimpan. Null untuk rekomendasi.
+  final int? savedId;
 
   int get scorePercent => (score * 100).round();
 

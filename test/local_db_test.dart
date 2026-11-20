@@ -116,6 +116,33 @@ void main() {
       final hasil = await dao.savedOutfits();
       expect(hasil.single.items.map((g) => g.id), ['$atas']);
     });
+
+    test('renameOutfit mengganti nama tanpa mengubah item', () async {
+      final atas = await tambah();
+      final bawah = await tambah(type: 'pants', slot: 'bottom');
+      final id = await dao.saveOutfit('Lama', 'non_formal', 0.5, [atas, bawah]);
+
+      await dao.renameOutfit(id, 'Baru');
+
+      final hasil = (await dao.savedOutfits()).single;
+      expect(hasil.name, 'Baru');
+      expect(hasil.items.length, 2);
+    });
+
+    test('deleteOutfit menghapus outfit dan itemnya tetap di lemari', () async {
+      final atas = await tambah();
+      final bawah = await tambah(type: 'pants', slot: 'bottom');
+      final id = await dao.saveOutfit('Paduan', 'non_formal', 0.5, [
+        atas,
+        bawah,
+      ]);
+
+      await dao.deleteOutfit(id);
+
+      expect(await dao.savedOutfits(), isEmpty);
+      expect(await dao.outfitSaved([atas, bawah]), isFalse);
+      expect((await dao.wardrobe()).length, 2);
+    });
   });
 
   group('riwayat rekomendasi', () {

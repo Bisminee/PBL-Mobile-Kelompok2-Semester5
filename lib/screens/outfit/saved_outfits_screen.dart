@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/saved_outfit.dart';
 import '../../services/providers.dart';
+import '../../services/recommender.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/responsive.dart';
+import '../../widgets/outfit/saved_outfit_actions.dart';
 import '../../widgets/outfit/saved_outfit_card.dart';
 
 /// Daftar outfit yang pernah disimpan pengguna dari layar detail rekomendasi.
+/// Pengguna bisa mengubah nama dan menghapus outfit dari sini.
 class SavedOutfitsScreen extends ConsumerWidget {
   const SavedOutfitsScreen({super.key});
+
+  void _bukaDetail(BuildContext context, SavedOutfit o) {
+    final detail = outfitFromSaved(o);
+    if (detail != null) context.push(AppRoutes.detail, extra: detail);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +67,14 @@ class SavedOutfitsScreen extends ConsumerWidget {
                           children: [
                             for (var i = 0; i < list.length; i++) ...[
                               if (i > 0) const SizedBox(height: 12),
-                              SavedOutfitCard(outfit: list[i]),
+                              SavedOutfitCard(
+                                outfit: list[i],
+                                onTap: () => _bukaDetail(context, list[i]),
+                                onRename: () =>
+                                    ubahNamaOutfit(context, ref, list[i]),
+                                onDelete: () =>
+                                    hapusOutfit(context, ref, list[i]),
+                              ),
                             ],
                           ],
                         ),

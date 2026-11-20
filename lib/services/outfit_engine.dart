@@ -8,6 +8,7 @@ import '../models/garment_labels.dart';
 import 'color_extractor.dart';
 import 'garment_classifier.dart';
 import 'local_db.dart';
+import 'outfit_detail.dart';
 
 /// Ambang confidence untuk menampilkan hasil tanpa peringatan.
 ///
@@ -27,6 +28,7 @@ class Detection {
     required this.styles,
     required this.colorShare,
     this.manual = false,
+    this.manualStyle,
   });
 
   final String type;
@@ -42,28 +44,35 @@ class Detection {
   /// True bila user mengoreksi jenis pakaian, sehingga confidence model tidak lagi berlaku.
   final bool manual;
 
+  /// Style yang dipilih user. Menggantikan style dari model dan tetap dipakai saat jenis atau warna berubah.
+  final String? manualStyle;
+
   String? get topStyle =>
-      styles.isEmpty ? null : styles.first['style'] as String?;
+      manualStyle ?? (styles.isEmpty ? null : styles.first['style'] as String?);
 
   bool get isConfident => !manual && confidence >= confidentThreshold;
 
   Detection copyWith({
     String? type,
     String? slot,
+    String? color,
+    String? colorHex,
     String? formality,
     List<Map<String, dynamic>>? styles,
     bool? manual,
+    String? manualStyle,
   }) => Detection(
     type: type ?? this.type,
     slot: slot ?? this.slot,
-    color: color,
-    colorHex: colorHex,
+    color: color ?? this.color,
+    colorHex: colorHex ?? this.colorHex,
     formality: formality ?? this.formality,
     confidence: confidence,
     alternatives: alternatives,
     styles: styles ?? this.styles,
     colorShare: colorShare,
     manual: manual ?? this.manual,
+    manualStyle: manualStyle ?? this.manualStyle,
   );
 }
 
@@ -169,6 +178,23 @@ class OutfitEngine {
       formality: f['pred'] as String,
       styles: s.take(3).toList(),
       manual: true,
+    );
+  }
+
+  /// Dipakai saat user memilih warna sendiri: formalitas dan style dihitung ulang untuk warna itu.
+  Future<Detection> withColor(
+    Detection d,
+    String color, {
+    required String gender,
+    String age = 'adult',
+  }) async {
+    final f = await dbh.predictFormality(d.type, color, gender, age);
+    final s = await dbh.predictStyles(d.type, color, gender, age);
+    return d.copyWith(
+      color: color,
+      colorHex: hexOf(colorOfFamily(color)),
+      formality: f['pred'] as String,
+      styles: s.take(3).toList(),
     );
   }
 

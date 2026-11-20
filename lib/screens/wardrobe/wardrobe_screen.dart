@@ -7,9 +7,11 @@ import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/garment_labels.dart';
 import '../../services/providers.dart';
+import '../../services/recommender.dart';
 import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/pill_chip.dart';
 import '../../widgets/common/responsive.dart';
+import '../../widgets/outfit/saved_outfit_actions.dart';
 import '../../widgets/outfit/saved_outfit_card.dart';
 import '../../widgets/wardrobe/clothing_grid_card.dart';
 
@@ -206,8 +208,24 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                           itemCount: outfitTersaring.length,
                           separatorBuilder: (_, _) =>
                               const SizedBox(height: 12),
-                          itemBuilder: (_, i) =>
-                              SavedOutfitCard(outfit: outfitTersaring[i]),
+                          itemBuilder: (_, i) => SavedOutfitCard(
+                            outfit: outfitTersaring[i],
+                            onTap: () {
+                              final detail = outfitFromSaved(
+                                outfitTersaring[i],
+                              );
+                              if (detail != null) {
+                                context.push(AppRoutes.detail, extra: detail);
+                              }
+                            },
+                            onRename: () => ubahNamaOutfit(
+                              context,
+                              ref,
+                              outfitTersaring[i],
+                            ),
+                            onDelete: () =>
+                                hapusOutfit(context, ref, outfitTersaring[i]),
+                          ),
                         ),
                 ),
               ),
