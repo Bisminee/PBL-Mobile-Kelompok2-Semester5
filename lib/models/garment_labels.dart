@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' show Color;
 /// ke teks yang tampil di UI (bahasa Indonesia). Semua fungsi murni agar mudah diuji.
 
 /// Slot outfit dari jenis pakaian. Harus sama dengan tabel ref_garment_type di fashion_app.db.
+/// 'other' tidak ada di database; hanya dipakai untuk menandai objek yang bukan pakaian.
 const Map<String, String> slotOfType = {
   't_shirt': 'top',
   'longsleeve': 'top',
@@ -25,6 +26,8 @@ const Map<String, String> slotOfType = {
   'hat': 'headwear',
   'bag': 'bag',
   'accessory': 'accessory',
+  // Kelas tambahan dari model 10 kelas: objek yang bukan pakaian.
+  'other': 'other',
 };
 
 const Map<String, String> _typeLabel = {
@@ -48,6 +51,7 @@ const Map<String, String> _typeLabel = {
   'hat': 'Topi',
   'bag': 'Tas',
   'accessory': 'Aksesori',
+  'other': 'Bukan pakaian',
 };
 
 /// Kategori yang dipakai filter lemari. Sepatu memakai kata "Sepatu" agar sama dengan filter di UI.
@@ -60,6 +64,7 @@ const Map<String, String> _categoryOfSlot = {
   'headwear': 'Aksesori',
   'bag': 'Aksesori',
   'accessory': 'Aksesori',
+  'other': 'Lainnya',
 };
 
 const Map<String, String> _slotLabel = {
@@ -71,6 +76,7 @@ const Map<String, String> _slotLabel = {
   'headwear': 'Topi',
   'bag': 'Tas',
   'accessory': 'Aksesori',
+  'other': 'Bukan pakaian',
 };
 
 const Map<String, String> _styleLabel = {
