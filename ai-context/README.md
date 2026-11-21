@@ -11,6 +11,7 @@ Isinya **tracked di Git** supaya semua anggota memakai konteks yang sama.
 | `konvensi-kode.md` | Gaya kode, penamaan, test, commit, PR | Sebelum menulis kode |
 | `peta-tugas.md` | Epic E1-E10, status, PIC minggu berjalan | Sebelum mengambil tugas |
 | `status-proyek.md` | Kondisi terkini, PR, penghambat | Awal sesi kerja |
+| `../Pembagian Tugas/alur-warna.md` | Alur warna dari dataset sampai harmoni, termasuk 16 keluarga | Sebelum mengubah warna |
 
 ## Cara merawat
 
