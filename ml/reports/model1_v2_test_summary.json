@@ -1,0 +1,55 @@
+{
+  "weights": "ml/runs/model1_hf_v2/weights/best.pt",
+  "dataset": "ashraq/fashion-product-images-small + 800 negatif COCO",
+  "classes": [
+    "dress",
+    "long_pants",
+    "other",
+    "outerwear",
+    "shirt",
+    "shoes",
+    "shorts",
+    "skirt",
+    "tshirt"
+  ],
+  "n_test": 3461,
+  "accuracy": 0.9754,
+  "macro_f1": 0.9337,
+  "per_source": [
+    {
+      "source": "fashion_products_hf",
+      "n": 3341,
+      "accuracy": 0.9746,
+      "macro_f1": 0.9254
+    },
+    {
+      "source": "negatives",
+      "n": 120,
+      "accuracy": 1.0,
+      "macro_f1": 1.0
+    }
+  ],
+  "top_confusions": [
+    {"count": 19, "true": "tshirt", "pred": "shirt"},
+    {"count": 15, "true": "tshirt", "pred": "outerwear"},
+    {"count": 13, "true": "tshirt", "pred": "dress"},
+    {"count": 11, "true": "outerwear", "pred": "tshirt"},
+    {"count": 7, "true": "dress", "pred": "tshirt"}
+  ],
+  "training": {
+    "epochs_run": 24,
+    "best_epoch": 16,
+    "early_stopping_patience": 8,
+    "batch": 64,
+    "imgsz": 224,
+    "device": "Tesla T4",
+    "val_top1_best": 0.971,
+    "val_top5_best": 1.0
+  },
+  "tflite": {
+    "file": "assets/models/yolo11n_cls.tflite",
+    "size_mb": 1.68,
+    "input": [1, 3, 224, 224],
+    "output": [1, 9]
+  }
+}
