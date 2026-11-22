@@ -79,12 +79,16 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
     }
   }
 
-  List<ColorSegment> _segments(Detection d) {
+  List<MapEntry<String, double>> _detectedColors(Detection d) {
     final entries =
         d.colorShare.entries.where((e) => e.value * 100 >= 1).toList()
           ..sort((a, b) => b.value.compareTo(a.value));
+    return entries.take(6).toList();
+  }
+
+  List<ColorSegment> _segments(Detection d) {
     return [
-      for (final e in entries.take(3))
+      for (final e in _detectedColors(d).take(3))
         ColorSegment(
           colorLabel(e.key),
           (e.value * 100).round().clamp(1, 100).toInt(),
@@ -122,6 +126,7 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
     }
 
     final pct = (d.confidence * 100).round();
+    final detected = _detectedColors(d);
     final segments = _segments(d);
 
     return Scaffold(
@@ -277,10 +282,37 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Pilih sendiri bila warna hasil ekstraksi piksel kurang tepat.',
+                  'Warna dari gambar tetap ditampilkan. Pilih warna lain bila '
+                  'hasil ekstraksi piksel kurang tepat.',
                   style: AppTextStyles.label.copyWith(fontSize: 11),
                 ),
+                if (detected.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text('Warna dari gambar', style: AppTextStyles.mono(10)),
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final e in detected)
+                        PillChip(
+                          label:
+                              '${colorLabel(e.key)} ${(e.value * 100).round()}%',
+                          selected: e.key == d.color,
+                          onTap: () {
+                            final family = ColorFamily.byKeyOrAlias(e.key);
+                            if (family == null) return;
+                            ref
+                                .read(scanSessionProvider.notifier)
+                                .chooseColor(family.key, family.hexCode);
+                          },
+                        ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 10),
+                Text('16 warna acuan', style: AppTextStyles.mono(10)),
+                const SizedBox(height: 6),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -301,7 +333,7 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Komposisi warna',
+                        'Komposisi warna terdeteksi',
                         style: AppTextStyles.title.copyWith(fontSize: 14),
                       ),
                       Text(

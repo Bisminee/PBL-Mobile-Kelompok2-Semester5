@@ -17,6 +17,7 @@ class AppButton extends StatelessWidget {
     this.trailingIcon,
     this.height = AppSizes.buttonHeight,
     this.expand = true,
+    this.horizontalPadding = 28,
   });
 
   final String label;
@@ -26,6 +27,10 @@ class AppButton extends StatelessWidget {
   final IconData? trailingIcon;
   final double height;
   final bool expand;
+
+  /// Padding kiri-kanan. Perkecil bila beberapa tombol berdampingan di layar
+  /// sempit agar label tidak meluap.
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +78,9 @@ class AppButton extends StatelessWidget {
         style: TextButton.styleFrom(
           backgroundColor: bg,
           shape: StadiumBorder(side: side),
-          padding: const EdgeInsets.symmetric(horizontal: 28),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         ),
-        child: child,
+        child: FittedBox(fit: BoxFit.scaleDown, child: child),
       ),
     );
   }

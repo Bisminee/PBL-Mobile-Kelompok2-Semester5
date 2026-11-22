@@ -7,6 +7,7 @@ import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/garment.dart';
 import '../../models/garment_labels.dart';
+import '../../services/color_family.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
@@ -21,8 +22,8 @@ class ClothingDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final g = garment;
-    if (g == null) {
+    final source = garment;
+    if (source == null) {
       return Scaffold(
         body: SafeArea(
           child: Center(
@@ -42,6 +43,15 @@ class ClothingDetailScreen extends ConsumerWidget {
       );
     }
 
+    // Ambil versi terbaru dari provider agar layar langsung berubah setelah
+    // atribut diedit, tanpa harus kembali ke daftar lemari.
+    final g =
+        ref
+            .watch(wardrobeProvider)
+            .where((item) => item.id == source.id)
+            .firstOrNull ??
+        source;
+
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -55,7 +65,7 @@ class ClothingDetailScreen extends ConsumerWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: _hero(context, g, wide: true)),
+                      Expanded(child: _hero(context, ref, g, wide: true)),
                       const SizedBox(width: 32),
                       Expanded(
                         child: SingleChildScrollView(
@@ -75,7 +85,7 @@ class ClothingDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _hero(context, g, wide: false),
+                  _hero(context, ref, g, wide: false),
                   _details(context, ref, g, wide: false),
                 ],
               ),
@@ -86,7 +96,12 @@ class ClothingDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _hero(BuildContext context, Garment g, {required bool wide}) {
+  Widget _hero(
+    BuildContext context,
+    WidgetRef ref,
+    Garment g, {
+    required bool wide,
+  }) {
     final stack = Stack(
       alignment: Alignment.center,
       children: [
@@ -109,12 +124,13 @@ class ClothingDetailScreen extends ConsumerWidget {
             onPressed: () => context.pop(),
           ),
         ),
-        const Positioned(
+        Positioned(
           top: 12,
           right: 20,
           child: CircleIconButton(
             icon: Icons.edit_outlined,
             background: Colors.white,
+            onPressed: () => _edit(context, ref, g),
           ),
         ),
       ],
@@ -162,6 +178,160 @@ class ClothingDetailScreen extends ConsumerWidget {
     if (ok != true) return;
     ref.read(wardrobeProvider.notifier).remove(g.id);
     if (context.mounted) context.pop();
+  }
+
+  Future<void> _edit(BuildContext context, WidgetRef ref, Garment g) async {
+    var type = g.garmentType ?? 't_shirt';
+    if (!slotOfType.containsKey(type)) type = 't_shirt';
+    var color =
+        ColorFamily.byKeyOrAlias(g.colorFamily ?? 'black') ?? ColorFamily.black;
+    var formality = g.formality ?? 'non_formal';
+    if (!formalityValues.contains(formality)) formality = 'non_formal';
+    var style = g.style ?? 'unspecified';
+    if (!styleValues.contains(style)) style = 'unspecified';
+
+    final types = slotOfType.keys.toList()
+      ..sort((a, b) => typeLabel(a).compareTo(typeLabel(b)));
+
+    final result = await showModalBottomSheet<Garment>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (ctx, setSheet) {
+          InputDecoration decoration(String label) => InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            isDense: true,
+          );
+
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                24,
+                0,
+                24,
+                24 + MediaQuery.viewInsetsOf(ctx).bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Edit Pakaian', style: AppTextStyles.title),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Ubah atribut tanpa mengganti foto.',
+                    style: AppTextStyles.bodySecondary,
+                  ),
+                  const SizedBox(height: 18),
+                  DropdownButtonFormField<String>(
+                    initialValue: type,
+                    decoration: decoration('Jenis pakaian'),
+                    items: [
+                      for (final t in types)
+                        DropdownMenuItem(value: t, child: Text(typeLabel(t))),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setSheet(() => type = value);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    initialValue: color.key,
+                    decoration: decoration('Warna'),
+                    items: [
+                      for (final family in ColorFamily.values)
+                        DropdownMenuItem(
+                          value: family.key,
+                          child: Text(family.label),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      final next = ColorFamily.byKey(value ?? '');
+                      if (next != null) setSheet(() => color = next);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    initialValue: formality,
+                    decoration: decoration('Formalitas'),
+                    items: [
+                      for (final f in formalityValues)
+                        DropdownMenuItem(
+                          value: f,
+                          child: Text(formalityLabel(f)),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setSheet(() => formality = value);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    initialValue: style,
+                    decoration: decoration('Style'),
+                    items: [
+                      for (final s in styleValues)
+                        DropdownMenuItem(value: s, child: Text(styleLabel(s))),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setSheet(() => style = value);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          label: 'Batal',
+                          style: AppButtonStyle.outlined,
+                          onPressed: () => Navigator.of(ctx).pop(),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: AppButton(
+                          label: 'Simpan',
+                          onPressed: () {
+                            final slot = slotOfType[type] ?? g.slot ?? 'top';
+                            Navigator.of(ctx).pop(
+                              g.copyWith(
+                                garmentType: type,
+                                slot: slot,
+                                category: categoryOfSlot(slot),
+                                colorFamily: color.key,
+                                colorName: color.label,
+                                colorValue: color.color,
+                                formality: formality,
+                                style: style,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
+    if (result == null) return;
+    try {
+      await ref.read(wardrobeProvider.notifier).update(result);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Atribut pakaian diperbarui.')),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal menyimpan perubahan. Coba lagi.')),
+      );
+    }
   }
 
   Widget _details(

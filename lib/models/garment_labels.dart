@@ -86,6 +86,9 @@ const Map<String, String> _styleLabel = {
   'unspecified': 'Umum',
 };
 
+/// Pilihan style untuk edit atribut pakaian.
+final List<String> styleValues = _styleLabel.keys.toList(growable: false);
+
 const Map<String, String> _colorLabel = {
   'black': 'Hitam',
   'white': 'Putih',

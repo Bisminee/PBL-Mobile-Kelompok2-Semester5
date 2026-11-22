@@ -57,4 +57,15 @@ void main() {
     await pumpPreview(tester, ScanSource.gallery);
     expect(find.text('foto.png'), findsNothing);
   });
+
+  testWidgets('tombol tidak overflow di layar sempit', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpPreview(tester, ScanSource.gallery);
+
+    expect(tester.takeException(), isNull);
+  });
 }

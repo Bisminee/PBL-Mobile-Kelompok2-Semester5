@@ -49,6 +49,15 @@ enum ColorFamily {
     }
     return null;
   }
+
+  /// Kode lama tetap bisa dipilih setelah migrasi 16 warna.
+  static ColorFamily? byKeyOrAlias(String key) =>
+      byKey(key) ??
+      switch (key) {
+        'beige' => cream,
+        'grey' => gray,
+        _ => null,
+      };
 }
 
 /// Keluarga warna terdekat dari sebuah warna gambar.

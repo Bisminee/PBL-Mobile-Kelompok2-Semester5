@@ -70,6 +70,27 @@ void main() {
       expect(rows.map((r) => r['id']), [b]);
     });
 
+    test('updateWardrobeItem mengubah atribut tanpa mengganti foto', () async {
+      final id = await tambah();
+      await dao.updateWardrobeItem(
+        id: id,
+        type: 'shirt',
+        slot: 'top',
+        color: 'navy',
+        colorHex: '#1A237E',
+        formality: 'formal',
+        style: 'elegant',
+      );
+
+      final row = (await dao.wardrobe()).single;
+      expect(row['garment_type'], 'shirt');
+      expect(row['color_family'], 'navy');
+      expect(row['color_hex'], '#1A237E');
+      expect(row['formality'], 'formal');
+      expect(row['style'], 'elegant');
+      expect(row['image_path'], '/foto/t_shirt-black.jpg');
+    });
+
     test('formalitas di luar tiga nilai yang sah ditolak database', () async {
       expect(() => tambah(formality: 'sangat_formal'), throwsException);
     });

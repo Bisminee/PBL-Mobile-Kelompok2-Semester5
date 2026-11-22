@@ -27,8 +27,10 @@ class LocalDb {
   // Untuk rilis, pisahkan data user dan tabel ML menjadi dua file DB.
   // Versi 2 menambah tabel app_preference untuk pengaturan lokal profil.
   // Versi 3 menambah tabel recommendation_history untuk riwayat rekomendasi.
+  // Versi 4 menambah lima warna baru ke ref_color agar edit atribut bisa
+  // memakai 16 keluarga warna.
   // Catatan: versi 1 adalah skema di assets/db/fashion_app.db.
-  static const _version = 3;
+  static const _version = 4;
 
   // Satu Future dipakai bersama: pemanggil pertama (preload engine dan WardrobeNotifier jalan
   // hampir bersamaan) tidak boleh sama-sama menyalin file asset.
@@ -90,6 +92,21 @@ class LocalDb {
         "created_at TEXT NOT NULL DEFAULT (datetime('now')), "
         'UNIQUE (top_item_id, bottom_item_id))',
       );
+    }
+    if (versiLama < 4) {
+      const colors = {
+        'cream': '#F2E3C6',
+        'maroon': '#7B1F2B',
+        'olive': '#6B8E23',
+        'teal': '#00897B',
+        'navy': '#1A237E',
+      };
+      for (final entry in colors.entries) {
+        await d.insert('ref_color', {
+          'color_family': entry.key,
+          'hex': entry.value,
+        }, conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
     }
   }
 
@@ -157,6 +174,32 @@ class LocalDb {
       'formality': formality,
       'style': style,
     });
+  }
+
+  /// Memperbarui atribut pakaian tanpa mengubah foto dan tanggal ditambahkan.
+  Future<void> updateWardrobeItem({
+    required int id,
+    required String type,
+    required String slot,
+    required String color,
+    required String colorHex,
+    required String formality,
+    String? style,
+  }) async {
+    final d = await db;
+    await d.update(
+      'wardrobe_item',
+      {
+        'garment_type': type,
+        'slot': slot,
+        'color_family': color,
+        'color_hex': colorHex,
+        'formality': formality,
+        'style': style,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   /// Urut id naik: item terbaru ada di akhir daftar (sesuai WardrobeNotifier.latest).

@@ -173,6 +173,7 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                             ? 'Pilih Ulang'
                             : 'Ambil Ulang',
                         style: AppButtonStyle.outlined,
+                        horizontalPadding: 10,
                         onPressed: _picking ? null : _retake,
                       ),
                     ),
@@ -193,6 +194,7 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                       child: AppButton(
                         label: 'Gunakan Foto',
                         style: AppButtonStyle.white,
+                        horizontalPadding: 10,
                         onPressed: _usePhoto,
                       ),
                     ),

@@ -11,6 +11,7 @@ import '../models/outfit.dart';
 import '../models/saved_outfit.dart';
 import '../models/scan_source.dart';
 import 'local_db.dart';
+import 'outfit_detail.dart';
 import 'outfit_engine.dart';
 import 'photo_source.dart';
 import 'recommender.dart';
@@ -176,19 +177,15 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
   }
 
   /// User memilih warna sendiri bila hasil ekstraksi piksel dianggap salah.
-  /// Komposisi warna diganti satu warna agar bilah komposisi tidak menampilkan
-  /// warna lama yang sudah tidak dipakai.
+  /// Komposisi warna asli tetap disimpan agar warna hasil deteksi tidak hilang
+  /// dari layar setelah user memilih warna lain.
   void chooseColor(String family, String hex) {
     final d = state.detection;
     if (d == null || (d.color == family && d.colorHex == hex)) return;
     state = ScanSession(
       imagePath: state.imagePath,
       source: state.source,
-      detection: d.copyWith(
-        color: family,
-        colorHex: hex,
-        colorShare: {family: 1.0},
-      ),
+      detection: d.copyWith(color: family, colorHex: hex),
     );
   }
 
@@ -292,6 +289,29 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
     });
     state = [...state, g];
     return g;
+  }
+
+  /// Menyimpan perubahan atribut dari layar detail pakaian. Foto tidak diubah.
+  Future<void> update(Garment garment) async {
+    final id = int.tryParse(garment.id);
+    if (id == null || garment.garmentType == null || garment.slot == null) {
+      return;
+    }
+    await ref
+        .read(localDbProvider)
+        .updateWardrobeItem(
+          id: id,
+          type: garment.garmentType!,
+          slot: garment.slot!,
+          color: garment.colorFamily ?? 'other',
+          colorHex: hexOf(garment.colorValue),
+          formality: garment.formality ?? 'non_formal',
+          style: garment.style,
+        );
+    state = [
+      for (final item in state)
+        if (item.id == garment.id) garment else item,
+    ];
   }
 
   static const _photoFolder = 'wardrobe';
