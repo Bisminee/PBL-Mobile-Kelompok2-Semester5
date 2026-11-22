@@ -4,18 +4,26 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/garment.dart';
 import '../../models/garment_labels.dart';
 import '../../models/outfit.dart';
+import '../../models/saved_outfit.dart';
 import '../../services/providers.dart';
 import '../../services/recommender.dart';
 import '../../widgets/common/circle_icon_button.dart';
+import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/pill_chip.dart';
 import '../../widgets/common/responsive.dart';
 import '../../widgets/outfit/outfit_compact_card.dart';
 
-/// Daftar rekomendasi outfit atasan + bawahan dari lemari user, diurut skor pasangan model.
+/// Daftar rekomendasi outfit per piece di lemari.
+///
+/// Setiap atasan atau bawahan mendapat maksimal tiga outfit terbaik. Bila
+/// [anchor] diisi, halaman hanya menampilkan rekomendasi untuk piece itu.
 class RecommendationScreen extends ConsumerStatefulWidget {
-  const RecommendationScreen({super.key});
+  const RecommendationScreen({super.key, this.anchor});
+
+  final Garment? anchor;
 
   @override
   ConsumerState<RecommendationScreen> createState() =>
@@ -26,13 +34,34 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
   // null = semua formalitas.
   String? _formality;
 
+  List<RecommendationGroup> _visibleGroups(
+    List<RecommendationGroup> groups,
+    List<SavedOutfit> saved,
+  ) {
+    final anchor = widget.anchor;
+    return [
+      for (final group in groups)
+        if (anchor == null || group.anchor.id == anchor.id)
+          RecommendationGroup(
+            anchor: group.anchor,
+            outfits: group.outfits
+                .where(
+                  (o) =>
+                      (_formality == null || o.formality == _formality) &&
+                      !isOutfitSaved(o, saved),
+                )
+                .toList(),
+          ),
+    ].where((group) => group.outfits.isNotEmpty).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final all = ref.watch(recommendationsProvider);
+    final groups = ref.watch(recommendationGroupsProvider);
+    final saved = ref.watch(savedOutfitsProvider).valueOrNull ?? const [];
+    final visible = _visibleGroups(groups, saved);
     final engineReady = ref.watch(engineProvider) != null;
-    final list = _formality == null
-        ? all
-        : all.where((o) => o.formality == _formality).toList();
+    final anchor = widget.anchor;
 
     void openDetail(Outfit o) => context.push(AppRoutes.detail, extra: o);
 
@@ -44,10 +73,52 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
           '${typeLabel(o.top.garmentType)} · ${typeLabel(o.bottom.garmentType)}',
       description: describeOutfit(o),
       reasons: o.reasons,
-      tags: [formalityLabel(o.formality), 'Lemarimu'],
+      tags: [formalityLabel(o.formality), 'Lemariku'],
       top: o.top,
       bottom: o.bottom,
       onTap: () => openDetail(o),
+    );
+
+    Widget groupSection(RecommendationGroup group) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              width: 52,
+              height: 52,
+              child: GarmentPhoto(
+                imagePath: group.anchor.imagePath,
+                kind: clothingKindOf(
+                  group.anchor.garmentType,
+                  group.anchor.slot,
+                ),
+                dark: group.anchor.isDark,
+                radius: 14,
+                iconSize: 26,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(group.anchor.title, style: AppTextStyles.title),
+                  Text(
+                    '${group.anchor.category} · ${group.outfits.length} rekomendasi',
+                    style: AppTextStyles.mono(10),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        for (var i = 0; i < group.outfits.length; i++) ...[
+          if (i > 0) const SizedBox(height: 12),
+          card(group.outfits[i], i + 1),
+        ],
+      ],
     );
 
     return Scaffold(
@@ -55,7 +126,7 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: ContentWidth(
-            maxWidth: 1040,
+            maxWidth: 760,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -84,7 +155,9 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
                 Text('Rekomendasi Outfit', style: AppTextStyles.display),
                 const SizedBox(height: 6),
                 Text(
-                  'Ditemukan berdasarkan pakaian yang kamu miliki.',
+                  anchor == null
+                      ? 'Tiga outfit terbaik untuk setiap pakaian di lemarimu.'
+                      : 'Rekomendasi outfit untuk ${anchor.title}.',
                   style: AppTextStyles.bodySecondary,
                 ),
                 const SizedBox(height: 14),
@@ -112,7 +185,7 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: Text(
-                    '${list.length} OUTFIT DITEMUKAN',
+                    '${visible.fold<int>(0, (n, g) => n + g.outfits.length)} REKOMENDASI DITEMUKAN',
                     style: AppTextStyles.mono(10),
                   ),
                 ),
@@ -125,48 +198,27 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
                     style: AppTextStyles.label.copyWith(fontSize: 11),
                   ),
                 ),
-                const SizedBox(height: 14),
-                if (list.isEmpty)
+                const SizedBox(height: 18),
+                if (visible.isEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 40,
                       horizontal: 8,
                     ),
                     child: Text(
-                      !engineReady
-                          ? 'Rekomendasi hanya tersedia di Android dan iOS.'
-                          : all.isEmpty
-                          ? 'Tambahkan minimal satu atasan dan satu bawahan ke lemari untuk melihat rekomendasi.'
-                          : 'Tidak ada outfit dengan formalitas ini.',
+                      _emptyMessage(
+                        anchor: anchor,
+                        engineReady: engineReady,
+                        groups: groups,
+                      ),
                       style: AppTextStyles.bodySecondary,
                     ),
                   )
                 else
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      const gap = 14.0;
-                      // Layar lebar: dua kolom; layar sempit: satu kolom.
-                      if (constraints.maxWidth >= 720) {
-                        final w = (constraints.maxWidth - gap) / 2;
-                        return Wrap(
-                          spacing: gap,
-                          runSpacing: gap,
-                          children: [
-                            for (var i = 0; i < list.length; i++)
-                              SizedBox(width: w, child: card(list[i], i + 1)),
-                          ],
-                        );
-                      }
-                      return Column(
-                        children: [
-                          for (var i = 0; i < list.length; i++) ...[
-                            if (i > 0) const SizedBox(height: gap),
-                            card(list[i], i + 1),
-                          ],
-                        ],
-                      );
-                    },
-                  ),
+                  for (var i = 0; i < visible.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 26),
+                    groupSection(visible[i]),
+                  ],
                 const SizedBox(height: 32),
               ],
             ),
@@ -174,5 +226,30 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
         ),
       ),
     );
+  }
+
+  String _emptyMessage({
+    required Garment? anchor,
+    required bool engineReady,
+    required List<RecommendationGroup> groups,
+  }) {
+    if (anchor != null && anchor.slot != 'top' && anchor.slot != 'bottom') {
+      return 'Item ini belum punya pasangan outfit. Rekomendasi saat ini '
+          'tersedia untuk atasan dan bawahan.';
+    }
+    if (anchor != null &&
+        !groups.any((group) => group.anchor.id == anchor.id)) {
+      return 'Belum ada pasangan untuk ${anchor.title}. Tambahkan atasan atau '
+          'bawahan lain ke lemari.';
+    }
+    if (!engineReady) {
+      return 'Rekomendasi hanya tersedia di Android dan iOS.';
+    }
+    if (groups.isEmpty) {
+      return 'Tambahkan minimal satu atasan dan satu bawahan ke lemari untuk '
+          'melihat rekomendasi.';
+    }
+    return 'Semua rekomendasi dengan filter ini sudah disimpan atau tidak '
+        'tersedia.';
   }
 }

@@ -38,18 +38,23 @@ void main() {
     await pumpPreview(tester, ScanSource.gallery);
     expect(find.text('Pilih Ulang'), findsOneWidget);
     expect(find.text('Ambil Ulang'), findsNothing);
-    expect(find.text('Sesuaikan area'), findsOneWidget);
+    expect(find.bySemanticsLabel('Sesuaikan area'), findsOneWidget);
   });
 
   testWidgets('sumber kamera menampilkan tombol Ambil Ulang', (tester) async {
     await pumpPreview(tester, ScanSource.camera);
     expect(find.text('Ambil Ulang'), findsOneWidget);
     expect(find.text('Pilih Ulang'), findsNothing);
-    expect(find.text('Sesuaikan area'), findsNothing);
+    expect(find.bySemanticsLabel('Sesuaikan area'), findsOneWidget);
   });
 
   testWidgets('kedua sumber menampilkan tombol Gunakan Foto', (tester) async {
     await pumpPreview(tester, ScanSource.gallery);
     expect(find.text('Gunakan Foto'), findsOneWidget);
+  });
+
+  testWidgets('nama berkas tidak ditampilkan', (tester) async {
+    await pumpPreview(tester, ScanSource.gallery);
+    expect(find.text('foto.png'), findsNothing);
   });
 }

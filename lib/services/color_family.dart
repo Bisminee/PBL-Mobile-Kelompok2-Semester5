@@ -38,6 +38,10 @@ enum ColorFamily {
 
   Color get color => Color(hex);
 
+  /// Kode HEX untuk disimpan di `color_hex`, mis. `#1A237E`.
+  String get hexCode =>
+      '#${(hex & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+
   /// Nama keluarga berdasarkan kode, mis. `navy`.
   static ColorFamily? byKey(String key) {
     for (final family in ColorFamily.values) {

@@ -106,6 +106,23 @@ void main() {
       expect(await dao.outfitSaved([atas]), isFalse);
     });
 
+    test(
+      'deleteSavedOutfit hanya menghapus outfit, bukan item lemari',
+      () async {
+        final atas = await tambah();
+        final bawah = await tambah(type: 'pants', slot: 'bottom');
+        final id = await dao.saveOutfit('Paduan', 'non_formal', 0.5, [
+          atas,
+          bawah,
+        ]);
+
+        await dao.deleteSavedOutfit(id);
+
+        expect(await dao.savedOutfits(), isEmpty);
+        expect((await dao.wardrobe()).length, 2);
+      },
+    );
+
     test('menghapus item lemari ikut menghapus keterkaitan outfit', () async {
       final atas = await tambah();
       final bawah = await tambah(type: 'pants', slot: 'bottom');

@@ -6,6 +6,7 @@ import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/garment_labels.dart';
+import '../../services/color_family.dart';
 import '../../services/outfit_engine.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
@@ -42,7 +43,9 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
         return;
       }
       context.go(AppRoutes.home);
-      if (toRecommendation) context.push(AppRoutes.recommendation);
+      if (toRecommendation) {
+        context.push(AppRoutes.recommendation, extra: saved);
+      }
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -195,7 +198,7 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                         value: pct,
                         size: 66,
                         showPercent: true,
-                        caption: 'CONF',
+                        caption: 'MIRIP',
                         stroke: 4,
                       ),
                   ],
@@ -219,7 +222,7 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                       colorLabel(d.color),
                       dotColor: colorFromHex(d.colorHex),
                     ),
-                    InfoCell('Confidence', d.manual ? 'Manual' : '$pct%'),
+                    InfoCell('Kemiripan', d.manual ? 'Manual' : '$pct%'),
                   ],
                 ),
                 const SizedBox(height: 22),
@@ -264,6 +267,31 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                         onTap: () => ref
                             .read(scanSessionProvider.notifier)
                             .chooseFormality(f),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                Text(
+                  'Warna',
+                  style: AppTextStyles.title.copyWith(fontSize: 14),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Pilih sendiri bila warna hasil ekstraksi piksel kurang tepat.',
+                  style: AppTextStyles.label.copyWith(fontSize: 11),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final family in ColorFamily.values)
+                      PillChip(
+                        label: family.label,
+                        selected: family.key == d.color,
+                        onTap: () => ref
+                            .read(scanSessionProvider.notifier)
+                            .chooseColor(family.key, family.hexCode),
                       ),
                   ],
                 ),

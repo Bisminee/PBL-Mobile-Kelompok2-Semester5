@@ -47,6 +47,9 @@ app.*.map.json
 # Local project documentation (kept out of Git)
 /docs/
 
+# Wacana pribadi, sengaja tidak di-commit
+/ai-context/wacana-segmentasi-warna.md
+
 #context
 context
 proposal

@@ -98,7 +98,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.recommendation,
-      builder: (context, state) => const RecommendationScreen(),
+      builder: (context, state) =>
+          RecommendationScreen(anchor: state.extra as Garment?),
     ),
     GoRoute(
       path: AppRoutes.recommendationHistory,

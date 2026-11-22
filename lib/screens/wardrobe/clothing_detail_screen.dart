@@ -231,7 +231,7 @@ class ClothingDetailScreen extends ConsumerWidget {
                 _Row('Style', Text(styleLabel(g.style))),
                 const Divider(height: 1, color: AppColors.border),
                 _Row(
-                  'Detection confidence',
+                  'Kemiripan model',
                   conf == null
                       ? const Text('-')
                       : Row(
@@ -267,7 +267,7 @@ class ClothingDetailScreen extends ConsumerWidget {
           AppButton(
             label: 'Gunakan untuk Rekomendasi',
             icon: Icons.auto_awesome,
-            onPressed: () => context.push(AppRoutes.recommendation),
+            onPressed: () => context.push(AppRoutes.recommendation, extra: g),
           ),
           const SizedBox(height: 12),
           AppButton(

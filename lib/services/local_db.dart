@@ -206,6 +206,15 @@ class LocalDb {
     );
   }
 
+  /// Menghapus satu outfit tersimpan. Item lemari tidak ikut dihapus.
+  Future<void> deleteSavedOutfit(int id) async {
+    final d = await db;
+    await d.transaction((t) async {
+      await t.delete('outfit_item', where: 'outfit_id = ?', whereArgs: [id]);
+      await t.delete('outfit', where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
   /// Semua outfit tersimpan, terbaru lebih dulu, beserta item lemari di dalamnya.
   Future<List<SavedOutfit>> savedOutfits() async {
     final d = await db;

@@ -6,6 +6,7 @@ import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/garment_labels.dart';
+import '../../models/saved_outfit.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/pill_chip.dart';
@@ -47,6 +48,29 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   void dispose() {
     _search.dispose();
     super.dispose();
+  }
+
+  Future<void> _deleteOutfit(SavedOutfit outfit) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hapus outfit tersimpan?'),
+        content: Text('${outfit.title} akan dihapus dari outfit tersimpan.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id);
+    ref.invalidate(savedOutfitsProvider);
   }
 
   @override
@@ -206,8 +230,10 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                           itemCount: outfitTersaring.length,
                           separatorBuilder: (_, _) =>
                               const SizedBox(height: 12),
-                          itemBuilder: (_, i) =>
-                              SavedOutfitCard(outfit: outfitTersaring[i]),
+                          itemBuilder: (_, i) => SavedOutfitCard(
+                            outfit: outfitTersaring[i],
+                            onDelete: () => _deleteOutfit(outfitTersaring[i]),
+                          ),
                         ),
                 ),
               ),

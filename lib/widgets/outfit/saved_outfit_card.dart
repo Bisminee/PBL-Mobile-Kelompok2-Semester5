@@ -11,9 +11,12 @@ import '../common/garment_photo.dart';
 /// Dipakai di layar Outfit Tersimpan dan sub-tab Lemari. Dibuat aman dari
 /// overflow dengan Expanded + Wrap, karena jumlah item bisa lebih dari dua.
 class SavedOutfitCard extends StatelessWidget {
-  const SavedOutfitCard({super.key, required this.outfit});
+  const SavedOutfitCard({super.key, required this.outfit, this.onDelete});
 
   final SavedOutfit outfit;
+
+  /// Bila diisi, tombol hapus tampil. Pemanggil yang meminta konfirmasi.
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +55,20 @@ class SavedOutfitCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text('$persen%', style: AppTextStyles.h3),
+              if (onDelete != null) ...[
+                const SizedBox(width: 4),
+                IconButton(
+                  tooltip: 'Hapus outfit',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  onPressed: onDelete,
+                  icon: const Icon(Icons.delete_outline, size: 20),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 10),

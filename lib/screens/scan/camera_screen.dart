@@ -30,6 +30,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   bool _isInitializing = false;
   bool _isProcessing = false;
   String? _errorMessage;
+  FlashMode _flashMode = FlashMode.off;
 
   List<CameraDescription> get _cameras => CameraService.cameras;
 
@@ -92,6 +93,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     try {
       await controller.initialize();
       _controller = controller;
+      await _applyFlashMode(controller, _flashMode);
     } on CameraException catch (e) {
       _errorMessage = _describeError(e);
     }
@@ -143,6 +145,40 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
   }
 
+  /// Flash tidak tersedia di semua kamera (mis. kamera depan). Kegagalan
+  /// pengaturan flash tidak boleh membuat preview kamera ikut gagal.
+  Future<bool> _applyFlashMode(
+    CameraController controller,
+    FlashMode mode,
+  ) async {
+    try {
+      await controller.setFlashMode(mode);
+      return true;
+    } on CameraException {
+      return false;
+    }
+  }
+
+  Future<void> _cycleFlash() async {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) return;
+
+    final next = switch (_flashMode) {
+      FlashMode.off => FlashMode.auto,
+      FlashMode.auto => FlashMode.always,
+      _ => FlashMode.off,
+    };
+    final ok = await _applyFlashMode(controller, next);
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _flashMode = next);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Flash tidak tersedia di kamera ini.')),
+      );
+    }
+  }
+
   Future<void> _switchCamera() async {
     if (_cameras.length < 2 || _isInitializing) return;
     _cameraIndex = (_cameraIndex + 1) % _cameras.length;
@@ -190,7 +226,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                 Positioned.fill(child: _buildPreview()),
                 SafeArea(
                   bottom: false,
-                  child: CameraOverlay(onClose: () => context.pop()),
+                  child: CameraOverlay(
+                    onClose: () => context.pop(),
+                    flashMode: _flashMode,
+                    onFlash: _cycleFlash,
+                  ),
                 ),
               ],
             ),

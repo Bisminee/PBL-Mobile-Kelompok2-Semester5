@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sera_z/models/garment.dart';
+import 'package:sera_z/models/outfit.dart';
+import 'package:sera_z/models/saved_outfit.dart';
 import 'package:sera_z/services/recommender.dart';
 
 Garment _g(int id, String type, String slot, String color, String formality) =>
@@ -85,6 +87,68 @@ void main() {
         toPercentile: (raw) => raw,
       );
       expect(out, isEmpty);
+    });
+  });
+
+  group('rekomendasi per piece', () {
+    final wardrobe = [
+      _g(1, 't_shirt', 'top', 'black', 'non_formal'),
+      _g(2, 'pants', 'bottom', 'blue', 'semi_formal'),
+      _g(3, 'shorts', 'bottom', 'white', 'non_formal'),
+      _g(4, 'skirt', 'bottom', 'red', 'semi_formal'),
+      _g(5, 'shoes', 'shoes', 'white', 'non_formal'),
+    ];
+
+    test('setiap atasan dan bawahan mendapat maksimal tiga outfit', () {
+      final groups = buildRecommendationGroups(
+        wardrobe: wardrobe,
+        pairScore: (a, b, c, d) => 0.4,
+        toPercentile: (raw) => raw,
+      );
+
+      expect(groups.length, 4);
+      expect(groups.first.anchor.id, '1');
+      expect(groups.first.outfits.length, 3);
+      expect(groups[1].anchor.id, '2');
+      expect(groups[1].outfits.single.id, '1-2');
+    });
+
+    test('skor pasangan menentukan urutan tiga outfit', () {
+      final groups = buildRecommendationGroups(
+        wardrobe: wardrobe,
+        pairScore: (ta, ca, tb, cb) {
+          if (tb == 'pants') return 0.9;
+          if (tb == 'shorts') return 0.7;
+          return 0.5;
+        },
+        toPercentile: (raw) => raw,
+      );
+
+      final top = groups.firstWhere((g) => g.anchor.id == '1');
+      expect(top.outfits.map((o) => o.bottom.id).toList(), ['2', '3', '4']);
+    });
+
+    test('outfit yang sudah tersimpan bisa dikenali', () {
+      final outfit = Outfit(
+        id: '1-2',
+        title: 'Hitam + Biru',
+        subtitle: 'Semi formal',
+        top: wardrobe[0],
+        bottom: wardrobe[1],
+        score: 0.8,
+        reasons: const [],
+      );
+      final saved = SavedOutfit(
+        id: 1,
+        name: 'Hitam + Biru',
+        formality: 'semi_formal',
+        score: 0.8,
+        createdAt: DateTime(2026),
+        items: [wardrobe[1], wardrobe[0]],
+      );
+
+      expect(isOutfitSaved(outfit, [saved]), isTrue);
+      expect(isOutfitSaved(outfit, const []), isFalse);
     });
   });
 

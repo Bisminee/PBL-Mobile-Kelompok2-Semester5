@@ -175,6 +175,23 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
     );
   }
 
+  /// User memilih warna sendiri bila hasil ekstraksi piksel dianggap salah.
+  /// Komposisi warna diganti satu warna agar bilah komposisi tidak menampilkan
+  /// warna lama yang sudah tidak dipakai.
+  void chooseColor(String family, String hex) {
+    final d = state.detection;
+    if (d == null || (d.color == family && d.colorHex == hex)) return;
+    state = ScanSession(
+      imagePath: state.imagePath,
+      source: state.source,
+      detection: d.copyWith(
+        color: family,
+        colorHex: hex,
+        colorShare: {family: 1.0},
+      ),
+    );
+  }
+
   void chooseFormality(String formality) {
     final d = state.detection;
     if (d == null) return;
@@ -335,6 +352,22 @@ final recommendationsProvider = Provider<List<Outfit>>((ref) {
   // E7.5: bila model belum termuat, tetap beri rekomendasi dari aturan harmoni.
   if (engine == null) return buildRuleOutfits(wardrobe: wardrobe);
   return buildOutfits(
+    wardrobe: wardrobe,
+    pairScore: engine.pairScore,
+    toPercentile: engine.topBottomPercentile,
+  );
+});
+
+/// Rekomendasi per piece: setiap atasan atau bawahan mendapat maksimal tiga
+/// outfit terbaik. Dipakai halaman rekomendasi dan tombol dari detail pakaian.
+final recommendationGroupsProvider = Provider<List<RecommendationGroup>>((ref) {
+  final wardrobe = ref.watch(wardrobeProvider);
+  if (wardrobe.isEmpty) return const <RecommendationGroup>[];
+  final engine = ref.watch(engineProvider);
+  if (engine == null) {
+    return buildRuleRecommendationGroups(wardrobe: wardrobe);
+  }
+  return buildRecommendationGroups(
     wardrobe: wardrobe,
     pairScore: engine.pairScore,
     toPercentile: engine.topBottomPercentile,
