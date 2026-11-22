@@ -173,28 +173,26 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                             ? 'Pilih Ulang'
                             : 'Ambil Ulang',
                         style: AppButtonStyle.outlined,
-                        horizontalPadding: 10,
+                        horizontalPadding: 6,
                         onPressed: _picking ? null : _retake,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Semantics(
-                      button: true,
-                      label: 'Sesuaikan area',
-                      child: CircleIconButton(
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AppButton(
+                        label: 'Sesuaikan',
                         icon: Icons.crop,
-                        size: 52,
-                        background: const Color(0xFF1D1D1F),
-                        iconColor: Colors.white,
+                        style: AppButtonStyle.outlined,
+                        horizontalPadding: 6,
                         onPressed: _picking ? null : _adjust,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: AppButton(
                         label: 'Gunakan Foto',
                         style: AppButtonStyle.white,
-                        horizontalPadding: 10,
+                        horizontalPadding: 6,
                         onPressed: _usePhoto,
                       ),
                     ),

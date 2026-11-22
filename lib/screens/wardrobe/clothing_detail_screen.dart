@@ -15,14 +15,39 @@ import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/responsive.dart';
 
 /// Detail satu pakaian di lemari. Pakaian dikirim lewat `extra` dari go_router.
-class ClothingDetailScreen extends ConsumerWidget {
-  const ClothingDetailScreen({super.key, this.garment});
+class ClothingDetailScreen extends ConsumerStatefulWidget {
+  const ClothingDetailScreen({
+    super.key,
+    this.garment,
+    this.editOnOpen = false,
+  });
 
   final Garment? garment;
+  final bool editOnOpen;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final source = garment;
+  ConsumerState<ClothingDetailScreen> createState() =>
+      _ClothingDetailScreenState();
+}
+
+class _ClothingDetailScreenState extends ConsumerState<ClothingDetailScreen> {
+  bool _editScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editOnOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _editScheduled || widget.garment == null) return;
+        _editScheduled = true;
+        _edit(context, ref, widget.garment!);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final source = widget.garment;
     if (source == null) {
       return Scaffold(
         body: SafeArea(

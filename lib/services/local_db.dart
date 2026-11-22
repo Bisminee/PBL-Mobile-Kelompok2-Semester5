@@ -249,6 +249,21 @@ class LocalDb {
     );
   }
 
+  /// Mengubah nama dan formalitas outfit tersimpan tanpa mengubah itemnya.
+  Future<void> updateSavedOutfit(
+    int id, {
+    required String name,
+    required String formality,
+  }) async {
+    final d = await db;
+    await d.update(
+      'outfit',
+      {'name': name.trim(), 'target_formality': formality},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   /// Menghapus satu outfit tersimpan. Item lemari tidak ikut dihapus.
   Future<void> deleteSavedOutfit(int id) async {
     final d = await db;

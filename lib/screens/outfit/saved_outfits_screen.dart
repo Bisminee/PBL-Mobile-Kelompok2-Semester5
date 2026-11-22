@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/app_text_styles.dart';
 import '../../models/saved_outfit.dart';
 import '../../services/providers.dart';
+import '../../services/saved_outfit_actions.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/responsive.dart';
 import '../../widgets/outfit/saved_outfit_card.dart';
@@ -87,6 +88,13 @@ class SavedOutfitsScreen extends ConsumerWidget {
                               if (i > 0) const SizedBox(height: 12),
                               SavedOutfitCard(
                                 outfit: list[i],
+                                onTap: () =>
+                                    openSavedOutfitDetail(context, list[i]),
+                                onLongPress: () => showSavedOutfitActions(
+                                  context,
+                                  ref,
+                                  list[i],
+                                ),
                                 onDelete: () => _delete(context, ref, list[i]),
                               ),
                             ],

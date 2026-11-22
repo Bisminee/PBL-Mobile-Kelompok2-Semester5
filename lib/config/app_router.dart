@@ -115,8 +115,10 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.clothingDetail,
-      builder: (context, state) =>
-          ClothingDetailScreen(garment: state.extra as Garment?),
+      builder: (context, state) => ClothingDetailScreen(
+        garment: state.extra as Garment?,
+        editOnOpen: state.uri.queryParameters['edit'] == '1',
+      ),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
