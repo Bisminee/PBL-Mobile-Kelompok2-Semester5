@@ -1,6 +1,6 @@
 # Alur Warna Sera-Z
 
-Diperbarui: 21 November 2026
+Diperbarui: 23 November 2026
 
 Dokumen ini menjelaskan alur warna dari dataset sampai aplikasi, termasuk
 kondisi yang sudah berjalan dan target 16 keluarga warna.
@@ -296,9 +296,10 @@ Aturan saat ini:
 
 | Bagian | Sekarang | Target |
 |---|---|---|
-| Keluarga warna UI | 14 | 16 |
+| Keluarga warna UI | 16 pilihan di hasil deteksi | 16 di seluruh UI |
+| Warna hasil gambar | Tetap tampil setelah koreksi pengguna | Dipertahankan |
 | Ekstraksi | HSV area tengah | Mask dan K-Means/HSV |
-| Database `ref_color` | 14 | 16 + legacy |
+| Database `ref_color` | 14 di aset, migrasi menambah 5 warna | 16 + legacy |
 | Tabel ML | 14 | Tetap 14, lookup legacy |
 | Harmoni | CIELCh 4 aturan | CIELCh + 16 keluarga |
 | K-Means++ | Belum | Ditunda |

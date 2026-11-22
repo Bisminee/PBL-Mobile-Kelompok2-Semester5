@@ -1,4 +1,4 @@
-﻿// Memastikan komponen kartu grid lemari merender thumbnail dan placeholder dengan benar
+// Memastikan komponen kartu grid lemari merender thumbnail dan placeholder dengan benar
 import 'package:flutter/material.dart';
 
 import '../../config/app_colors.dart';
@@ -18,6 +18,7 @@ class ClothingGridCard extends StatelessWidget {
     required this.dark,
     this.imagePath,
     this.onTap,
+    this.onLongPress,
   });
 
   final String name;
@@ -32,11 +33,13 @@ class ClothingGridCard extends StatelessWidget {
   /// Path foto asli hasil kamera. Null = pakai ikon pengganti.
   final String? imagePath;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -115,5 +118,3 @@ class ClothingGridCard extends StatelessWidget {
     );
   }
 }
-
-

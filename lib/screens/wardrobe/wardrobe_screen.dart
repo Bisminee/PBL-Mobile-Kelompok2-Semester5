@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
+import '../../models/garment.dart';
 import '../../models/garment_labels.dart';
+import '../../models/saved_outfit.dart';
 import '../../services/providers.dart';
+import '../../services/saved_outfit_actions.dart';
 import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/pill_chip.dart';
 import '../../widgets/common/responsive.dart';
@@ -47,6 +50,101 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   void dispose() {
     _search.dispose();
     super.dispose();
+  }
+
+  Future<void> _openClothingActions(Garment garment) async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                garment.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: const Text('Pilih tindakan untuk pakaian ini'),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.visibility_outlined),
+              title: const Text('Lihat'),
+              onTap: () => Navigator.of(ctx).pop('view'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Edit'),
+              onTap: () => Navigator.of(ctx).pop('edit'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: const Text('Hapus'),
+              onTap: () => Navigator.of(ctx).pop('delete'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (action == null || !mounted) return;
+
+    switch (action) {
+      case 'view':
+        context.push(AppRoutes.clothingDetail, extra: garment);
+        break;
+      case 'edit':
+        context.push('${AppRoutes.clothingDetail}?edit=1', extra: garment);
+        break;
+      case 'delete':
+        final ok = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Hapus dari lemari?'),
+            content: Text(
+              '${garment.title} akan dihapus dari lemari dan tidak masuk '
+              'rekomendasi lagi.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Hapus'),
+              ),
+            ],
+          ),
+        );
+        if (ok == true) ref.read(wardrobeProvider.notifier).remove(garment.id);
+        break;
+    }
+  }
+
+  Future<void> _deleteOutfit(SavedOutfit outfit) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hapus outfit tersimpan?'),
+        content: Text('${outfit.title} akan dihapus dari outfit tersimpan.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id);
+    ref.invalidate(savedOutfitsProvider);
   }
 
   @override
@@ -206,8 +304,19 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                           itemCount: outfitTersaring.length,
                           separatorBuilder: (_, _) =>
                               const SizedBox(height: 12),
-                          itemBuilder: (_, i) =>
-                              SavedOutfitCard(outfit: outfitTersaring[i]),
+                          itemBuilder: (_, i) => SavedOutfitCard(
+                            outfit: outfitTersaring[i],
+                            onTap: () => openSavedOutfitDetail(
+                              context,
+                              outfitTersaring[i],
+                            ),
+                            onLongPress: () => showSavedOutfitActions(
+                              context,
+                              ref,
+                              outfitTersaring[i],
+                            ),
+                            onDelete: () => _deleteOutfit(outfitTersaring[i]),
+                          ),
                         ),
                 ),
               ),
@@ -270,6 +379,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                               AppRoutes.clothingDetail,
                               extra: g,
                             ),
+                            onLongPress: () => _openClothingActions(g),
                           );
                         },
                       ),

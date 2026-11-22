@@ -50,25 +50,28 @@ class Detection {
   Detection copyWith({
     String? type,
     String? slot,
+    String? color,
+    String? colorHex,
     String? formality,
     List<Map<String, dynamic>>? styles,
+    Map<String, double>? colorShare,
     bool? manual,
   }) => Detection(
     type: type ?? this.type,
     slot: slot ?? this.slot,
-    color: color,
-    colorHex: colorHex,
+    color: color ?? this.color,
+    colorHex: colorHex ?? this.colorHex,
     formality: formality ?? this.formality,
     confidence: confidence,
     alternatives: alternatives,
     styles: styles ?? this.styles,
-    colorShare: colorShare,
+    colorShare: colorShare ?? this.colorShare,
     manual: manual ?? this.manual,
   );
 }
 
 /// Core engine utama aplikasi Sera-Z.
-/// Berfungsi menghubungkan hasil deteksi gambar (YOLO) dengan 
+/// Berfungsi menghubungkan hasil deteksi gambar (YOLO) dengan
 /// evaluasi parameter outfit (formalitas, style, kecocokan) via SQLite.
 class OutfitEngine {
   OutfitEngine(this.classifier, this.dbh);

@@ -89,7 +89,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       await ref
           .read(localDbProvider)
           .saveOutfit(o.title, o.formality ?? 'non_formal', o.score, ids);
+      await _catatRiwayat(o);
       ref.invalidate(savedOutfitsProvider);
+      ref.invalidate(recommendationHistoryProvider);
       if (!mounted) return;
       setState(() => _saved = true);
       ScaffoldMessenger.of(

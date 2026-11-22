@@ -1,4 +1,6 @@
 import 'garment.dart';
+import 'garment_labels.dart';
+import 'outfit.dart';
 
 /// Satu paduan outfit yang sudah disimpan pengguna.
 ///
@@ -25,9 +27,32 @@ class SavedOutfit {
   final DateTime createdAt;
   final List<Garment> items;
 
-  /// Judul siap tampil, mis. "Kaos Hitam + Celana Panjang Biru".
+  /// Judul siap tampil. Nama yang diedit pengguna dipakai lebih dulu; data
+  /// lama yang namanya kosong tetap memakai susunan item.
   String get title {
-    if (items.isEmpty) return name;
+    if (name.trim().isNotEmpty) return name;
+    if (items.isEmpty) return 'Outfit tersimpan';
     return items.map((g) => g.title).join(' + ');
+  }
+
+  /// Bentuk [Outfit] agar bisa dibuka di layar detail outfit yang sudah ada.
+  /// Null bila item atasan atau bawahan tidak lengkap.
+  Outfit? toOutfit() {
+    final top = items.where((g) => g.slot == 'top').firstOrNull;
+    final bottom = items.where((g) => g.slot == 'bottom').firstOrNull;
+    if (top == null || bottom == null) return null;
+    return Outfit(
+      id: 'saved-$id',
+      title: title,
+      subtitle: formalityLabel(formality),
+      top: top,
+      bottom: bottom,
+      score: score,
+      formality: formality,
+      reasons: [
+        'Outfit tersimpan pada ${formatDateId(createdAt)}.',
+        'Formalitas ${formalityLabel(formality).toLowerCase()}.',
+      ],
+    );
   }
 }

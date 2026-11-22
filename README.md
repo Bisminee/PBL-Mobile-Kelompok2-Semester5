@@ -22,12 +22,14 @@ jenis pakaian terbatas. Sera-Z membantu dengan tiga langkah:
 ## 2. Fitur utama
 
 - Login dengan akun Google dan profil yang tersimpan di cloud.
-- Lemari pakaian digital: tambah, lihat, filter, dan hapus item.
-- Pemindaian foto pakaian dengan kamera, lengkap dengan pratinjau.
+- Lemari pakaian digital: tambah, lihat, edit atribut, filter, dan hapus item.
+- Pemindaian foto pakaian dengan kamera, crop, dan pratinjau.
 - Klasifikasi jenis pakaian di perangkat.
-- Ekstraksi warna dominan dan palet warna.
-- Rekomendasi outfit dengan skor dan alasan kecocokan.
-- Simpan outfit dan lihat detail item.
+- Ekstraksi warna dominan, 16 keluarga warna, dan koreksi warna oleh pengguna.
+- Rekomendasi tiga outfit terbaik untuk setiap atasan atau bawahan.
+- Simpan outfit, buka detail outfit tersimpan, dan hapus outfit.
+- Menu tekan lama untuk pakaian dan outfit tersimpan.
+- Flash kamera dengan mode off, auto, dan on.
 - Data lemari tersimpan lokal di SQLite.
 - Tampilan responsif untuk layar kecil dan lebar.
 
@@ -73,7 +75,7 @@ Home -> Profil
 |---|---|---|
 | Model 1 | YOLOv11n-cls, 9 kelas | Akurasi test 94,34 persen, macro F1 89,48 persen |
 | Baseline | MobileNetV2 | Akurasi validasi 89,37 persen, macro F1 79,27 persen |
-| Modul 2 | K-Means dan palet 14 warna | Berjalan di aplikasi |
+| Modul 2 | HSV dan 16 keluarga warna | Berjalan di aplikasi; K-Means Dart belum |
 | Model 3 | MLP dan aturan harmoni | Data latih masih sintetis, metrik AUC menyusul |
 
 Dataset Model 1 memakai tiga sumber berlisensi bebas: Clothing Dataset Full
@@ -84,17 +86,17 @@ Rincian lengkap ada di `ml/README.md` dan `ml/reports/model1-card.md`.
 
 ## 6. Status proyek
 
-Diperbarui: 3 November 2026.
+Diperbarui: 23 November 2026.
 
 | Area | Status |
 |---|---|
 | Fondasi aplikasi dan UI | Selesai |
 | Autentikasi Firebase | Selesai |
 | Model 1 dan evaluasi | Selesai, ekspor model sendiri masih tertunda |
-| Penyimpanan SQLite | Selesai sebagian |
-| Integrasi TFLite | Selesai sebagian |
-| Fitur aplikasi | Selesai sebagian |
-| QA dan dokumentasi | Berjalan |
+| Penyimpanan SQLite | Selesai untuk lemari, outfit, riwayat, dan migrasi versi 4 |
+| Integrasi TFLite | Berjalan di Android; web belum didukung |
+| Fitur aplikasi | Kamera, crop, edit atribut, rekomendasi per piece, dan outfit tersimpan |
+| QA dan dokumentasi | 135 test, analyze bersih, APK diuji di perangkat |
 
 Status terperinci ada di `ai-context/status-proyek.md` dan
 `Pembagian Tugas/pembagian-tugas.md`.

@@ -76,7 +76,8 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
     }
   }
 
-  /// Membuka crop manual. Hanya tersedia untuk foto dari galeri.
+  /// Membuka crop manual. Tersedia untuk foto kamera maupun galeri agar user
+  /// bisa memvalidasi area pakaian sebelum analisis.
   Future<void> _adjust() async {
     final original = _originalPath;
     if (original == null || _picking) return;
@@ -102,9 +103,6 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
   @override
   Widget build(BuildContext context) {
     final path = _path;
-    final fileName = path == null
-        ? 'Belum ada foto'
-        : path.split(RegExp(r'[\\/]')).last;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -159,55 +157,14 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                                 ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 16,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF6E6E73),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            fileName,
-                            style: AppTextStyles.mono(
-                              10,
-                              color: Colors.white,
-                              ls: 0.8,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 14),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  alignment: WrapAlignment.center,
-                  children: const [
-                    _Check('Cahaya cukup'),
-                    _Check('Fokus tajam'),
-                    _Check('1 pakaian'),
-                  ],
-                ),
-                const SizedBox(height: 28),
-                if (widget.source == ScanSource.gallery) ...[
-                  TextButton.icon(
-                    onPressed: _picking ? null : _adjust,
-                    icon: const Icon(Icons.crop, size: 18, color: Colors.white),
-                    label: Text(
-                      'Sesuaikan area',
-                      style: AppTextStyles.labelBold.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                ],
+                // TODO(kualitas-foto): chip "Cahaya cukup", "Fokus tajam", dan
+                // "1 pakaian" jangan ditampilkan dulu. Nanti nilainya diisi dari
+                // extractor warna, hasil deteksi pakaian, dan deteksi blur.
+                const SizedBox(height: 14),
                 Row(
                   children: [
                     Expanded(
@@ -215,15 +172,27 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                         label: widget.source == ScanSource.gallery
                             ? 'Pilih Ulang'
                             : 'Ambil Ulang',
-                        style: AppButtonStyle.outlined,
+                        style: AppButtonStyle.outlinedLight,
+                        horizontalPadding: 6,
                         onPressed: _picking ? null : _retake,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AppButton(
+                        label: 'Sesuaikan',
+                        icon: Icons.crop,
+                        style: AppButtonStyle.outlinedLight,
+                        horizontalPadding: 6,
+                        onPressed: _picking ? null : _adjust,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: AppButton(
                         label: 'Gunakan Foto',
                         style: AppButtonStyle.white,
+                        horizontalPadding: 6,
                         onPressed: _usePhoto,
                       ),
                     ),
@@ -237,29 +206,4 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
       ),
     );
   }
-}
-
-class _Check extends StatelessWidget {
-  const _Check(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    decoration: BoxDecoration(
-      color: const Color(0xFF1D1D1F),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(Icons.check, size: 14, color: Colors.white),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: AppTextStyles.labelBold.copyWith(color: Colors.white),
-        ),
-      ],
-    ),
-  );
 }

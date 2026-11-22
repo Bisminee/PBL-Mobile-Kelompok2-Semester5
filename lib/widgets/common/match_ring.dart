@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 
-/// Lingkaran persentase (94 / 94% MATCH / CONF).
+/// Lingkaran persentase (94 / 94% MIRIP).
 class MatchRing extends StatelessWidget {
   const MatchRing({
     super.key,

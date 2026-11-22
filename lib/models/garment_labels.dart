@@ -86,37 +86,51 @@ const Map<String, String> _styleLabel = {
   'unspecified': 'Umum',
 };
 
+/// Pilihan style untuk edit atribut pakaian.
+final List<String> styleValues = _styleLabel.keys.toList(growable: false);
+
 const Map<String, String> _colorLabel = {
   'black': 'Hitam',
   'white': 'Putih',
   'gray': 'Abu-abu',
+  'cream': 'Krem',
   'beige': 'Krem',
   'brown': 'Cokelat',
-  'blue': 'Biru',
-  'green': 'Hijau',
   'red': 'Merah',
+  'maroon': 'Maroon',
   'pink': 'Merah muda',
-  'purple': 'Ungu',
-  'yellow': 'Kuning',
   'orange': 'Oranye',
+  'yellow': 'Kuning',
+  'green': 'Hijau',
+  'olive': 'Olive',
+  'teal': 'Teal',
+  'blue': 'Biru',
+  'navy': 'Navy',
+  'purple': 'Ungu',
   'multicolor': 'Multiwarna',
   'other': 'Lainnya',
 };
 
-/// Sama dengan tabel ref_color di fashion_app.db. Dipakai bila hex dari piksel tidak ada.
+/// Sama dengan 16 keluarga warna di color_family.dart. Dipakai bila hex dari
+/// piksel tidak ada.
 const Map<String, int> _colorValue = {
   'black': 0xFF1A1A1A,
   'white': 0xFFF5F5F5,
   'gray': 0xFF808080,
+  'cream': 0xFFF2E3C6,
   'beige': 0xFFD8C3A5,
   'brown': 0xFF6B4423,
-  'blue': 0xFF2F5D9E,
-  'green': 0xFF3E7C4F,
-  'red': 0xFFB3261E,
+  'red': 0xFFC62828,
+  'maroon': 0xFF7B1F2B,
   'pink': 0xFFE8A0BF,
-  'purple': 0xFF7B4B94,
-  'yellow': 0xFFE6C229,
   'orange': 0xFFE67E22,
+  'yellow': 0xFFE6C229,
+  'green': 0xFF3E7C4F,
+  'olive': 0xFF6B8E23,
+  'teal': 0xFF00897B,
+  'blue': 0xFF2F5D9E,
+  'navy': 0xFF1A237E,
+  'purple': 0xFF6A1B9A,
   'multicolor': 0xFF9E9E9E,
   'other': 0xFF9E9E9E,
 };

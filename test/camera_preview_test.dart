@@ -38,18 +38,34 @@ void main() {
     await pumpPreview(tester, ScanSource.gallery);
     expect(find.text('Pilih Ulang'), findsOneWidget);
     expect(find.text('Ambil Ulang'), findsNothing);
-    expect(find.text('Sesuaikan area'), findsOneWidget);
+    expect(find.text('Sesuaikan'), findsOneWidget);
   });
 
   testWidgets('sumber kamera menampilkan tombol Ambil Ulang', (tester) async {
     await pumpPreview(tester, ScanSource.camera);
     expect(find.text('Ambil Ulang'), findsOneWidget);
     expect(find.text('Pilih Ulang'), findsNothing);
-    expect(find.text('Sesuaikan area'), findsNothing);
+    expect(find.text('Sesuaikan'), findsOneWidget);
   });
 
   testWidgets('kedua sumber menampilkan tombol Gunakan Foto', (tester) async {
     await pumpPreview(tester, ScanSource.gallery);
     expect(find.text('Gunakan Foto'), findsOneWidget);
+  });
+
+  testWidgets('nama berkas tidak ditampilkan', (tester) async {
+    await pumpPreview(tester, ScanSource.gallery);
+    expect(find.text('foto.png'), findsNothing);
+  });
+
+  testWidgets('tombol tidak overflow di layar sempit', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpPreview(tester, ScanSource.gallery);
+
+    expect(tester.takeException(), isNull);
   });
 }

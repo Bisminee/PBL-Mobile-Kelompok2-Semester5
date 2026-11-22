@@ -70,6 +70,27 @@ void main() {
       expect(rows.map((r) => r['id']), [b]);
     });
 
+    test('updateWardrobeItem mengubah atribut tanpa mengganti foto', () async {
+      final id = await tambah();
+      await dao.updateWardrobeItem(
+        id: id,
+        type: 'shirt',
+        slot: 'top',
+        color: 'navy',
+        colorHex: '#1A237E',
+        formality: 'formal',
+        style: 'elegant',
+      );
+
+      final row = (await dao.wardrobe()).single;
+      expect(row['garment_type'], 'shirt');
+      expect(row['color_family'], 'navy');
+      expect(row['color_hex'], '#1A237E');
+      expect(row['formality'], 'formal');
+      expect(row['style'], 'elegant');
+      expect(row['image_path'], '/foto/t_shirt-black.jpg');
+    });
+
     test('formalitas di luar tiga nilai yang sah ditolak database', () async {
       expect(() => tambah(formality: 'sangat_formal'), throwsException);
     });
@@ -105,6 +126,23 @@ void main() {
       expect(await dao.outfitSaved([atas, lain]), isFalse);
       expect(await dao.outfitSaved([atas]), isFalse);
     });
+
+    test(
+      'deleteSavedOutfit hanya menghapus outfit, bukan item lemari',
+      () async {
+        final atas = await tambah();
+        final bawah = await tambah(type: 'pants', slot: 'bottom');
+        final id = await dao.saveOutfit('Paduan', 'non_formal', 0.5, [
+          atas,
+          bawah,
+        ]);
+
+        await dao.deleteSavedOutfit(id);
+
+        expect(await dao.savedOutfits(), isEmpty);
+        expect((await dao.wardrobe()).length, 2);
+      },
+    );
 
     test('menghapus item lemari ikut menghapus keterkaitan outfit', () async {
       final atas = await tambah();

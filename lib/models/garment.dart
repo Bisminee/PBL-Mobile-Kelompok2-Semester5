@@ -34,6 +34,33 @@ class Garment {
   /// Kode style dari model (casual, minimalist, ...). Teks tampilan lewat styleLabel().
   final String? style;
 
+  Garment copyWith({
+    String? category,
+    String? colorName,
+    Color? colorValue,
+    String? imagePath,
+    String? style,
+    String? garmentType,
+    String? slot,
+    String? colorFamily,
+    double? confidence,
+    String? formality,
+    DateTime? addedAt,
+  }) => Garment(
+    id: id,
+    category: category ?? this.category,
+    colorName: colorName ?? this.colorName,
+    colorValue: colorValue ?? this.colorValue,
+    imagePath: imagePath ?? this.imagePath,
+    style: style ?? this.style,
+    garmentType: garmentType ?? this.garmentType,
+    slot: slot ?? this.slot,
+    colorFamily: colorFamily ?? this.colorFamily,
+    confidence: confidence ?? this.confidence,
+    formality: formality ?? this.formality,
+    addedAt: addedAt ?? this.addedAt,
+  );
+
   /// t_shirt, longsleeve, pants, shoes, dst. Sama dengan labels.txt model.
   final String? garmentType;
 

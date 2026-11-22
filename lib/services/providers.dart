@@ -11,6 +11,7 @@ import '../models/outfit.dart';
 import '../models/saved_outfit.dart';
 import '../models/scan_source.dart';
 import 'local_db.dart';
+import 'outfit_detail.dart';
 import 'outfit_engine.dart';
 import 'photo_source.dart';
 import 'recommender.dart';
@@ -175,6 +176,19 @@ class ScanSessionNotifier extends Notifier<ScanSession> {
     );
   }
 
+  /// User memilih warna sendiri bila hasil ekstraksi piksel dianggap salah.
+  /// Komposisi warna asli tetap disimpan agar warna hasil deteksi tidak hilang
+  /// dari layar setelah user memilih warna lain.
+  void chooseColor(String family, String hex) {
+    final d = state.detection;
+    if (d == null || (d.color == family && d.colorHex == hex)) return;
+    state = ScanSession(
+      imagePath: state.imagePath,
+      source: state.source,
+      detection: d.copyWith(color: family, colorHex: hex),
+    );
+  }
+
   void chooseFormality(String formality) {
     final d = state.detection;
     if (d == null) return;
@@ -277,6 +291,29 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
     return g;
   }
 
+  /// Menyimpan perubahan atribut dari layar detail pakaian. Foto tidak diubah.
+  Future<void> update(Garment garment) async {
+    final id = int.tryParse(garment.id);
+    if (id == null || garment.garmentType == null || garment.slot == null) {
+      return;
+    }
+    await ref
+        .read(localDbProvider)
+        .updateWardrobeItem(
+          id: id,
+          type: garment.garmentType!,
+          slot: garment.slot!,
+          color: garment.colorFamily ?? 'other',
+          colorHex: hexOf(garment.colorValue),
+          formality: garment.formality ?? 'non_formal',
+          style: garment.style,
+        );
+    state = [
+      for (final item in state)
+        if (item.id == garment.id) garment else item,
+    ];
+  }
+
   static const _photoFolder = 'wardrobe';
 
   void remove(String id) {
@@ -335,6 +372,22 @@ final recommendationsProvider = Provider<List<Outfit>>((ref) {
   // E7.5: bila model belum termuat, tetap beri rekomendasi dari aturan harmoni.
   if (engine == null) return buildRuleOutfits(wardrobe: wardrobe);
   return buildOutfits(
+    wardrobe: wardrobe,
+    pairScore: engine.pairScore,
+    toPercentile: engine.topBottomPercentile,
+  );
+});
+
+/// Rekomendasi per piece: setiap atasan atau bawahan mendapat maksimal tiga
+/// outfit terbaik. Dipakai halaman rekomendasi dan tombol dari detail pakaian.
+final recommendationGroupsProvider = Provider<List<RecommendationGroup>>((ref) {
+  final wardrobe = ref.watch(wardrobeProvider);
+  if (wardrobe.isEmpty) return const <RecommendationGroup>[];
+  final engine = ref.watch(engineProvider);
+  if (engine == null) {
+    return buildRuleRecommendationGroups(wardrobe: wardrobe);
+  }
+  return buildRecommendationGroups(
     wardrobe: wardrobe,
     pairScore: engine.pairScore,
     toPercentile: engine.topBottomPercentile,

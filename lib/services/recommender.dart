@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/garment.dart';
 import '../models/garment_labels.dart';
 import '../models/outfit.dart';
+import '../models/saved_outfit.dart';
 import 'color_harmony.dart';
 
 /// Layanan penyusun rekomendasi pakaian (Recommender).
@@ -10,7 +11,15 @@ import 'color_harmony.dart';
 /// skor dari model ML, harmoni warna, dan aturan tingkat formalitas.
 
 /// Warna yang mudah dipadukan dengan hampir semua warna lain.
-const Set<String> neutralColors = {'black', 'white', 'gray', 'beige', 'brown'};
+const Set<String> neutralColors = {
+  'black',
+  'white',
+  'gray',
+  'cream',
+  'beige',
+  'brown',
+  'navy',
+};
 
 /// Skor pasangan mentah (0..1) untuk (jenis A, warna A, jenis B, warna B). Null bila tidak ada.
 typedef PairScore =
@@ -121,6 +130,165 @@ List<Outfit> buildRuleOutfits({
   }
   hasil.sort((a, b) => b.score.compareTo(a.score));
   return hasil.take(limit).map((e) => e.outfit).toList();
+}
+
+/// Tiga outfit terbaik untuk satu item, dipakai halaman rekomendasi per piece.
+class RecommendationGroup {
+  const RecommendationGroup({required this.anchor, required this.outfits});
+
+  final Garment anchor;
+  final List<Outfit> outfits;
+}
+
+/// Tiga pasangan terbaik untuk [anchor]. Hanya atasan dan bawahan yang punya
+/// slot pasangan; sepatu, tas, dan aksesori belum membentuk outfit.
+List<Outfit> buildOutfitsForAnchor({
+  required Garment anchor,
+  required List<Garment> wardrobe,
+  required PairScore pairScore,
+  required double Function(double raw) toPercentile,
+  int limit = 3,
+}) {
+  bool siap(Garment g, String slot) =>
+      g.slot == slot && g.garmentType != null && g.colorFamily != null;
+
+  if (!siap(anchor, 'top') && !siap(anchor, 'bottom')) return const [];
+
+  final partners = wardrobe.where((g) {
+    if (anchor.slot == 'top') return siap(g, 'bottom');
+    return siap(g, 'top');
+  });
+
+  final hasil = <({double raw, Outfit outfit})>[];
+  for (final partner in partners) {
+    final top = anchor.slot == 'top' ? anchor : partner;
+    final bottom = anchor.slot == 'top' ? partner : anchor;
+    final raw = pairScore(
+      top.garmentType!,
+      top.colorFamily!,
+      bottom.garmentType!,
+      bottom.colorFamily!,
+    );
+    if (raw == null) continue;
+    final pct = toPercentile(raw);
+    final harmony = ColorHarmony.evaluate(top.colorValue, bottom.colorValue);
+    final formality = lowerFormality(top.formality, bottom.formality);
+    hasil.add((
+      raw: raw,
+      outfit: Outfit(
+        id: '${top.id}-${bottom.id}',
+        title: '${top.colorName} + ${bottom.colorName}',
+        subtitle: formalityLabel(formality),
+        top: top,
+        bottom: bottom,
+        score: pct,
+        formality: formality,
+        reasons: [
+          '${harmony.label}: ${harmony.detail}',
+          _formalityReason(top, bottom),
+          'Skor pasangan lebih tinggi dari ${(pct * 100).round()}% kombinasi '
+              'atasan-bawahan lain di data outfit stylist.',
+        ],
+      ),
+    ));
+  }
+  hasil.sort((a, b) => b.raw.compareTo(a.raw));
+  return hasil.take(limit).map((e) => e.outfit).toList();
+}
+
+/// Versi fallback tanpa model: tiga pasangan terbaik dari harmoni warna.
+List<Outfit> buildRuleOutfitsForAnchor({
+  required Garment anchor,
+  required List<Garment> wardrobe,
+  int limit = 3,
+}) {
+  bool siap(Garment g, String slot) => g.slot == slot && g.colorFamily != null;
+  if (!siap(anchor, 'top') && !siap(anchor, 'bottom')) return const [];
+
+  final partners = wardrobe.where((g) {
+    if (anchor.slot == 'top') return siap(g, 'bottom');
+    return siap(g, 'top');
+  });
+
+  final hasil = <({double score, Outfit outfit})>[];
+  for (final partner in partners) {
+    final top = anchor.slot == 'top' ? anchor : partner;
+    final bottom = anchor.slot == 'top' ? partner : anchor;
+    final harmony = ColorHarmony.evaluate(top.colorValue, bottom.colorValue);
+    final formality = lowerFormality(top.formality, bottom.formality);
+    hasil.add((
+      score: harmony.score,
+      outfit: Outfit(
+        id: '${top.id}-${bottom.id}',
+        title: '${top.colorName} + ${bottom.colorName}',
+        subtitle: formalityLabel(formality),
+        top: top,
+        bottom: bottom,
+        score: harmony.score,
+        formality: formality,
+        reasons: [
+          '${harmony.label}: ${harmony.detail}',
+          _formalityReason(top, bottom),
+          'Skor dari aturan harmoni karena model belum termuat.',
+        ],
+      ),
+    ));
+  }
+  hasil.sort((a, b) => b.score.compareTo(a.score));
+  return hasil.take(limit).map((e) => e.outfit).toList();
+}
+
+/// Kelompok rekomendasi untuk setiap piece di lemari. Satu piece maksimal
+/// mendapat tiga outfit, sehingga daftar bisa berisi pasangan yang sama dari
+/// sudut pandang atasan dan bawahan.
+List<RecommendationGroup> buildRecommendationGroups({
+  required List<Garment> wardrobe,
+  required PairScore pairScore,
+  required double Function(double raw) toPercentile,
+  int perItem = 3,
+}) {
+  return [
+    for (final anchor in wardrobe)
+      if (anchor.slot == 'top' || anchor.slot == 'bottom')
+        RecommendationGroup(
+          anchor: anchor,
+          outfits: buildOutfitsForAnchor(
+            anchor: anchor,
+            wardrobe: wardrobe,
+            pairScore: pairScore,
+            toPercentile: toPercentile,
+            limit: perItem,
+          ),
+        ),
+  ].where((g) => g.outfits.isNotEmpty).toList();
+}
+
+List<RecommendationGroup> buildRuleRecommendationGroups({
+  required List<Garment> wardrobe,
+  int perItem = 3,
+}) {
+  return [
+    for (final anchor in wardrobe)
+      if (anchor.slot == 'top' || anchor.slot == 'bottom')
+        RecommendationGroup(
+          anchor: anchor,
+          outfits: buildRuleOutfitsForAnchor(
+            anchor: anchor,
+            wardrobe: wardrobe,
+            limit: perItem,
+          ),
+        ),
+  ].where((g) => g.outfits.isNotEmpty).toList();
+}
+
+/// True bila outfit dengan susunan item yang sama sudah tersimpan. Dipakai
+/// untuk menghapus outfit dari daftar rekomendasi setelah disimpan.
+bool isOutfitSaved(Outfit outfit, Iterable<SavedOutfit> saved) {
+  final target = {outfit.top.id, outfit.bottom.id};
+  return saved.any((s) {
+    final items = s.items.map((g) => g.id).toSet();
+    return items.length == target.length && items.containsAll(target);
+  });
 }
 
 String _formalityReason(Garment t, Garment b) {
