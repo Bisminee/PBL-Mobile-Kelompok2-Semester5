@@ -6,7 +6,7 @@ import '../common/circle_icon_button.dart';
 import '../common/corner_frame.dart';
 
 /// Lapisan di atas preview kamera: tombol tutup, label "AI SCAN",
-/// chip deteksi, bingkai sudut, dan petunjuk posisi pakaian.
+/// bingkai sudut, dan petunjuk posisi pakaian.
 ///
 /// Hanya tampilan; aksi kamera dikirim lewat callback dari `CameraScreen`.
 class CameraOverlay extends StatelessWidget {
@@ -25,9 +25,7 @@ class CameraOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [_topBar(), _detectionChip(), _guideFrame(), _hint()],
-    );
+    return Stack(children: [_topBar(), _guideFrame(), _hint()]);
   }
 
   Widget _topBar() {
@@ -81,35 +79,6 @@ class CameraOverlay extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  /// Chip "Kaos terdeteksi" masih tiruan sampai Model 1 (jenis pakaian) terpasang.
-  Widget _detectionChip() {
-    return Positioned(
-      top: 64,
-      left: 0,
-      right: 0,
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(color: Color(0x22000000), blurRadius: 10),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircleAvatar(radius: 3, backgroundColor: Colors.black),
-              const SizedBox(width: 8),
-              Text('Kaos terdeteksi', style: AppTextStyles.labelBold),
-            ],
-          ),
-        ),
       ),
     );
   }
