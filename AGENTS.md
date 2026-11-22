@@ -96,8 +96,10 @@ Profil dibuka dari navigasi utama.
   warna manual yang tetap menampilkan warna gambar, edit atribut pakaian,
   rekomendasi tiga outfit per piece, detail outfit tersimpan, dan menu tekan
   lama.
-- `flutter analyze` bersih dan 135 test lulus. APK debug sudah diuji di
+- `flutter analyze` bersih dan 169 test lulus. APK debug sudah diuji di
   perangkat Android.
+- PR #55, #53, dan #52 menambah unit test classifier, warna, harmony, dan
+  outfit engine.
 - Database lokal naik ke versi 4: `ref_color` mendapat `cream`, `maroon`,
   `olive`, `teal`, dan `navy`.
 - Model 1 9 kelas selesai dilatih dan dievaluasi, tetapi aset aplikasi masih

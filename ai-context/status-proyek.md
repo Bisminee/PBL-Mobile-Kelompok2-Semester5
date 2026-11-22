@@ -1,6 +1,6 @@
 # Status Proyek
 
-Diperbarui: 23 November 2026 (setelah PR #59 di `dev`)
+Diperbarui: 23 November 2026 (setelah PR #52 di `dev`)
 
 ## 1. Ringkasan
 
@@ -15,7 +15,7 @@ Diperbarui: 23 November 2026 (setelah PR #59 di `dev`)
 | Model 3 (E6) | Aturan harmoni dan skor pasangan berjalan. MLP masih data sintetis |
 | Integrasi (E7) | Loader TFLite, inferensi, rekomendasi per piece, dan fallback aturan berjalan. Latensi belum diukur |
 | Fitur aplikasi (E8) | Lemari, Home, Profil, detail pakaian, edit atribut, detail outfit tersimpan, dan menu tekan lama berjalan |
-| QA (E9) | 135 test lulus; `flutter analyze` bersih. APK debug sudah diuji di HP Android |
+| QA (E9) | 169 test lulus; `flutter analyze` bersih. APK debug sudah diuji di HP Android |
 | Dokumentasi (E10) | Logbook, laporan milestone, model card, dan dokumen tugas ML tersedia |
 
 ## 2. Perubahan mobile terbaru (PR #59)
@@ -61,7 +61,7 @@ Keputusan ML yang belum final:
 | Kondisi | Hasil |
 |---|---|
 | `flutter analyze` | Bersih |
-| `flutter test` | 135 test lulus |
+| `flutter test` | 169 test lulus |
 | APK debug | Berhasil build dan terpasang di SM A325F |
 | Uji UI perangkat | Pratinjau, tekan lama, detail outfit, dan edit atribut sudah dicoba |
 | Inferensi TFLite | Belum ada test integrasi otomatis |
@@ -73,12 +73,17 @@ Test baru yang relevan:
 3. `test/clothing_detail_test.dart` untuk form edit.
 4. `test/saved_outfit_test.dart` untuk konversi detail.
 5. `test/saved_outfit_card_test.dart` untuk tap dan tekan lama.
+6. `test/garment_classifier_test.dart` untuk preprocessing classifier.
+7. `test/outfit_engine_test.dart` untuk detection, slot, dan persentil.
 
 ## 5. PR
 
 | PR | Isi | Status |
 |---|---|---|
 | #59 | Revisi alur mobile dan rekomendasi per piece | Digabung ke `dev` |
+| #55 | Unit test preprocessing classifier | Digabung ke `dev` |
+| #53 | Unit test color palette dan extractor | Digabung ke `dev` |
+| #52 | Unit test color harmony dan outfit engine | Digabung ke `dev` |
 | #32 | Penolakan objek dan model 10 kelas | Belum valid, jangan digabung |
 | #30 | Dokumen status lama | Perlu ditutup atau diperbarui |
 | #22, #23, #26, #31 | Perbaikan ML, dataset, auth | Sudah diperbaiki dan menunggu review |
