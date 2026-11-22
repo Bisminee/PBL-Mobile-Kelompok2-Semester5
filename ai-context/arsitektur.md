@@ -1,6 +1,6 @@
 # Arsitektur Sera-Z
 
-Diperbarui: 23 November 2026 (setelah PR #59)
+Diperbarui: 23 November 2026 (setelah PR #52)
 
 ## 1. Lapisan
 
@@ -176,6 +176,8 @@ Keputusan dataset dan bentuk T4 belum final.
 | Berkas | Cakupan |
 |---|---|
 | `test/color_harmony_test.dart` | Aturan harmoni warna |
+| `test/outfit_engine_test.dart` | Detection, slot, persentil, dan analisis outfit |
+| `test/garment_classifier_test.dart` | Preprocessing NCHW, crop, resize, dan EXIF |
 | `test/color_family_test.dart` | 16 keluarga warna dan pencocokan Lab |
 | `test/color_extractor_test.dart` | Warna dasar dari piksel |
 | `test/color_palette_test.dart` | Nama palet tampilan |
@@ -190,5 +192,5 @@ Keputusan dataset dan bentuk T4 belum final.
 | `test/image_crop_test.dart` | Crop dan rotasi |
 | `test/widget_test.dart` | Smoke test aplikasi |
 
-Total: 135 test lulus. Test belum mencakup inferensi TFLite di perangkat.
+Total: 169 test lulus. Test belum mencakup inferensi TFLite di perangkat.
 Test baru wajib menyertai logika baru yang bisa diuji tanpa widget.
