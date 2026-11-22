@@ -172,7 +172,7 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                         label: widget.source == ScanSource.gallery
                             ? 'Pilih Ulang'
                             : 'Ambil Ulang',
-                        style: AppButtonStyle.outlined,
+                        style: AppButtonStyle.outlinedLight,
                         horizontalPadding: 6,
                         onPressed: _picking ? null : _retake,
                       ),
@@ -182,7 +182,7 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
                       child: AppButton(
                         label: 'Sesuaikan',
                         icon: Icons.crop,
-                        style: AppButtonStyle.outlined,
+                        style: AppButtonStyle.outlinedLight,
                         horizontalPadding: 6,
                         onPressed: _picking ? null : _adjust,
                       ),

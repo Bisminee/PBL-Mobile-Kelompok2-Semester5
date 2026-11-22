@@ -4,7 +4,7 @@ import '../../config/app_colors.dart';
 import '../../config/app_sizes.dart';
 import '../../config/app_text_styles.dart';
 
-enum AppButtonStyle { filled, outlined, white }
+enum AppButtonStyle { filled, outlined, outlinedLight, white }
 
 /// Tombol pill: hitam (filled), outline, atau putih (untuk background gelap).
 class AppButton extends StatelessWidget {
@@ -47,6 +47,11 @@ class AppButton extends StatelessWidget {
         bg = Colors.transparent;
         fg = AppColors.textPrimary;
         side = const BorderSide(color: AppColors.textPrimary, width: 1);
+        break;
+      case AppButtonStyle.outlinedLight:
+        bg = Colors.transparent;
+        fg = Colors.white;
+        side = const BorderSide(color: Colors.white, width: 1);
         break;
       case AppButtonStyle.white:
         bg = Colors.white;
