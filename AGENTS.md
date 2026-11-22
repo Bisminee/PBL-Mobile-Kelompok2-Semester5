@@ -16,7 +16,7 @@ Tiga komponen ML:
 | Komponen | Isi | Status |
 |---|---|---|
 | Model 1 | YOLOv11n-cls, klasifikasi jenis pakaian | Model 9 kelas selesai (94,34 persen); aset aplikasi masih 15 kelas; model 10 kelas di PR #32 belum valid |
-| Modul 2 | Warna dominan dan palet 14 warna | HSV dan palet selesai; K-Means di Dart belum |
+| Modul 2 | Warna dominan dan 16 keluarga warna | Acuan 16 warna selesai; ekstraksi masih HSV; K-Means di Dart belum |
 | Model 3 | MLP skor kecocokan + aturan harmoni | Aturan dan tabel skor jalan; MLP masih data sintetis |
 
 ## 2. Perintah penting
@@ -76,7 +76,13 @@ ai-context/                 Konteks proyek untuk agen AI
   placeholder in-memory (`authProvider`, `wardrobeProvider`,
   `recommendationsProvider`).
 - `lib/services/color_harmony.dart` berisi aturan harmoni warna (sudah diuji).
-  `lib/services/recommender.dart` masih membangun outfit placeholder.
+- `lib/services/recommender.dart` menyusun rekomendasi per piece (maksimal tiga
+  outfit per atasan/bawahan), fallback aturan harmoni, dan penyaringan outfit
+  yang sudah disimpan.
+- `lib/services/saved_outfit_actions.dart` menangani menu tekan lama outfit
+  tersimpan: lihat detail, edit nama/formalitas, dan hapus.
+- `lib/screens/wardrobe/clothing_detail_screen.dart` menyediakan edit atribut
+  pakaian dan bisa dibuka langsung dalam mode edit dari lemari.
 
 ## 6. Alur layar
 
@@ -84,9 +90,16 @@ Splash → Onboarding → Login/SignUp → Home (tab Home dan Lemari) → Kamera
 Preview → Analyzing → Detection Result → Rekomendasi → Detail.
 Profil dibuka dari navigasi utama.
 
-## 7. Status singkat (10 November 2026)
+## 7. Status singkat (23 November 2026)
 
-- `dev` berada di `b00b3e5`; 80 test lulus dan `flutter analyze` bersih.
+- PR #59 menggabungkan revisi alur mobile: crop tiga tombol, hapus nama berkas,
+  warna manual yang tetap menampilkan warna gambar, edit atribut pakaian,
+  rekomendasi tiga outfit per piece, detail outfit tersimpan, dan menu tekan
+  lama.
+- `flutter analyze` bersih dan 135 test lulus. APK debug sudah diuji di
+  perangkat Android.
+- Database lokal naik ke versi 4: `ref_color` mendapat `cream`, `maroon`,
+  `olive`, `teal`, dan `navy`.
 - Model 1 9 kelas selesai dilatih dan dievaluasi, tetapi aset aplikasi masih
   model 15 kelas.
 - Arahan dosen 10 November: klasifikasi jenis memakai satu dataset, kombinasi
@@ -94,8 +107,7 @@ Profil dibuka dari navigasi utama.
   belum final.
 - Model 10 kelas di PR #32 belum valid: TFLite hanya benar 3 dari 270 foto
   dengan preprocessing aplikasi.
-- PR #22, #23, #26, dan #31 sudah diperbaiki dan menunggu review. PR #30 dan
-  #32 masih perlu perbaikan.
+- K-Means di Dart dan segmentasi pakaian belum diimplementasikan.
 - Rincian status dan penghambat: `ai-context/status-proyek.md`.
 - Rincian tugas ML dan cara kerja model:
   `Pembagian Tugas/tugas-ml-per-anggota.md`.

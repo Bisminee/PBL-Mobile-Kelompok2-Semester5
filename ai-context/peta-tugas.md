@@ -1,6 +1,6 @@
 # Peta Tugas dan PIC
 
-Diperbarui: 10 November 2026 (branch `dev`, commit `b00b3e5`)
+Diperbarui: 23 November 2026 (setelah PR #59)
 
 Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md`,
 `Pembagian Tugas/pembagian-tugas-minggu-11.md`, dan
@@ -11,14 +11,14 @@ Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md`,
 | Epic | Nama | Status |
 |---|---|---|
 | E1 | Fondasi aplikasi | Selesai |
-| E2 | Penyimpanan dan data | Sebagian (E2.4 dan E2.6 belum) |
+| E2 | Penyimpanan dan data | Selesai untuk lemari, outfit, riwayat, dan migrasi versi 4 |
 | E3 | Autentikasi dan cloud | Selesai |
 | E4 | Model 1 klasifikasi jenis | Model 9 kelas selesai; E4.6 dan pemasangan model belum |
-| E5 | Modul 2 ekstraksi warna | Palet 14 selesai; E5.2 K-Means dan E5.4 test belum |
+| E5 | Modul 2 ekstraksi warna | Acuan 16 warna selesai; E5.2 K-Means dan E5.4 test belum |
 | E6 | Model 3 skor kecocokan | Aturan dan skor pasangan jalan; data nyata dan ekspor MLP belum |
 | E7 | Integrasi on-device | E7.1 sampai E7.5 jalan; E7.6 latensi belum |
-| E8 | Penyelesaian fitur | Sebagian; Admin dan CRUD lengkap belum |
-| E9 | QA dan pengujian | 80 test dan QA plan ada; uji perangkat dan fungsional belum |
+| E8 | Penyelesaian fitur | CRUD lemari, edit atribut, detail outfit, dan tekan lama selesai; Admin belum |
+| E9 | QA dan pengujian | 135 test, analyze bersih, APK diuji di HP; QA fungsional penuh belum |
 | E10 | Dokumentasi | Berjalan |
 
 ## 2. Arahan ML per 10 November 2026
@@ -29,7 +29,7 @@ kombinasi warna menjadi pekerjaan ML terpisah.
 | Kode | Tugas ML | Isi | Data | PIC | Status |
 |---|---|---|---|---|---|
 | T1 | Klasifikasi jenis pakaian | Satu model, satu label jenis | Satu dataset, belum dipilih | Bisma dan Abim | Perlu disusun ulang |
-| T2 | Ekstraksi warna | Warna dominan per item, terpisah dari jenis | Gambar item | Izza dan Bisma | Sebagian: HSV dan palet selesai, K-Means Dart belum |
+| T2 | Ekstraksi warna | Warna dominan per item, terpisah dari jenis | Gambar item | Izza dan Bisma | Sebagian: acuan 16 warna selesai, ekstraksi HSV, K-Means Dart belum |
 | T3 | Kombinasi warna | Skor cocok atau tidaknya dua warna | Dataset pasangan warna atau outfit | Ahmad dan Bisma | Prototipe sintetis, belum data nyata |
 | T4 | Penolakan non-cloth | Menerima pakaian atau menolak objek lain | Foto pakaian dan negatif | Abim | PR #32, model TFLite belum valid |
 
@@ -53,14 +53,14 @@ Keputusan yang belum diambil:
 
 | Tugas | PIC | Status |
 |---|---|---|
-| E2.4 Riwayat rekomendasi | Pras | Belum |
-| E2.6 Unit test DAO | Pras | Belum |
+| E2.4 Riwayat rekomendasi | Pras | Selesai |
+| E2.6 Unit test DAO | Pras | Selesai |
 | E7.6 Latensi dan ukuran model | Abim | Belum |
-| E8.1 CRUD UI Lemari lengkap | Izza | Sebagian, pencarian dan daftar sudah ada |
+| E8.1 CRUD UI Lemari lengkap | Izza | Selesai: tambah, lihat, edit, hapus, tekan lama |
 | E8.6 Halaman Admin | Izza | Belum |
-| E8.3 Ranking dan explainability | Pras | Belum |
+| E8.3 Ranking dan explainability | Pras | Sebagian: ranking per piece dan alasan sudah ada |
 | E5.2 K-Means di Dart | Belum ada PIC | Belum |
-| E5.4 Unit test warna | Izza | Belum |
+| E5.4 Unit test warna | Izza | Sebagian: 16 keluarga dan palet sudah diuji |
 | Dokumentasi metode ML | Izza | Belum |
 | E10.2 Foto lapangan | Pras | Belum |
 | Uji perangkat | Bisma | Belum |

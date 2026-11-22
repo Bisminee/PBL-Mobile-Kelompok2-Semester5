@@ -1,6 +1,6 @@
 # Arsitektur Sera-Z
 
-Diperbarui: 10 November 2026 (branch `dev`, commit `b00b3e5`)
+Diperbarui: 23 November 2026 (setelah PR #59)
 
 ## 1. Lapisan
 
@@ -36,13 +36,16 @@ Aturan praktis:
 | `lib/models/garment.dart` | Item lemari: id, tipe, slot, warna, path foto, formalitas, style |
 | `lib/models/outfit.dart` | Paduan atasan-bawahan, skor, alasan |
 | `lib/models/saved_outfit.dart` | Outfit yang tersimpan di SQLite |
-| `lib/services/providers.dart` | Provider auth, lemari, sesi scan, engine, rekomendasi, outfit tersimpan |
+| `lib/services/providers.dart` | Provider auth, lemari, sesi scan, engine, rekomendasi per piece, outfit tersimpan |
 | `lib/services/garment_classifier.dart` | Preprocessing gambar dan inferensi Model 1 |
 | `lib/services/outfit_engine.dart` | Analisis deteksi, preload skor pasangan, rekomendasi slot |
 | `lib/services/color_extractor.dart` | Ekstraksi warna HSV dari piksel |
-| `lib/services/color_palette.dart` | Pemetaan keluarga warna ke 14 nama palet |
+| `lib/services/color_family.dart` | 16 keluarga warna, tone, netral, pencocokan Lab, harmoni |
+| `lib/services/color_palette.dart` | Pemetaan keluarga warna ke nama palet tampilan |
 | `lib/services/color_harmony.dart` | Aturan harmoni warna CIELCh |
-| `lib/services/recommender.dart` | Pembentukan dan peringkat outfit, fallback aturan |
+| `lib/services/recommender.dart` | Rekomendasi per piece, peringkat outfit, fallback aturan |
+| `lib/services/saved_outfit_actions.dart` | Menu tekan lama outfit: detail, edit, hapus |
+| `lib/models/saved_outfit.dart` | Outfit tersimpan dan konversi ke layar detail |
 | `lib/services/local_db.dart` | SQLite: lemari, outfit, preferensi, tabel ML |
 | `lib/services/photo_intake.dart` | Normalisasi foto dan penyimpanan sementara |
 | `lib/services/photo_source.dart` | Pemilih foto galeri |
@@ -65,10 +68,11 @@ Aturan praktis:
 | `cropPhoto` | `/crop-photo` | CropScreen, butuh `CropArgs` |
 | `analyzing` | `/analyzing` | AnalyzingScreen |
 | `detectionResult` | `/detection-result` | DetectionResultScreen |
-| `recommendation` | `/recommendation` | RecommendationScreen |
+| `recommendation` | `/recommendation` | RecommendationScreen, `extra` opsional berupa `Garment` |
+| `recommendationHistory` | `/recommendation-history` | RecommendationHistoryScreen |
 | `savedOutfits` | `/saved-outfits` | SavedOutfitsScreen |
-| `detail` | `/detail` | DetailScreen |
-| `clothingDetail` | `/clothing-detail` | ClothingDetailScreen |
+| `detail` | `/detail` | DetailScreen, `extra` berupa `Outfit` |
+| `clothingDetail` | `/clothing-detail` | ClothingDetailScreen, `?edit=1` membuka form edit |
 
 `home` dan `wardrobe` memakai `StatefulShellRoute.indexedStack` dengan
 `MainShell`, sehingga state tiap tab terjaga.
@@ -82,16 +86,24 @@ Aturan praktis:
 | `scanSessionProvider` | `NotifierProvider<ScanSessionNotifier, ScanSession>` | Foto, sumber, hasil deteksi, error |
 | `engineProvider` | `Provider<OutfitEngine?>` | Engine ML yang dimuat saat start, null bila gagal |
 | `recommendationsProvider` | `Provider<List<Outfit>>` | Outfit dari skor pasangan dan aturan |
+| `recommendationGroupsProvider` | `Provider<List<RecommendationGroup>>` | Maksimal tiga outfit untuk setiap atasan/bawahan |
 | `savedOutfitsProvider` | `FutureProvider<List<SavedOutfit>>` | Outfit tersimpan dari SQLite |
+| `recommendationHistoryProvider` | `FutureProvider.autoDispose<List<SavedOutfit>>` | Riwayat rekomendasi yang dibuka |
 | `genderProvider` | `NotifierProvider<GenderNotifier, String>` | Preferensi gender untuk lookup ML |
 | `photoPickerProvider` | `Provider<PhotoPicker>` | Pemilih galeri, bisa diganti saat test |
 
 Alur data nyata:
 
-- `wardrobeProvider` memuat item dari `wardrobe_item`.
+- `wardrobeProvider` memuat item dari `wardrobe_item`, mendukung tambah, edit
+  atribut, dan hapus.
 - `recommendationsProvider` memakai `engineProvider`; bila null, memakai
   `buildRuleOutfits`.
-- `scanSessionProvider` menyimpan hasil `OutfitEngine.analyze`.
+- `recommendationGroupsProvider` membentuk pasangan per piece. Outfit yang sudah
+  tersimpan disaring di layar rekomendasi.
+- `scanSessionProvider` menyimpan hasil `OutfitEngine.analyze` dan warna pilihan
+  pengguna. Komposisi warna asli tidak dihapus saat warna diganti.
+- `savedOutfitsProvider` dan `recommendationHistoryProvider` dibaca ulang
+  setelah simpan, edit, atau hapus outfit.
 
 ## 5. Integrasi ML saat ini
 
@@ -110,21 +122,27 @@ Urutan saat foto dianalisis:
 3. `GarmentClassifier.predictInput` menjalankan TFLite dan mengambil top-3.
 4. `extractColor` menghitung warna dominan dengan HSV.
 5. `LocalDb.predictFormality` dan `predictStyles` membaca tabel ML.
-6. `Detection` dibentuk, lalu disimpan ke lemari bila pengguna menyetujui.
+6. `Detection` dibentuk. Pengguna dapat mengoreksi jenis, formalitas, dan warna.
+7. Setelah disimpan, `WardrobeNotifier.addDetected` menyalin foto dan menulis
+   `wardrobe_item`.
+8. `WardrobeNotifier.update` dipakai oleh edit atribut tanpa mengganti foto.
 
 Urutan saat outfit dicocokkan:
 
-1. `recommendationsProvider` mengambil atasan dan bawahan.
-2. `buildOutfits` mencari skor pasangan di `ml_pair_score`.
+1. `recommendationGroupsProvider` mengambil setiap atasan dan bawahan.
+2. `buildOutfitsForAnchor` mencari pasangan dan skor di `ml_pair_score`.
 3. Skor diubah menjadi persentil dan digabung dengan harmoni serta formalitas.
-4. Bila engine tidak tersedia, `buildRuleOutfits` memakai harmoni.
+4. Setiap piece mendapat maksimal tiga outfit.
+5. Bila engine tidak tersedia, `buildRuleOutfitsForAnchor` memakai harmoni.
+6. Layar menyaring outfit yang sudah tersimpan, lalu pengguna membuka detail
+   dan menyimpan atau menghapusnya.
 
 ## 6. Komponen ML dan batas tugas
 
 | Kode | Komponen | Sifat | Status |
 |---|---|---|---|
 | T1 | Klasifikasi jenis pakaian | Model terlatih | Model 9 kelas selesai; aset aplikasi masih 15 kelas |
-| T2 | Ekstraksi warna | Aturan atau unsupervised | HSV dan palet 14 selesai; K-Means Dart belum |
+| T2 | Ekstraksi warna | Aturan atau unsupervised | Acuan 16 keluarga selesai; ekstraksi piksel masih HSV; K-Means Dart belum |
 | T3 | Kombinasi warna | Model terlatih atau aturan | MLP sintetis; aplikasi memakai tabel dan aturan |
 | T4 | Penolakan non-cloth | Kelas tambahan atau gate | PR #32; TFLite v3 belum valid |
 
@@ -140,6 +158,10 @@ Keputusan dataset dan bentuk T4 belum final.
    aplikasi: 3 dari 270 foto benar.
 5. Tidak ada test integrasi inferensi TFLite.
 6. Preload 51 ribu skor dilakukan sebelum `runApp`, berpotensi memperlambat start.
+7. Tabel ML masih 14 warna; `ref_color` sudah memiliki 16 warna untuk data
+   pengguna.
+8. Segmentasi pakaian belum ada; warna masih memakai crop tengah dan HSV.
+9. Web belum bisa dikompilasi karena `tflite_flutter` dan `ffi`.
 
 ## 8. Responsif
 
@@ -153,16 +175,20 @@ Keputusan dataset dan bentuk T4 belum final.
 
 | Berkas | Cakupan |
 |---|---|
-| `test/color_harmony_test.dart` | Aturan harmoni warna, 17 test |
-| `test/color_extractor_test.dart` | Enam warna dasar |
-| `test/color_palette_test.dart` | Palet 14 warna, 5 test |
-| `test/recommender_test.dart` | Pembentukan outfit, 8 test |
-| `test/outfit_detail_test.dart` | Tab detail outfit, 9 test |
-| `test/camera_preview_test.dart` | Pratinjau kamera dan galeri |
-| `test/photo_intake_test.dart` | Normalisasi foto |
+| `test/color_harmony_test.dart` | Aturan harmoni warna |
+| `test/color_family_test.dart` | 16 keluarga warna dan pencocokan Lab |
+| `test/color_extractor_test.dart` | Warna dasar dari piksel |
+| `test/color_palette_test.dart` | Nama palet tampilan |
+| `test/recommender_test.dart` | Outfit, rekomendasi per piece, penyaringan tersimpan |
+| `test/saved_outfit_test.dart` | Konversi outfit tersimpan ke detail |
+| `test/saved_outfit_card_test.dart` | Tap dan tekan lama kartu outfit |
+| `test/clothing_detail_test.dart` | Form edit atribut pakaian |
+| `test/camera_preview_test.dart` | Pratinjau, crop, nama berkas, layar 320 px |
+| `test/camera_overlay_test.dart` | Tombol flash |
+| `test/local_db_test.dart` | DAO, migrasi, update atribut, hapus outfit |
+| `test/outfit_detail_test.dart` | Tab detail outfit |
 | `test/image_crop_test.dart` | Crop dan rotasi |
-| `test/home_summary_test.dart` | Ringkasan kategori Home |
 | `test/widget_test.dart` | Smoke test aplikasi |
 
-Total `dev`: 80 test lulus. Test belum mencakup inferensi TFLite di perangkat.
+Total: 135 test lulus. Test belum mencakup inferensi TFLite di perangkat.
 Test baru wajib menyertai logika baru yang bisa diuji tanpa widget.
