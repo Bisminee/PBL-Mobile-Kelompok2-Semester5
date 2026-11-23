@@ -176,40 +176,63 @@ void main() {
   });
 
   group('Detection model', () {
-    test('isConfident aktif hanya saat confidence >= 0.97 dan bukan manual', () {
-      const high = Detection(
-        type: 't_shirt',
-        slot: 'top',
-        color: 'black',
-        colorHex: '#000000',
-        formality: 'non_formal',
-        confidence: confidentThreshold,
-        alternatives: [],
-        styles: [
-          {'style': 'casual', 'prob': 0.8},
-        ],
-        colorShare: {'black': 1.0},
-      );
-      expect(high.isConfident, isTrue);
-      expect(high.topStyle, 'casual');
+    test(
+      'isConfident aktif hanya saat confidence >= 0.97 dan bukan manual',
+      () {
+        const high = Detection(
+          type: 't_shirt',
+          slot: 'top',
+          color: 'black',
+          colorHex: '#000000',
+          formality: 'non_formal',
+          confidence: confidentThreshold,
+          alternatives: [],
+          styles: [
+            {'style': 'casual', 'prob': 0.8},
+          ],
+          colorShare: {'black': 1.0},
+        );
+        expect(high.isConfident, isTrue);
+        expect(high.topStyle, 'casual');
 
-      final low = Detection(
-        type: 't_shirt',
-        slot: 'top',
-        color: 'black',
-        colorHex: '#000000',
-        formality: 'non_formal',
-        confidence: 0.969,
-        alternatives: const [],
-        styles: const [],
-        colorShare: const {'black': 1.0},
-      );
-      expect(low.isConfident, isFalse);
-      expect(low.topStyle, isNull);
+        final low = Detection(
+          type: 't_shirt',
+          slot: 'top',
+          color: 'black',
+          colorHex: '#000000',
+          formality: 'non_formal',
+          confidence: 0.969,
+          alternatives: const [],
+          styles: const [],
+          colorShare: const {'black': 1.0},
+        );
+        expect(low.isConfident, isFalse);
+        expect(low.topStyle, isNull);
 
-      final corrected = high.copyWith(type: 'shirt', manual: true);
-      expect(corrected.isConfident, isFalse);
-      expect(corrected.type, 'shirt');
+        final corrected = high.copyWith(type: 'shirt', manual: true);
+        expect(corrected.isConfident, isFalse);
+        expect(corrected.type, 'shirt');
+      },
+    );
+
+    test('isRecognized memakai ambang 70 persen', () {
+      Detection detection(double confidence, {bool manual = false}) =>
+          Detection(
+            type: 't_shirt',
+            slot: 'top',
+            color: 'black',
+            colorHex: '#000000',
+            formality: 'non_formal',
+            confidence: confidence,
+            alternatives: const [],
+            styles: const [],
+            colorShare: const {'black': 1.0},
+            manual: manual,
+          );
+
+      expect(detection(0.699).isRecognized, isFalse);
+      expect(detection(0.70).isRecognized, isTrue);
+      expect(detection(0.10, manual: true).isRecognized, isTrue);
     });
   });
 
@@ -219,7 +242,10 @@ void main() {
 
     setUp(() async {
       db = await _createTestDb();
-      engine = OutfitEngine(_FakeClassifier(const []), LocalDb.withDatabase(db));
+      engine = OutfitEngine(
+        _FakeClassifier(const []),
+        LocalDb.withDatabase(db),
+      );
     });
 
     tearDown(() async => db.close());
@@ -274,7 +300,10 @@ void main() {
 
     setUp(() async {
       db = await _createTestDb();
-      engine = OutfitEngine(_FakeClassifier(const []), LocalDb.withDatabase(db));
+      engine = OutfitEngine(
+        _FakeClassifier(const []),
+        LocalDb.withDatabase(db),
+      );
     });
 
     tearDown(() async => db.close());
@@ -284,19 +313,22 @@ void main() {
       expect(engine.topBottomPercentile(0.42), 0.42);
     });
 
-    test('setelah preload, pairScore dan persentil top-bottom akurat', () async {
-      await engine.preload();
+    test(
+      'setelah preload, pairScore dan persentil top-bottom akurat',
+      () async {
+        await engine.preload();
 
-      expect(engine.pairScore('t_shirt', 'black', 'pants', 'blue'), 0.30);
-      expect(engine.pairScore('shirt', 'white', 'pants', 'black'), 0.45);
-      expect(engine.pairScore('dress', 'red', 'shoes', 'black'), isNull);
+        expect(engine.pairScore('t_shirt', 'black', 'pants', 'blue'), 0.30);
+        expect(engine.pairScore('shirt', 'white', 'pants', 'black'), 0.45);
+        expect(engine.pairScore('dress', 'red', 'shoes', 'black'), isNull);
 
-      // Hanya 4 pasangan top-bottom yang dihitung (0.30, 0.35, 0.40, 0.45);
-      // skor 0.99 (top-shoes) tidak ikut menggeser persentil.
-      expect(engine.topBottomPercentile(0.30), closeTo(0.25, 1e-9));
-      expect(engine.topBottomPercentile(0.40), closeTo(0.75, 1e-9));
-      expect(engine.topBottomPercentile(0.45), closeTo(1.00, 1e-9));
-    });
+        // Hanya 4 pasangan top-bottom yang dihitung (0.30, 0.35, 0.40, 0.45);
+        // skor 0.99 (top-shoes) tidak ikut menggeser persentil.
+        expect(engine.topBottomPercentile(0.30), closeTo(0.25, 1e-9));
+        expect(engine.topBottomPercentile(0.40), closeTo(0.75, 1e-9));
+        expect(engine.topBottomPercentile(0.45), closeTo(1.00, 1e-9));
+      },
+    );
   });
 
   group('Analisis gambar, koreksi tipe, & rekomendasi', () {

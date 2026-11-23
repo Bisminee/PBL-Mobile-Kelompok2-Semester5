@@ -96,7 +96,7 @@ Diperbarui: 23 November 2026.
 | Penyimpanan SQLite | Selesai untuk lemari, outfit, riwayat, dan migrasi versi 4 |
 | Integrasi TFLite | Berjalan di Android; web belum didukung |
 | Fitur aplikasi | Kamera, crop, edit atribut, rekomendasi per piece, dan outfit tersimpan |
-| QA dan dokumentasi | 169 test, analyze bersih, APK diuji di perangkat |
+| QA dan dokumentasi | 170 test, analyze bersih, APK diuji di perangkat |
 
 Status terperinci ada di `ai-context/status-proyek.md` dan
 `Pembagian Tugas/pembagian-tugas.md`.

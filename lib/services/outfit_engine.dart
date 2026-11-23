@@ -15,6 +15,11 @@ import 'local_db.dart';
 /// hanya sekitar 57%. Ambang ditentukan dari data uji yang sama, jadi angka 94,5% sedikit optimis.
 const double confidentThreshold = 0.97;
 
+/// Ambang minimal agar hasil klasifikasi dianggap sebagai pakaian.
+///
+/// Di bawah ambang ini, foto dianggap tidak memuat pakaian yang cukup jelas.
+const double recognizedThreshold = 0.70;
+
 class Detection {
   const Detection({
     required this.type,
@@ -46,6 +51,9 @@ class Detection {
       styles.isEmpty ? null : styles.first['style'] as String?;
 
   bool get isConfident => !manual && confidence >= confidentThreshold;
+
+  /// Hasil manual dianggap sah karena pengguna sudah memilih jenis sendiri.
+  bool get isRecognized => manual || confidence >= recognizedThreshold;
 
   Detection copyWith({
     String? type,

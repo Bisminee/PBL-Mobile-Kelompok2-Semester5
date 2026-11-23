@@ -15,7 +15,7 @@ Diperbarui: 23 November 2026 (setelah PR #52 di `dev`)
 | Model 3 (E6) | Aturan harmoni dan skor pasangan berjalan. MLP masih data sintetis |
 | Integrasi (E7) | Loader TFLite, inferensi, rekomendasi per piece, dan fallback aturan berjalan. Latensi belum diukur |
 | Fitur aplikasi (E8) | Lemari, Home, Profil, detail pakaian, edit atribut, detail outfit tersimpan, dan menu tekan lama berjalan |
-| QA (E9) | 169 test lulus; `flutter analyze` bersih. APK debug sudah diuji di HP Android |
+| QA (E9) | 170 test lulus; `flutter analyze` bersih. APK debug sudah diuji di HP Android |
 | Dokumentasi (E10) | Logbook, laporan milestone, model card, dan dokumen tugas ML tersedia |
 
 ## 2. Perubahan mobile terbaru (PR #59)
@@ -35,6 +35,7 @@ Diperbarui: 23 November 2026 (setelah PR #52 di `dev`)
 | Hapus outfit | Tersedia dari tombol dan menu tekan lama |
 | Tekan lama | Pakaian dan outfit tersimpan menampilkan menu Lihat, Edit, Hapus |
 | Flash kamera | Berfungsi dengan urutan Off, Auto, On |
+| Ambang deteksi | Kemiripan di bawah 70 persen menampilkan "Pakaian tidak terdeteksi" |
 
 Database lokal naik ke versi 4. Migrasi menambahkan `cream`, `maroon`, `olive`,
 `teal`, dan `navy` ke `ref_color` agar edit atribut memakai 16 keluarga warna.
@@ -61,7 +62,7 @@ Keputusan ML yang belum final:
 | Kondisi | Hasil |
 |---|---|
 | `flutter analyze` | Bersih |
-| `flutter test` | 169 test lulus |
+| `flutter test` | 170 test lulus |
 | APK debug | Berhasil build dan terpasang di SM A325F |
 | Uji UI perangkat | Pratinjau, tekan lama, detail outfit, dan edit atribut sudah dicoba |
 | Inferensi TFLite | Belum ada test integrasi otomatis |
