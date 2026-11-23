@@ -11,6 +11,7 @@ import '../../services/outfit_engine.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
+import '../../widgets/common/clothing_thumb.dart';
 import '../../widgets/common/corner_frame.dart';
 import '../../widgets/common/garment_photo.dart';
 import '../../widgets/common/match_ring.dart';
@@ -123,6 +124,10 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
           ),
         ),
       );
+    }
+
+    if (!d.isRecognized) {
+      return _NotRecognizedScreen(detection: d, imagePath: s.imagePath);
     }
 
     final pct = (d.confidence * 100).round();
@@ -356,6 +361,88 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                   label: 'Simpan ke Lemari',
                   style: AppButtonStyle.outlined,
                   onPressed: () => _save(toRecommendation: false),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Layar yang muncul bila kemiripan model di bawah [recognizedThreshold].
+class _NotRecognizedScreen extends StatelessWidget {
+  const _NotRecognizedScreen({required this.detection, this.imagePath});
+
+  final Detection detection;
+  final String? imagePath;
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = (detection.confidence * 100).round();
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: ContentWidth(
+            maxWidth: 560,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleIconButton(
+                      icon: Icons.chevron_left,
+                      onPressed: () => context.go(AppRoutes.home),
+                    ),
+                    Text('Hasil Deteksi', style: AppTextStyles.title),
+                    const SizedBox(width: 44),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                Container(
+                  height: 280,
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBg,
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: GarmentPhoto(
+                    imagePath: imagePath,
+                    kind: ClothingKind.top,
+                    radius: 12,
+                    iconSize: 110,
+                    background: Colors.transparent,
+                  ),
+                ),
+                const SizedBox(height: 22),
+                const Icon(Icons.search_off, size: 34),
+                const SizedBox(height: 8),
+                Text('Pakaian tidak terdeteksi', style: AppTextStyles.display),
+                const SizedBox(height: 8),
+                Text(
+                  'Kemiripan model hanya $pct%, di bawah ambang '
+                  '${(recognizedThreshold * 100).round()}%. '
+                  'Pastikan hanya satu pakaian yang terlihat, pencahayaan cukup, '
+                  'dan latar belakang tidak ramai.',
+                  style: AppTextStyles.bodySecondary,
+                ),
+                const SizedBox(height: 22),
+                AppButton(
+                  label: 'Ambil Foto Lagi',
+                  icon: Icons.camera_alt_outlined,
+                  onPressed: () => context.go(AppRoutes.camera),
+                ),
+                const SizedBox(height: 10),
+                AppButton(
+                  label: 'Kembali ke Beranda',
+                  style: AppButtonStyle.outlined,
+                  onPressed: () => context.go(AppRoutes.home),
                 ),
                 const SizedBox(height: 24),
               ],
