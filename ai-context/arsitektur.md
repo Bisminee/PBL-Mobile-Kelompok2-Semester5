@@ -192,5 +192,5 @@ Keputusan dataset dan bentuk T4 belum final.
 | `test/image_crop_test.dart` | Crop dan rotasi |
 | `test/widget_test.dart` | Smoke test aplikasi |
 
-Total: 169 test lulus. Test belum mencakup inferensi TFLite di perangkat.
+Total: 170 test lulus. Test belum mencakup inferensi TFLite di perangkat.
 Test baru wajib menyertai logika baru yang bisa diuji tanpa widget.

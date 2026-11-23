@@ -18,7 +18,7 @@ Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md`,
 | E6 | Model 3 skor kecocokan | Aturan dan skor pasangan jalan; data nyata dan ekspor MLP belum |
 | E7 | Integrasi on-device | E7.1 sampai E7.5 jalan; E7.6 latensi belum |
 | E8 | Penyelesaian fitur | CRUD lemari, edit atribut, detail outfit, dan tekan lama selesai; Admin belum |
-| E9 | QA dan pengujian | 169 test, analyze bersih, APK diuji di HP; QA fungsional penuh belum |
+| E9 | QA dan pengujian | 170 test, analyze bersih, APK diuji di HP; QA fungsional penuh belum |
 | E10 | Dokumentasi | Berjalan |
 
 ## 2. Arahan ML per 10 November 2026
