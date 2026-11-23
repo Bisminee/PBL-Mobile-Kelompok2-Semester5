@@ -31,13 +31,13 @@ November 2026
 
 | Mata kuliah | Dosen pengampu | Dosen rujukan kelas |
 |---|---|---|
-| Pemrograman Mobile | Agung Nugroho Pramudhita, S.T., M.T. | [isi dosen rujukan TI-3D] |
-| Pembelajaran Mesin | Vivi Nur Wijayaningrum, S.Kom., M.Kom. | [isi dosen rujukan TI-3D] |
-| Penjaminan Mutu Perangkat Lunak | Dika Rizky Yunianto, S.Kom., M.Kom. | [isi dosen rujukan TI-3D] |
+| Pemrograman Mobile | Agung Nugroho Pramudhita, S.T., M.T. | Dosen rujukan TI-3D |
+| Pembelajaran Mesin | Vivi Nur Wijayaningrum, S.Kom., M.Kom. | Dosen rujukan TI-3D |
+| Penjaminan Mutu Perangkat Lunak | Dika Rizky Yunianto, S.Kom., M.Kom. | Dosen rujukan TI-3D |
 
 ### S.2 Status Milestone 2
 
-Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai rekomendasi: pengguna memilih foto, melakukan crop, model mengklasifikasikan jenis pakaian, warna diekstrak dan dapat dikoreksi, lalu lemari dan rekomendasi outfit menampilkan hasil. Model ML sudah dipanggil dari aplikasi dan ambang 70 persen dipakai untuk menolak hasil yang tidak meyakinkan. Aplikasi sudah dipasang pada perangkat Android dan 170 test otomatis lulus. Dokumen wajib belum lengkap: logbook Minggu 9–12, tangkapan layar akhir, video demo, tag `milestone-2`, dan bukti pengujian manual formal. Model 9 kelas belum dipasang sebagai aset aplikasi; aset yang dipakai masih 15 kelas. Rencana perbaikan ada di Bab 4.3 dan S.6.
+Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai rekomendasi: pengguna memilih foto, melakukan crop, model mengklasifikasikan jenis pakaian, warna diekstrak dan dapat dikoreksi, lalu lemari dan rekomendasi outfit menampilkan hasil. Model ML sudah dipanggil dari aplikasi dan ambang 70 persen dipakai untuk menolak hasil yang tidak meyakinkan. Aplikasi sudah dipasang pada perangkat Android dan 170 test otomatis lulus. Logbook Minggu 9–12 sudah disusun, tetapi tangkapan layar akhir, video demo, tag `milestone-2`, dan bukti pengujian manual formal belum lengkap. Model 9 kelas belum dipasang sebagai aset aplikasi; aset yang dipakai masih 15 kelas. Rencana perbaikan ada di Bab 4.3 dan S.6.
 
 ### S.3 Tindak Lanjut Milestone 1
 
@@ -92,8 +92,8 @@ Daftar periksa target TI Semester 5:
 - [x] Hasil awal model tertulis di Bab 4 dan Lampiran F.
 - [x] Draf Bab 1–3 tersedia.
 - [x] Bab 4 memuat minimal 10 kasus uji.
-- [ ] Logbook Minggu 9–12 dan lampiran akhir lengkap.
-- [ ] Tag `milestone-2` dan video demo tersedia.
+- [x] Logbook Minggu 9–12 tersusun.
+- [ ] Lampiran akhir, tag `milestone-2`, dan video demo tersedia.
 
 ### S.5 Bukti
 
@@ -109,7 +109,7 @@ Daftar periksa target TI Semester 5:
 
 | Minggu | Target | Penanggung jawab |
 |---|---|---|
-| 13 | Ekspor dan validasi TFLite model 9 kelas; sambungkan aset; lengkapi logbook 9–12 | Ahmad, Bisma |
+| 13 | Ekspor dan validasi TFLite model 9 kelas; sambungkan aset; validasi logbook 9–12 | Ahmad, Bisma |
 | 14 | Integrasi K-Means dan 16 warna; selesaikan PR Admin; uji manual 10 kasus | Faatihurrizki, Izza, Abim |
 | 15 | Uji performa dan kompatibilitas; perbaiki bug; siapkan tangkapan layar, video, dan laporan | Seluruh tim |
 | 16 | Demo Day, Expo, dan penyelesaian laporan akhir | Seluruh tim |
@@ -543,14 +543,16 @@ Ditulis pada laporan akhir.
 
 ## Lampiran B. Logbook Minggu 1–12
 
-Logbook Minggu 1–8 tersedia di `Pembagian Tugas/Logbook/logbook.md`. Minggu 9–12 perlu dilengkapi sebelum pengumpulan.
+Logbook Minggu 1–8 tersedia di `Pembagian Tugas/Logbook/logbook.md`. Logbook Minggu 9–12 tersedia di `Pembagian Tugas/Logbook/logbook-minggu-9-12.md` dan diringkas di bawah.
 
 | Minggu | Pekerjaan selesai | Dikerjakan oleh | Kendala | Rencana berikutnya |
 |---|---|---|---|---|
-| 9 | Revisi warna 16 keluarga, PR #54 dan #56 | Bisma, Izza | Konflik warna lama | Integrasi warna |
-| 10 | Rekomendasi per piece, detail outfit, menu tekan lama | Bisma | APK lama tidak ter-update | Uji perangkat |
-| 11 | Ambang 70 persen, unit test classifier/warna/outfit | Bisma, Izza | Penyimpanan HP penuh | Uji perangkat |
-| 12 | Laporan Milestone 2, QA, dokumentasi | Seluruh tim | Logbook dan screenshot belum lengkap | Lengkapi Minggu 13 |
+| 9 (10–16 Nov) | Audit 16 warna, harmoni CIELAB/CIELCh, review PR #51/#52/#53/#36, QC PR #54/#56, 122 test | Bisma, Izza | Palet tampilan dan tabel ML masih 14 warna | Revisi mobile |
+| 10 (17–23 Nov) | Tiga tombol pratinjau, flash, crop kamera/galeri, 16 warna dan koreksi, edit atribut, tekan lama, rekomendasi per piece, detail outfit, ambang 70 persen, 170 test, APK perangkat | Bisma, Abim, Izza | APK lama tidak ter-update; penyimpanan HP penuh | Finalisasi model |
+| 11 (24–30 Nov) | Ekspor TFLite 9 kelas, uji manual 14 kasus, tangkapan layar, video, tag `milestone-2`, lengkapi Lampiran B/F/E, rebase PR #36 | Ahmad, Bisma, Izza | Label dan preprocessing harus sama; tautan harus publik | Demo |
+| 12 (1–7 Des) | Demo Day, perbaikan umpan balik, Bab 4.6/5.4/5.5, ekspor PDF dan unggah | Seluruh tim | Prioritas bug dan waktu | Selesai |
+
+Catatan: Minggu 11 dan 12 masih berstatus rencana per 23 November 2026. Hasil aktual perlu diperbarui setelah pelaksanaan.
 
 ## Lampiran C. Dokumen Rujukan
 
