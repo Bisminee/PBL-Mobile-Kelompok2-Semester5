@@ -57,7 +57,8 @@ class _CameraPreviewScreenState extends ConsumerState<CameraPreviewScreen> {
 
   Future<void> _retake() async {
     if (widget.source != ScanSource.gallery) {
-      context.pop();
+      // Kamera sudah diganti oleh halaman pratinjau, jadi buat instance baru.
+      context.pushReplacement(AppRoutes.camera);
       return;
     }
     if (_picking) return;

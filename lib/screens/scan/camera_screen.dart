@@ -103,19 +103,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
   }
 
-  /// Membuka pratinjau, lalu menghidupkan kembali kamera saat pengguna kembali
-  /// dengan tombol Ambil Ulang. Controller lama bisa kehilangan preview setelah
-  /// route kamera tertutup halaman lain.
-  Future<void> _openPreview(String path, ScanSource source) async {
-    await context.push(
+  /// Pratinjau menggantikan halaman kamera, bukan ditumpuk di atasnya.
+  /// Dengan begitu controller lama benar-benar dibuang dan tombol Ambil Ulang
+  /// selalu membuka instance kamera baru.
+  void _openPreview(String path, ScanSource source) {
+    context.pushReplacement(
       AppRoutes.cameraPreview,
       extra: PreviewArgs(path, source),
     );
-    if (!mounted || _cameras.isEmpty) return;
-    // Tunggu transisi pop selesai sebelum controller baru dipasang.
-    await Future<void>.delayed(const Duration(milliseconds: 250));
-    if (!mounted || _cameras.isEmpty) return;
-    await _initializeCamera(_cameras[_cameraIndex]);
   }
 
   Future<void> _takePicture() async {
@@ -141,7 +136,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       }
       // Foto baru ditambahkan ke lemari setelah dikonfirmasi di halaman
       // pratinjau ("Gunakan Foto"); "Ambil Ulang" kembali ke sini.
-      await _openPreview(path, ScanSource.camera);
+      _openPreview(path, ScanSource.camera);
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -204,7 +199,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     try {
       final path = await pickGalleryPhoto(context, ref);
       if (!mounted || path == null) return;
-      await _openPreview(path, ScanSource.gallery);
+      _openPreview(path, ScanSource.gallery);
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }
