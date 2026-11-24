@@ -149,11 +149,14 @@ Future<void> _editOutfit(
   controller.dispose();
   if (result == null || !context.mounted) return;
 
+  final uid = ref.read(activeUidProvider);
+  if (uid == null || !context.mounted) return;
   try {
     await ref
         .read(localDbProvider)
         .updateSavedOutfit(
           outfit.id,
+          ownerUid: uid,
           name: result.name,
           formality: result.formality,
         );
@@ -194,9 +197,13 @@ Future<void> _deleteOutfit(
   );
   if (ok != true || !context.mounted) return;
 
+  final uid = ref.read(activeUidProvider);
+  if (uid == null) return;
   try {
-    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id);
+    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id, ownerUid: uid);
+    await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
     ref.invalidate(savedOutfitsProvider);
+    ref.invalidate(userPreferencesProvider);
     if (!context.mounted) return;
     ScaffoldMessenger.of(
       context,

@@ -91,6 +91,43 @@ void main() {
       expect(row['image_path'], '/foto/t_shirt-black.jpg');
     });
 
+    test('data pakaian dan outfit terpisah per owner_uid', () async {
+      Future<int> addFor(String uid, {String type = 't_shirt'}) =>
+          dao.insertWardrobeItem(
+            ownerUid: uid,
+            imagePath: '/foto/$uid-$type.jpg',
+            type: type,
+            slot: type == 'pants' ? 'bottom' : 'top',
+            color: 'black',
+            colorHex: '#1A1A1A',
+            confidence: 0.9,
+            formality: 'non_formal',
+          );
+
+      final aTop = await addFor('akun-a');
+      final aBottom = await addFor('akun-b', type: 'pants');
+      final bTop = await addFor('akun-b');
+
+      expect((await dao.wardrobe(ownerUid: 'akun-a')).length, 1);
+      expect((await dao.wardrobe(ownerUid: 'akun-b')).length, 2);
+
+      await dao.saveOutfit('A', 'non_formal', 0.7, [
+        aTop,
+        aBottom,
+      ], ownerUid: 'akun-a');
+      await dao.saveOutfit('B', 'non_formal', 0.7, [
+        bTop,
+        aBottom,
+      ], ownerUid: 'akun-b');
+
+      expect((await dao.savedOutfits(ownerUid: 'akun-a')).single.name, 'A');
+      expect((await dao.savedOutfits(ownerUid: 'akun-b')).single.name, 'B');
+
+      await dao.deleteUserData('akun-a');
+      expect(await dao.wardrobe(ownerUid: 'akun-a'), isEmpty);
+      expect((await dao.wardrobe(ownerUid: 'akun-b')).length, 2);
+    });
+
     test('formalitas di luar tiga nilai yang sah ditolak database', () async {
       expect(() => tambah(formality: 'sangat_formal'), throwsException);
     });
@@ -335,7 +372,12 @@ void main() {
       addTearDown(baru.close);
 
       expect(await adaTabel(baru, 'recommendation_history'), isTrue);
-      expect(await LocalDb.withDatabase(baru).preference('k'), 'v');
+      expect(
+        await LocalDb.withDatabase(
+          baru,
+        ).preference('k', ownerUid: '__legacy__'),
+        'v',
+      );
     });
   });
 }

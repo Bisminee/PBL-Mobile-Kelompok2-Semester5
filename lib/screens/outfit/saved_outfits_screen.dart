@@ -37,8 +37,12 @@ class SavedOutfitsScreen extends ConsumerWidget {
       ),
     );
     if (ok != true) return;
-    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id);
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) return;
+    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id, ownerUid: uid);
+    await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
     ref.invalidate(savedOutfitsProvider);
+    ref.invalidate(userPreferencesProvider);
   }
 
   @override

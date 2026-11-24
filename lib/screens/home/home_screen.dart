@@ -41,6 +41,8 @@ class HomeScreen extends ConsumerWidget {
     final user = ref.watch(authProvider);
     final wardrobe = ref.watch(wardrobeProvider);
     final outfits = ref.watch(recommendationsProvider).take(5).toList();
+    // Memuat metadata preferensi akun dari lokal/Firebase saat Home dibuka.
+    ref.watch(userPreferencesProvider);
 
     final miniItems = <Widget>[
       for (final g in wardrobe.reversed.take(4))

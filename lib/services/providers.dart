@@ -1,10 +1,8 @@
 import 'dart:async' show unawaited;
-import 'dart:io' show Directory, File;
+import 'dart:io' show File;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 import '../models/garment.dart';
 import '../models/outfit.dart';
@@ -14,17 +12,28 @@ import 'local_db.dart';
 import 'outfit_detail.dart';
 import 'outfit_engine.dart';
 import 'photo_source.dart';
+import 'photo_storage.dart';
 import 'recommender.dart';
+import 'user_preferences.dart';
+import 'user_repository.dart';
 
 /// Signed-in user (null = logged out). Local placeholder for the cloud profile.
 class AppUser {
-  const AppUser({required this.name, required this.email, this.photoUrl});
+  const AppUser({
+    required this.name,
+    required this.email,
+    this.photoUrl,
+    this.uid,
+  });
 
   final String name;
   final String email;
 
   /// URL foto profil dari akun Google. Null bila pengguna tidak punya foto.
   final String? photoUrl;
+
+  /// UID Firebase. Null pada mode uji lama atau pengguna yang belum login.
+  final String? uid;
 
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+'));
@@ -60,6 +69,7 @@ class AuthNotifier extends Notifier<AppUser?> {
     if (user == null) return null;
     final email = user.email ?? '';
     return AppUser(
+      uid: user.uid,
       name:
           user.displayName ??
           (email.contains('@') ? email.split('@').first : 'Pengguna'),
@@ -70,6 +80,29 @@ class AuthNotifier extends Notifier<AppUser?> {
 }
 
 final authProvider = NotifierProvider<AuthNotifier, AppUser?>(AuthNotifier.new);
+
+/// UID aktif. Semua data pengguna di SQLite difilter memakai nilai ini.
+final activeUidProvider = Provider<String?>((ref) {
+  return ref.watch(authProvider)?.uid;
+});
+
+final userRepositoryProvider = Provider<UserRepository>(
+  (ref) => UserRepository(),
+);
+
+final userPreferenceServiceProvider = Provider<UserPreferenceService>((ref) {
+  return UserPreferenceService(
+    ref.watch(localDbProvider),
+    ref.watch(userRepositoryProvider),
+  );
+});
+
+/// Metadata preferensi per akun. Sumber awal: outfit tersimpan.
+final userPreferencesProvider = FutureProvider<UserPreferences>((ref) async {
+  final uid = ref.watch(activeUidProvider);
+  if (uid == null) return UserPreferences.empty();
+  return ref.watch(userPreferenceServiceProvider).load(uid);
+});
 
 // ===========================================================================
 // ML dan database
@@ -226,13 +259,18 @@ final scanSessionProvider = NotifierProvider<ScanSessionNotifier, ScanSession>(
 class WardrobeNotifier extends Notifier<List<Garment>> {
   @override
   List<Garment> build() {
-    unawaited(_load()); // tidak menahan build; state terisi setelah DB terbaca
+    final uid = ref.watch(activeUidProvider);
+    if (uid == null) return <Garment>[];
+    unawaited(
+      _load(uid),
+    ); // tidak menahan build; state terisi setelah DB terbaca
     return <Garment>[];
   }
 
-  Future<void> _load() async {
+  Future<void> _load(String uid) async {
     try {
-      final rows = await ref.read(localDbProvider).wardrobe();
+      final rows = await ref.read(localDbProvider).wardrobe(ownerUid: uid);
+      if (ref.read(activeUidProvider) != uid) return;
       state = rows.map(Garment.fromRow).toList();
     } catch (_) {
       // DB belum siap atau aset belum terdaftar: biarkan lemari kosong agar app tidak crash saat start.
@@ -247,22 +285,16 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
     required String imagePath,
     required Detection d,
   }) async {
-    // Foto kamera biasanya ada di folder cache yang bisa dibersihkan sistem; salin ke folder dokumen.
-    final dir = await getApplicationDocumentsDirectory();
-    final folder = Directory(p.join(dir.path, _photoFolder));
-    await folder.create(recursive: true);
-    final saved = await File(imagePath).copy(
-      p.join(
-        folder.path,
-        '${DateTime.now().millisecondsSinceEpoch}${p.extension(imagePath)}',
-      ),
-    );
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) throw StateError('Belum ada akun aktif.');
+    final savedPath = await PhotoStorage.save(uid, imagePath);
 
     final style = d.topStyle;
     final id = await ref
         .read(localDbProvider)
         .insertWardrobeItem(
-          imagePath: saved.path,
+          ownerUid: uid,
+          imagePath: savedPath,
           type: d.type,
           slot: d.slot,
           color: d.color,
@@ -273,7 +305,7 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
         );
     final g = Garment.fromRow({
       'id': id,
-      'image_path': saved.path,
+      'image_path': savedPath,
       'garment_type': d.type,
       'slot': d.slot,
       'color_family': d.color,
@@ -294,13 +326,18 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
   /// Menyimpan perubahan atribut dari layar detail pakaian. Foto tidak diubah.
   Future<void> update(Garment garment) async {
     final id = int.tryParse(garment.id);
-    if (id == null || garment.garmentType == null || garment.slot == null) {
+    final uid = ref.read(activeUidProvider);
+    if (id == null ||
+        uid == null ||
+        garment.garmentType == null ||
+        garment.slot == null) {
       return;
     }
     await ref
         .read(localDbProvider)
         .updateWardrobeItem(
           id: id,
+          ownerUid: uid,
           type: garment.garmentType!,
           slot: garment.slot!,
           color: garment.colorFamily ?? 'other',
@@ -314,17 +351,16 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
     ];
   }
 
-  static const _photoFolder = 'wardrobe';
-
   void remove(String id) {
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) return;
     final target = state.where((g) => g.id == id).firstOrNull;
     final n = int.tryParse(id);
-    if (n != null) unawaited(ref.read(localDbProvider).deleteWardrobeItem(n));
-    final path = target?.imagePath;
-    // Hapus berkas foto hanya bila ada di folder milik app, bukan foto asli di galeri user.
-    if (path != null && p.basename(p.dirname(path)) == _photoFolder) {
-      unawaited(File(path).delete().then((_) {}, onError: (_) {}));
+    if (n != null) {
+      unawaited(ref.read(localDbProvider).deleteWardrobeItem(n, ownerUid: uid));
     }
+    final path = target?.imagePath;
+    if (path != null) unawaited(PhotoStorage.deleteFileIfOwned(path));
     state = state.where((g) => g.id != id).toList();
   }
 
@@ -341,8 +377,10 @@ final wardrobeProvider = NotifierProvider<WardrobeNotifier, List<Garment>>(
 /// Outfit yang disimpan pengguna dari layar detail. Dibaca dari SQLite.
 /// Panggil `ref.invalidate(savedOutfitsProvider)` setelah menyimpan outfit baru.
 final savedOutfitsProvider = FutureProvider<List<SavedOutfit>>((ref) async {
+  final uid = ref.watch(activeUidProvider);
+  if (uid == null) return const <SavedOutfit>[];
   try {
-    return await ref.read(localDbProvider).savedOutfits();
+    return await ref.read(localDbProvider).savedOutfits(ownerUid: uid);
   } catch (_) {
     return const <SavedOutfit>[];
   }
@@ -352,8 +390,12 @@ final savedOutfitsProvider = FutureProvider<List<SavedOutfit>>((ref) async {
 /// autoDispose: dibaca ulang dari SQLite setiap layar riwayat dibuka.
 final recommendationHistoryProvider =
     FutureProvider.autoDispose<List<SavedOutfit>>((ref) async {
+      final uid = ref.watch(activeUidProvider);
+      if (uid == null) return const <SavedOutfit>[];
       try {
-        return await ref.read(localDbProvider).recommendationHistory();
+        return await ref
+            .read(localDbProvider)
+            .recommendationHistory(ownerUid: uid);
       } catch (_) {
         return const <SavedOutfit>[];
       }
