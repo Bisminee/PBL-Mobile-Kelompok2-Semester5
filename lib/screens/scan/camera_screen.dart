@@ -112,7 +112,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       extra: PreviewArgs(path, source),
     );
     if (!mounted || _cameras.isEmpty) return;
-    if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+    // Tunggu transisi pop selesai sebelum controller baru dipasang.
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    if (!mounted || _cameras.isEmpty) return;
     await _initializeCamera(_cameras[_cameraIndex]);
   }
 
