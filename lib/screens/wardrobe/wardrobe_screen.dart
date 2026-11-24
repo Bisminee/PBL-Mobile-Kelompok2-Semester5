@@ -199,6 +199,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   @override
   Widget build(BuildContext context) {
     final all = ref.watch(wardrobeProvider);
+    final user = ref.watch(authProvider);
     final kueri = _search.text.trim().toLowerCase();
 
     // Item terbaru tampil paling atas.
@@ -258,12 +259,13 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                       width: 44,
                       height: 44,
                       decoration: const BoxDecoration(
-                        color: AppColors.accent,
+                        color: AppColors.secondaryBg,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.person_outline,
-                        color: Colors.white,
+                      alignment: Alignment.center,
+                      child: Text(
+                        user?.initials ?? '?',
+                        style: AppTextStyles.title,
                       ),
                     ),
                   ),
