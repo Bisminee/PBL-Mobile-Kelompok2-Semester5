@@ -253,7 +253,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => context.push(AppRoutes.camera),
+                    onTap: () => context.push(AppRoutes.profile),
                     child: Container(
                       width: 44,
                       height: 44,
@@ -261,7 +261,10 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         color: AppColors.accent,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.add, color: Colors.white),
+                      child: const Icon(
+                        Icons.person_outline,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
