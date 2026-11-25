@@ -29,8 +29,9 @@ class LocalDb {
   // Versi 3 menambah tabel recommendation_history untuk riwayat rekomendasi.
   // Versi 4 menambah lima warna baru ke ref_color agar edit atribut bisa
   // memakai 16 keluarga warna.
+  // Versi 5 memisahkan data pengguna per akun dengan owner_uid.
   // Catatan: versi 1 adalah skema di assets/db/fashion_app.db.
-  static const _version = 4;
+  static const _version = 5;
 
   // Satu Future dipakai bersama: pemanggil pertama (preload engine dan WardrobeNotifier jalan
   // hampir bersamaan) tidak boleh sama-sama menyalin file asset.
@@ -108,6 +109,55 @@ class LocalDb {
         }, conflictAlgorithm: ConflictAlgorithm.ignore);
       }
     }
+    if (versiLama < 5) {
+      for (final table in [
+        'wardrobe_item',
+        'outfit',
+        'recommendation_history',
+      ]) {
+        final columns = await d.rawQuery('PRAGMA table_info($table)');
+        final hasOwner = columns.any((c) => c['name'] == 'owner_uid');
+        if (!hasOwner) {
+          await d.execute('ALTER TABLE $table ADD COLUMN owner_uid TEXT');
+        }
+        await d.execute(
+          "UPDATE $table SET owner_uid = '__legacy__' "
+          'WHERE owner_uid IS NULL OR owner_uid = \'\'',
+        );
+      }
+
+      // app_preference lama memakai key sebagai primary key. Tabel baru
+      // memakai pasangan (owner_uid, key) agar preferensi tidak tercampur.
+      await d.execute(
+        'CREATE TABLE IF NOT EXISTS app_preference_v5 ('
+        'owner_uid TEXT NOT NULL, '
+        'key TEXT NOT NULL, '
+        'value TEXT NOT NULL, '
+        'PRIMARY KEY (owner_uid, key))',
+      );
+      final prefs = await d.query('app_preference');
+      for (final row in prefs) {
+        await d.insert('app_preference_v5', {
+          'owner_uid': '__legacy__',
+          'key': row['key'],
+          'value': row['value'],
+        }, conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
+      await d.execute('DROP TABLE app_preference');
+      await d.execute('ALTER TABLE app_preference_v5 RENAME TO app_preference');
+
+      await d.execute(
+        'CREATE INDEX IF NOT EXISTS idx_wardrobe_owner '
+        'ON wardrobe_item(owner_uid)',
+      );
+      await d.execute(
+        'CREATE INDEX IF NOT EXISTS idx_outfit_owner ON outfit(owner_uid)',
+      );
+      await d.execute(
+        'CREATE INDEX IF NOT EXISTS idx_history_owner '
+        'ON recommendation_history(owner_uid)',
+      );
+    }
   }
 
   // ---------- Lookup ML (hasil model sklearn yang sudah dihitung untuk semua kombinasi) ----------
@@ -154,6 +204,7 @@ class LocalDb {
   // ---------- Data user ----------
 
   Future<int> insertWardrobeItem({
+    required String ownerUid,
     required String imagePath,
     required String type,
     required String slot,
@@ -165,6 +216,7 @@ class LocalDb {
   }) async {
     final d = await db;
     return d.insert('wardrobe_item', {
+      'owner_uid': ownerUid,
       'image_path': imagePath,
       'garment_type': type,
       'slot': slot,
@@ -179,6 +231,7 @@ class LocalDb {
   /// Memperbarui atribut pakaian tanpa mengubah foto dan tanggal ditambahkan.
   Future<void> updateWardrobeItem({
     required int id,
+    required String ownerUid,
     required String type,
     required String slot,
     required String color,
@@ -197,27 +250,39 @@ class LocalDb {
         'formality': formality,
         'style': style,
       },
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ? AND owner_uid = ?',
+      whereArgs: [id, ownerUid],
     );
   }
 
   /// Urut id naik: item terbaru ada di akhir daftar (sesuai WardrobeNotifier.latest).
-  Future<List<Map<String, dynamic>>> wardrobe() async =>
-      (await db).query('wardrobe_item', orderBy: 'id ASC');
+  Future<List<Map<String, dynamic>>> wardrobe({
+    required String ownerUid,
+  }) async => (await db).query(
+    'wardrobe_item',
+    where: 'owner_uid = ?',
+    whereArgs: [ownerUid],
+    orderBy: 'id ASC',
+  );
 
-  Future<void> deleteWardrobeItem(int id) async =>
-      (await db).delete('wardrobe_item', where: 'id = ?', whereArgs: [id]);
+  Future<void> deleteWardrobeItem(int id, {required String ownerUid}) async =>
+      (await db).delete(
+        'wardrobe_item',
+        where: 'id = ? AND owner_uid = ?',
+        whereArgs: [id, ownerUid],
+      );
 
   Future<int> saveOutfit(
     String name,
     String formality,
     double score,
-    List<int> itemIds,
-  ) async {
+    List<int> itemIds, {
+    required String ownerUid,
+  }) async {
     final d = await db;
     return d.transaction((t) async {
       final id = await t.insert('outfit', {
+        'owner_uid': ownerUid,
         'name': name,
         'target_formality': formality,
         'match_score': score,
@@ -231,11 +296,17 @@ class LocalDb {
 
   /// True bila sudah ada outfit tersimpan dengan susunan item yang sama.
   /// Dipakai agar tombol "Simpan Outfit" tidak membuat duplikat.
-  Future<bool> outfitSaved(List<int> itemIds) async {
+  Future<bool> outfitSaved(
+    List<int> itemIds, {
+    required String ownerUid,
+  }) async {
     if (itemIds.length < 2) return false;
     final d = await db;
     final rows = await d.rawQuery(
-      'SELECT outfit_id, wardrobe_item_id FROM outfit_item',
+      'SELECT oi.outfit_id, oi.wardrobe_item_id '
+      'FROM outfit_item oi JOIN outfit o ON o.id = oi.outfit_id '
+      'WHERE o.owner_uid = ?',
+      [ownerUid],
     );
     final perOutfit = <int, Set<int>>{};
     for (final r in rows) {
@@ -252,6 +323,7 @@ class LocalDb {
   /// Mengubah nama dan formalitas outfit tersimpan tanpa mengubah itemnya.
   Future<void> updateSavedOutfit(
     int id, {
+    required String ownerUid,
     required String name,
     required String formality,
   }) async {
@@ -259,30 +331,50 @@ class LocalDb {
     await d.update(
       'outfit',
       {'name': name.trim(), 'target_formality': formality},
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ? AND owner_uid = ?',
+      whereArgs: [id, ownerUid],
     );
   }
 
   /// Menghapus satu outfit tersimpan. Item lemari tidak ikut dihapus.
-  Future<void> deleteSavedOutfit(int id) async {
+  Future<void> deleteSavedOutfit(int id, {required String ownerUid}) async {
     final d = await db;
     await d.transaction((t) async {
+      final owned = await t.query(
+        'outfit',
+        columns: ['id'],
+        where: 'id = ? AND owner_uid = ?',
+        whereArgs: [id, ownerUid],
+        limit: 1,
+      );
+      if (owned.isEmpty) return;
       await t.delete('outfit_item', where: 'outfit_id = ?', whereArgs: [id]);
-      await t.delete('outfit', where: 'id = ?', whereArgs: [id]);
+      await t.delete(
+        'outfit',
+        where: 'id = ? AND owner_uid = ?',
+        whereArgs: [id, ownerUid],
+      );
     });
   }
 
   /// Semua outfit tersimpan, terbaru lebih dulu, beserta item lemari di dalamnya.
-  Future<List<SavedOutfit>> savedOutfits() async {
+  Future<List<SavedOutfit>> savedOutfits({required String ownerUid}) async {
     final d = await db;
-    final outfits = await d.query('outfit', orderBy: 'id DESC');
+    final outfits = await d.query(
+      'outfit',
+      where: 'owner_uid = ?',
+      whereArgs: [ownerUid],
+      orderBy: 'id DESC',
+    );
     if (outfits.isEmpty) return <SavedOutfit>[];
 
     final rows = await d.rawQuery(
       'SELECT oi.outfit_id, w.* FROM outfit_item oi '
+      'JOIN outfit o ON o.id = oi.outfit_id '
       'JOIN wardrobe_item w ON w.id = oi.wardrobe_item_id '
+      'WHERE o.owner_uid = ? '
       'ORDER BY oi.outfit_id DESC',
+      [ownerUid],
     );
     final itemsPerOutfit = <int, List<Garment>>{};
     for (final row in rows) {
@@ -312,6 +404,7 @@ class LocalDb {
   /// Mencatat bahwa pengguna melihat rekomendasi atasan + bawahan ini.
   /// Pasangan yang sama tidak digandakan; catatan lama diganti yang terbaru.
   Future<void> logRecommendation({
+    required String ownerUid,
     required int topId,
     required int bottomId,
     required String title,
@@ -320,6 +413,7 @@ class LocalDb {
   }) async {
     final d = await db;
     await d.insert('recommendation_history', {
+      'owner_uid': ownerUid,
       'top_item_id': topId,
       'bottom_item_id': bottomId,
       'title': title,
@@ -330,10 +424,15 @@ class LocalDb {
 
   /// Riwayat rekomendasi, terbaru lebih dulu. Item yang sudah dihapus dari
   /// lemari ikut hilang dari riwayat.
-  Future<List<SavedOutfit>> recommendationHistory({int limit = 50}) async {
+  Future<List<SavedOutfit>> recommendationHistory({
+    required String ownerUid,
+    int limit = 50,
+  }) async {
     final d = await db;
     final rows = await d.query(
       'recommendation_history',
+      where: 'owner_uid = ?',
+      whereArgs: [ownerUid],
       orderBy: 'id DESC',
       limit: limit,
     );
@@ -347,8 +446,9 @@ class LocalDb {
     }.toList();
     final items = await d.query(
       'wardrobe_item',
-      where: 'id IN (${List.filled(ids.length, '?').join(',')})',
-      whereArgs: ids,
+      where:
+          'owner_uid = ? AND id IN (${List.filled(ids.length, '?').join(',')})',
+      whereArgs: [ownerUid, ...ids],
     );
     final byId = {for (final r in items) r['id'] as int: Garment.fromRow(r)};
 
@@ -372,23 +472,117 @@ class LocalDb {
 
   // ---------- Pengaturan lokal (mis. preferensi notifikasi) ----------
 
-  Future<String?> preference(String key) async {
+  Future<String?> preference(String key, {required String ownerUid}) async {
     final d = await db;
     final rows = await d.query(
       'app_preference',
-      where: 'key = ?',
-      whereArgs: [key],
+      where: 'owner_uid = ? AND key = ?',
+      whereArgs: [ownerUid, key],
       limit: 1,
     );
     return rows.isEmpty ? null : rows.first['value'] as String?;
   }
 
-  Future<void> setPreference(String key, String value) async {
+  Future<void> setPreference(
+    String key,
+    String value, {
+    required String ownerUid,
+  }) async {
     final d = await db;
     await d.insert('app_preference', {
+      'owner_uid': ownerUid,
       'key': key,
       'value': value,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  /// Jumlah data lama yang belum memiliki pemilik akun.
+  Future<int> legacyDataCount() async {
+    final d = await db;
+    final rows = await d.rawQuery(
+      "SELECT "
+      "(SELECT COUNT(*) FROM wardrobe_item WHERE owner_uid = '__legacy__') + "
+      "(SELECT COUNT(*) FROM outfit WHERE owner_uid = '__legacy__') + "
+      "(SELECT COUNT(*) FROM recommendation_history WHERE owner_uid = '__legacy__') + "
+      "(SELECT COUNT(*) FROM app_preference WHERE owner_uid = '__legacy__') "
+      'AS n',
+    );
+    return (rows.first['n'] as num?)?.toInt() ?? 0;
+  }
+
+  /// Item lama yang belum memiliki pemilik akun.
+  Future<List<Map<String, dynamic>>> legacyWardrobe() async => (await db).query(
+    'wardrobe_item',
+    where: "owner_uid = '__legacy__'",
+    orderBy: 'id ASC',
+  );
+
+  /// Memindahkan satu item lama ke akun dan memperbarui path fotonya.
+  Future<void> claimLegacyWardrobeItem(
+    int id, {
+    required String ownerUid,
+    required String imagePath,
+  }) async {
+    final d = await db;
+    await d.update(
+      'wardrobe_item',
+      {'owner_uid': ownerUid, 'image_path': imagePath},
+      where: "id = ? AND owner_uid = '__legacy__'",
+      whereArgs: [id],
+    );
+  }
+
+  /// Memindahkan seluruh data lama ke akun yang sedang login.
+  Future<void> claimLegacyData(String ownerUid) async {
+    final d = await db;
+    await d.transaction((t) async {
+      for (final table in [
+        'wardrobe_item',
+        'outfit',
+        'recommendation_history',
+        'app_preference',
+      ]) {
+        await t.update(table, {
+          'owner_uid': ownerUid,
+        }, where: "owner_uid = '__legacy__'");
+      }
+    });
+  }
+
+  /// Menghapus seluruh data milik satu akun. Tabel referensi dan ML tidak disentuh.
+  Future<void> deleteUserData(String ownerUid) async {
+    final d = await db;
+    await d.transaction((t) async {
+      final outfits = await t.query(
+        'outfit',
+        columns: ['id'],
+        where: 'owner_uid = ?',
+        whereArgs: [ownerUid],
+      );
+      for (final row in outfits) {
+        await t.delete(
+          'outfit_item',
+          where: 'outfit_id = ?',
+          whereArgs: [row['id']],
+        );
+      }
+      await t.delete('outfit', where: 'owner_uid = ?', whereArgs: [ownerUid]);
+      await t.delete(
+        'recommendation_history',
+        where: 'owner_uid = ?',
+        whereArgs: [ownerUid],
+      );
+      await t.delete(
+        'wardrobe_item',
+        where: 'owner_uid = ?',
+        whereArgs: [ownerUid],
+      );
+      await t.delete(
+        'app_preference',
+        where: 'owner_uid = ?',
+        whereArgs: [ownerUid],
+      );
+    });
   }
 
   /// Saran item untuk satu slot yang belum ada, diurut rata-rata skor pasangan terhadap item terpilih.

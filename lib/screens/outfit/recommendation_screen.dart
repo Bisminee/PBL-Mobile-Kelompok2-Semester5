@@ -58,7 +58,10 @@ class _RecommendationScreenState extends ConsumerState<RecommendationScreen> {
   @override
   Widget build(BuildContext context) {
     final groups = ref.watch(recommendationGroupsProvider);
-    final saved = ref.watch(savedOutfitsProvider).valueOrNull ?? const [];
+    final savedState = ref.watch(savedOutfitsProvider);
+    final saved = savedState.isLoading
+        ? const <SavedOutfit>[]
+        : (savedState.valueOrNull ?? const <SavedOutfit>[]);
     final visible = _visibleGroups(groups, saved);
     final engineReady = ref.watch(engineProvider) != null;
     final anchor = widget.anchor;

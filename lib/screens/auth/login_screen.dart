@@ -69,6 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             .read(authProvider.notifier)
             .setUser(
               AppUser(
+                uid: user.uid,
                 name:
                     user.displayName ??
                     user.email?.split('@').first ??
@@ -106,7 +107,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     authListenable.debugSignIn();
     ref
         .read(authProvider.notifier)
-        .setUser(const AppUser(name: 'Mode Uji', email: 'tanpa-akun'));
+        .setUser(
+          const AppUser(uid: 'mode-uji', name: 'Mode Uji', email: 'tanpa-akun'),
+        );
     // Pindah eksplisit; jangan hanya bergantung pada redirect router.
     context.go(AppRoutes.home);
   }

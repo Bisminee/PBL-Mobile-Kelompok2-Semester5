@@ -103,6 +103,16 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
   }
 
+  /// Pratinjau menggantikan halaman kamera, bukan ditumpuk di atasnya.
+  /// Dengan begitu controller lama benar-benar dibuang dan tombol Ambil Ulang
+  /// selalu membuka instance kamera baru.
+  void _openPreview(String path, ScanSource source) {
+    context.pushReplacement(
+      AppRoutes.cameraPreview,
+      extra: PreviewArgs(path, source),
+    );
+  }
+
   Future<void> _takePicture() async {
     final controller = _controller;
     if (controller == null ||
@@ -126,10 +136,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       }
       // Foto baru ditambahkan ke lemari setelah dikonfirmasi di halaman
       // pratinjau ("Gunakan Foto"); "Ambil Ulang" kembali ke sini.
-      context.push(
-        AppRoutes.cameraPreview,
-        extra: PreviewArgs(path, ScanSource.camera),
-      );
+      _openPreview(path, ScanSource.camera);
     } on CameraException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -192,10 +199,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     try {
       final path = await pickGalleryPhoto(context, ref);
       if (!mounted || path == null) return;
-      context.push(
-        AppRoutes.cameraPreview,
-        extra: PreviewArgs(path, ScanSource.gallery),
-      );
+      _openPreview(path, ScanSource.gallery);
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }

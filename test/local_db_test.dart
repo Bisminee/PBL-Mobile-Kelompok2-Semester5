@@ -11,6 +11,7 @@ void main() {
   sqfliteFfiInit();
   final factory = databaseFactoryFfi;
   const asset = 'assets/db/fashion_app.db';
+  const testUid = 'test';
 
   late Directory folder;
   late Database database;
@@ -35,6 +36,7 @@ void main() {
     String color = 'black',
     String formality = 'non_formal',
   }) => dao.insertWardrobeItem(
+    ownerUid: testUid,
     imagePath: '/foto/$type-$color.jpg',
     type: type,
     slot: slot,
@@ -53,7 +55,7 @@ void main() {
       final a = await tambah();
       final b = await tambah(type: 'pants', slot: 'bottom', color: 'blue');
 
-      final rows = await dao.wardrobe();
+      final rows = await dao.wardrobe(ownerUid: testUid);
 
       expect(rows.map((r) => r['id']), [a, b]);
       expect(rows.first['garment_type'], 't_shirt');
@@ -64,15 +66,16 @@ void main() {
       final a = await tambah();
       final b = await tambah(type: 'pants', slot: 'bottom');
 
-      await dao.deleteWardrobeItem(a);
+      await dao.deleteWardrobeItem(a, ownerUid: testUid);
 
-      final rows = await dao.wardrobe();
+      final rows = await dao.wardrobe(ownerUid: testUid);
       expect(rows.map((r) => r['id']), [b]);
     });
 
     test('updateWardrobeItem mengubah atribut tanpa mengganti foto', () async {
       final id = await tambah();
       await dao.updateWardrobeItem(
+        ownerUid: testUid,
         id: id,
         type: 'shirt',
         slot: 'top',
@@ -82,13 +85,50 @@ void main() {
         style: 'elegant',
       );
 
-      final row = (await dao.wardrobe()).single;
+      final row = (await dao.wardrobe(ownerUid: testUid)).single;
       expect(row['garment_type'], 'shirt');
       expect(row['color_family'], 'navy');
       expect(row['color_hex'], '#1A237E');
       expect(row['formality'], 'formal');
       expect(row['style'], 'elegant');
       expect(row['image_path'], '/foto/t_shirt-black.jpg');
+    });
+
+    test('data pakaian dan outfit terpisah per owner_uid', () async {
+      Future<int> addFor(String uid, {String type = 't_shirt'}) =>
+          dao.insertWardrobeItem(
+            ownerUid: uid,
+            imagePath: '/foto/$uid-$type.jpg',
+            type: type,
+            slot: type == 'pants' ? 'bottom' : 'top',
+            color: 'black',
+            colorHex: '#1A1A1A',
+            confidence: 0.9,
+            formality: 'non_formal',
+          );
+
+      final aTop = await addFor('akun-a');
+      final aBottom = await addFor('akun-b', type: 'pants');
+      final bTop = await addFor('akun-b');
+
+      expect((await dao.wardrobe(ownerUid: 'akun-a')).length, 1);
+      expect((await dao.wardrobe(ownerUid: 'akun-b')).length, 2);
+
+      await dao.saveOutfit('A', 'non_formal', 0.7, [
+        aTop,
+        aBottom,
+      ], ownerUid: 'akun-a');
+      await dao.saveOutfit('B', 'non_formal', 0.7, [
+        bTop,
+        aBottom,
+      ], ownerUid: 'akun-b');
+
+      expect((await dao.savedOutfits(ownerUid: 'akun-a')).single.name, 'A');
+      expect((await dao.savedOutfits(ownerUid: 'akun-b')).single.name, 'B');
+
+      await dao.deleteUserData('akun-a');
+      expect(await dao.wardrobe(ownerUid: 'akun-a'), isEmpty);
+      expect((await dao.wardrobe(ownerUid: 'akun-b')).length, 2);
     });
 
     test('formalitas di luar tiga nilai yang sah ditolak database', () async {
@@ -102,10 +142,16 @@ void main() {
       final bawah1 = await tambah(type: 'pants', slot: 'bottom');
       final bawah2 = await tambah(type: 'shorts', slot: 'bottom');
 
-      await dao.saveOutfit('Pertama', 'non_formal', 0.8, [atas, bawah1]);
-      await dao.saveOutfit('Kedua', 'formal', 0.6, [atas, bawah2]);
+      await dao.saveOutfit('Pertama', 'non_formal', 0.8, [
+        atas,
+        bawah1,
+      ], ownerUid: testUid);
+      await dao.saveOutfit('Kedua', 'formal', 0.6, [
+        atas,
+        bawah2,
+      ], ownerUid: testUid);
 
-      final hasil = await dao.savedOutfits();
+      final hasil = await dao.savedOutfits(ownerUid: testUid);
       expect(hasil.map((o) => o.name), ['Kedua', 'Pertama']);
       expect(hasil.first.formality, 'formal');
       expect(hasil.first.score, 0.6);
@@ -120,11 +166,14 @@ void main() {
       final atas = await tambah();
       final bawah = await tambah(type: 'pants', slot: 'bottom');
       final lain = await tambah(type: 'skirt', slot: 'bottom');
-      await dao.saveOutfit('Paduan', 'non_formal', 0.5, [atas, bawah]);
+      await dao.saveOutfit('Paduan', 'non_formal', 0.5, [
+        atas,
+        bawah,
+      ], ownerUid: testUid);
 
-      expect(await dao.outfitSaved([bawah, atas]), isTrue);
-      expect(await dao.outfitSaved([atas, lain]), isFalse);
-      expect(await dao.outfitSaved([atas]), isFalse);
+      expect(await dao.outfitSaved([bawah, atas], ownerUid: testUid), isTrue);
+      expect(await dao.outfitSaved([atas, lain], ownerUid: testUid), isFalse);
+      expect(await dao.outfitSaved([atas], ownerUid: testUid), isFalse);
     });
 
     test(
@@ -135,23 +184,26 @@ void main() {
         final id = await dao.saveOutfit('Paduan', 'non_formal', 0.5, [
           atas,
           bawah,
-        ]);
+        ], ownerUid: testUid);
 
-        await dao.deleteSavedOutfit(id);
+        await dao.deleteSavedOutfit(id, ownerUid: testUid);
 
-        expect(await dao.savedOutfits(), isEmpty);
-        expect((await dao.wardrobe()).length, 2);
+        expect(await dao.savedOutfits(ownerUid: testUid), isEmpty);
+        expect((await dao.wardrobe(ownerUid: testUid)).length, 2);
       },
     );
 
     test('menghapus item lemari ikut menghapus keterkaitan outfit', () async {
       final atas = await tambah();
       final bawah = await tambah(type: 'pants', slot: 'bottom');
-      await dao.saveOutfit('Paduan', 'non_formal', 0.5, [atas, bawah]);
+      await dao.saveOutfit('Paduan', 'non_formal', 0.5, [
+        atas,
+        bawah,
+      ], ownerUid: testUid);
 
-      await dao.deleteWardrobeItem(bawah);
+      await dao.deleteWardrobeItem(bawah, ownerUid: testUid);
 
-      final hasil = await dao.savedOutfits();
+      final hasil = await dao.savedOutfits(ownerUid: testUid);
       expect(hasil.single.items.map((g) => g.id), ['$atas']);
     });
   });
@@ -159,6 +211,7 @@ void main() {
   group('riwayat rekomendasi', () {
     Future<void> catat(int atas, int bawah, {String judul = 'Paduan'}) =>
         dao.logRecommendation(
+          ownerUid: testUid,
           topId: atas,
           bottomId: bawah,
           title: judul,
@@ -167,7 +220,7 @@ void main() {
         );
 
     test('kosong sebelum ada yang dicatat', () async {
-      expect(await dao.recommendationHistory(), isEmpty);
+      expect(await dao.recommendationHistory(ownerUid: testUid), isEmpty);
     });
 
     test(
@@ -180,7 +233,7 @@ void main() {
         await catat(atas, bawah1, judul: 'Lama');
         await catat(atas, bawah2, judul: 'Baru');
 
-        final hasil = await dao.recommendationHistory();
+        final hasil = await dao.recommendationHistory(ownerUid: testUid);
         expect(hasil.map((o) => o.name), ['Baru', 'Lama']);
         expect(hasil.first.formality, 'semi_formal');
         expect(hasil.first.score, 0.7);
@@ -199,7 +252,7 @@ void main() {
         await catat(atas, bawah2, judul: 'B');
         await catat(atas, bawah1, judul: 'A');
 
-        final hasil = await dao.recommendationHistory();
+        final hasil = await dao.recommendationHistory(ownerUid: testUid);
         expect(hasil.map((o) => o.name), ['A', 'B']);
       },
     );
@@ -211,7 +264,10 @@ void main() {
         await catat(atas, bawah, judul: 'Paduan $i');
       }
 
-      final hasil = await dao.recommendationHistory(limit: 2);
+      final hasil = await dao.recommendationHistory(
+        ownerUid: testUid,
+        limit: 2,
+      );
       expect(hasil.map((o) => o.name), ['Paduan 2', 'Paduan 1']);
     });
 
@@ -220,9 +276,9 @@ void main() {
       final bawah = await tambah(type: 'pants', slot: 'bottom');
       await catat(atas, bawah);
 
-      await dao.deleteWardrobeItem(atas);
+      await dao.deleteWardrobeItem(atas, ownerUid: testUid);
 
-      expect(await dao.recommendationHistory(), isEmpty);
+      expect(await dao.recommendationHistory(ownerUid: testUid), isEmpty);
     });
 
     test('riwayat tetap ada setelah database dibuka ulang', () async {
@@ -235,18 +291,18 @@ void main() {
       database = await factory.openDatabase(path, options: LocalDb.openOptions);
       dao = LocalDb.withDatabase(database);
 
-      expect((await dao.recommendationHistory()).length, 1);
+      expect((await dao.recommendationHistory(ownerUid: testUid)).length, 1);
     });
   });
 
   group('preferensi', () {
     test('null bila belum diatur, lalu nilai terakhir yang berlaku', () async {
-      expect(await dao.preference('notifikasi'), isNull);
+      expect(await dao.preference('notifikasi', ownerUid: testUid), isNull);
 
-      await dao.setPreference('notifikasi', 'on');
-      await dao.setPreference('notifikasi', 'off');
+      await dao.setPreference('notifikasi', 'on', ownerUid: testUid);
+      await dao.setPreference('notifikasi', 'off', ownerUid: testUid);
 
-      expect(await dao.preference('notifikasi'), 'off');
+      expect(await dao.preference('notifikasi', ownerUid: testUid), 'off');
     });
   });
 
@@ -335,7 +391,12 @@ void main() {
       addTearDown(baru.close);
 
       expect(await adaTabel(baru, 'recommendation_history'), isTrue);
-      expect(await LocalDb.withDatabase(baru).preference('k'), 'v');
+      expect(
+        await LocalDb.withDatabase(
+          baru,
+        ).preference('k', ownerUid: '__legacy__'),
+        'v',
+      );
     });
   });
 }

@@ -7,6 +7,7 @@ import '../../config/app_routes.dart';
 import '../../config/app_text_styles.dart';
 import '../../services/auth_listenable.dart';
 import '../../services/auth_service.dart';
+import '../../services/photo_storage.dart';
 import '../../services/profile_prefs.dart';
 import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
@@ -36,8 +37,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   /// Preferensi disimpan di SQLite lokal (tabel app_preference), bukan di cloud,
   /// supaya tetap ada walau pengguna sedang offline.
   Future<void> _muatPreferensi() async {
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) return;
     try {
-      final nilai = await ref.read(localDbProvider).preference('notif_enabled');
+      final nilai = await ref
+          .read(localDbProvider)
+          .preference('notif_enabled', ownerUid: uid);
       if (mounted) {
         setState(() => _notif = parseBoolPreference(nilai));
       }
@@ -47,11 +52,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _ubahNotif(bool value) async {
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) return;
     setState(() => _notif = value);
     try {
       await ref
           .read(localDbProvider)
-          .setPreference('notif_enabled', encodeBoolPreference(value));
+          .setPreference(
+            'notif_enabled',
+            encodeBoolPreference(value),
+            ownerUid: uid,
+          );
     } catch (error) {
       debugPrint('Gagal menyimpan preferensi notifikasi: $error');
     }
@@ -95,6 +106,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           .read(authProvider.notifier)
           .setUser(
             AppUser(
+              uid: terbaru.uid,
               name: terbaru.displayName ?? rapi,
               email: terbaru.email ?? user?.email ?? '',
               photoUrl: terbaru.photoURL,
@@ -117,6 +129,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await _authService.signOut();
       authListenable.setSignedIn(false);
       ref.read(authProvider.notifier).signOut();
+      ref.read(scanSessionProvider.notifier).reset();
       ref.read(wardrobeProvider.notifier).clear();
       if (mounted) context.go(AppRoutes.login);
     } catch (error) {
@@ -153,12 +166,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
 
     if (confirmed != true) return;
+    final uid = ref.read(activeUidProvider);
     setState(() => _busy = true);
 
     try {
       await _authService.deleteAccount();
+      if (uid != null) {
+        await ref.read(localDbProvider).deleteUserData(uid);
+        await PhotoStorage.deleteUserFolder(uid);
+      }
       authListenable.setSignedIn(false);
       ref.read(authProvider.notifier).signOut();
+      ref.read(scanSessionProvider.notifier).reset();
       ref.read(wardrobeProvider.notifier).clear();
       if (mounted) context.go(AppRoutes.login);
     } on AuthReauthRequiredException {
@@ -200,8 +219,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider);
-    final jumlahOutfit =
-        ref.watch(savedOutfitsProvider).valueOrNull?.length ?? 0;
+    final outfitState = ref.watch(savedOutfitsProvider);
+    final jumlahOutfit = outfitState.isLoading
+        ? 0
+        : (outfitState.valueOrNull?.length ?? 0);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

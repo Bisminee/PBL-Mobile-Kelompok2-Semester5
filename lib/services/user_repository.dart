@@ -71,6 +71,26 @@ class UserRepository {
     await batch.commit();
   }
 
+  /// Membaca metadata preferensi pengguna.
+  Future<Map<String, dynamic>> loadPreferences(String uid) async {
+    final snap = await _firestore.collection('profiles').doc(uid).get();
+    final raw = snap.data()?['preferences'];
+    return raw is Map<String, dynamic>
+        ? Map<String, dynamic>.from(raw)
+        : <String, dynamic>{};
+  }
+
+  /// Menyimpan metadata preferensi tanpa menimpa field profil lain.
+  Future<void> savePreferences(
+    String uid,
+    Map<String, dynamic> preferences,
+  ) async {
+    await _firestore.collection('profiles').doc(uid).set({
+      'preferences': preferences,
+      'updated_at': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   /// Menghapus dokumen pengguna dan profil dari Firestore.
   Future<void> deleteProfile(String uid) async {
     final batch = _firestore.batch();

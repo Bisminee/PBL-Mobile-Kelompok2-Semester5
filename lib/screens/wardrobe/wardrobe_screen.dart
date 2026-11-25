@@ -8,6 +8,7 @@ import '../../config/app_text_styles.dart';
 import '../../models/garment.dart';
 import '../../models/garment_labels.dart';
 import '../../models/saved_outfit.dart';
+import '../../services/account_data_service.dart';
 import '../../services/providers.dart';
 import '../../services/saved_outfit_actions.dart';
 import '../../widgets/common/garment_photo.dart';
@@ -124,6 +125,50 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     }
   }
 
+  Future<void> _claimLegacy() async {
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Pindahkan data lama?'),
+        content: const Text(
+          'Ditemukan pakaian atau outfit dari versi aplikasi sebelumnya. '
+          'Pindahkan data itu ke akun yang sedang login?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Bukan milik saya'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Pindahkan'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    try {
+      await ref.read(accountDataServiceProvider).claimLegacy(uid);
+      await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
+      ref.invalidate(wardrobeProvider);
+      ref.invalidate(savedOutfitsProvider);
+      ref.invalidate(recommendationHistoryProvider);
+      ref.invalidate(legacyDataCountProvider);
+      ref.invalidate(userPreferencesProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data lama dipindahkan ke akun ini.')),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal memindahkan data lama.')),
+      );
+    }
+  }
+
   Future<void> _deleteOutfit(SavedOutfit outfit) async {
     final ok = await showDialog<bool>(
       context: context,
@@ -143,13 +188,18 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
       ),
     );
     if (ok != true) return;
-    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id);
+    final uid = ref.read(activeUidProvider);
+    if (uid == null) return;
+    await ref.read(localDbProvider).deleteSavedOutfit(outfit.id, ownerUid: uid);
+    await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
     ref.invalidate(savedOutfitsProvider);
+    ref.invalidate(userPreferencesProvider);
   }
 
   @override
   Widget build(BuildContext context) {
     final all = ref.watch(wardrobeProvider);
+    final user = ref.watch(authProvider);
     final kueri = _search.text.trim().toLowerCase();
 
     // Item terbaru tampil paling atas.
@@ -164,7 +214,11 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     }).toList();
 
     final outfits = ref.watch(savedOutfitsProvider);
-    final semuaOutfit = outfits.valueOrNull ?? const [];
+    final legacyCount = ref.watch(legacyDataCountProvider).valueOrNull ?? 0;
+    // Jangan tampilkan nilai cache saat provider memuat akun baru.
+    final semuaOutfit = outfits.isLoading
+        ? const <SavedOutfit>[]
+        : (outfits.valueOrNull ?? const <SavedOutfit>[]);
     final outfitTersaring = semuaOutfit.where((o) {
       final cocokTeks =
           kueri.isEmpty ||
@@ -203,20 +257,53 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => context.push(AppRoutes.camera),
+                    onTap: () => context.push(AppRoutes.profile),
                     child: Container(
                       width: 44,
                       height: 44,
                       decoration: const BoxDecoration(
-                        color: AppColors.accent,
+                        color: AppColors.secondaryBg,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.add, color: Colors.white),
+                      alignment: Alignment.center,
+                      child: Text(
+                        user?.initials ?? '?',
+                        style: AppTextStyles.title,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+            if (legacyCount > 0) ...[
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBg,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.accent),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.inventory_2_outlined),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text(
+                          'Ditemukan data dari versi aplikasi sebelumnya.',
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _claimLegacy,
+                        child: const Text('Pindahkan'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 14),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),

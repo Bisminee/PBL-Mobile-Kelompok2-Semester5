@@ -53,9 +53,12 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
 
   Future<void> _cekSudahDisimpan(Outfit o) async {
     final ids = _itemIds(o);
-    if (ids.length < 2) return;
+    final uid = ref.read(activeUidProvider);
+    if (ids.length < 2 || uid == null) return;
     try {
-      final sudah = await ref.read(localDbProvider).outfitSaved(ids);
+      final sudah = await ref
+          .read(localDbProvider)
+          .outfitSaved(ids, ownerUid: uid);
       if (mounted && sudah) setState(() => _saved = true);
     } catch (_) {
       // Database belum siap: biarkan tombol aktif.
@@ -65,11 +68,13 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   /// Membuka detail dihitung sebagai melihat rekomendasi; dicatat ke riwayat.
   Future<void> _catatRiwayat(Outfit o) async {
     final ids = _itemIds(o);
-    if (ids.length < 2) return;
+    final uid = ref.read(activeUidProvider);
+    if (ids.length < 2 || uid == null) return;
     try {
       await ref
           .read(localDbProvider)
           .logRecommendation(
+            ownerUid: uid,
             topId: ids[0],
             bottomId: ids[1],
             title: o.title,
@@ -84,14 +89,23 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   Future<void> _saveOutfit(Outfit o) async {
     if (_saved) return;
     final ids = _itemIds(o);
-    if (ids.length < 2) return;
+    final uid = ref.read(activeUidProvider);
+    if (ids.length < 2 || uid == null) return;
     try {
       await ref
           .read(localDbProvider)
-          .saveOutfit(o.title, o.formality ?? 'non_formal', o.score, ids);
+          .saveOutfit(
+            o.title,
+            o.formality ?? 'non_formal',
+            o.score,
+            ids,
+            ownerUid: uid,
+          );
       await _catatRiwayat(o);
+      await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
       ref.invalidate(savedOutfitsProvider);
       ref.invalidate(recommendationHistoryProvider);
+      ref.invalidate(userPreferencesProvider);
       if (!mounted) return;
       setState(() => _saved = true);
       ScaffoldMessenger.of(
