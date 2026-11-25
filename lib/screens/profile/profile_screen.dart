@@ -219,8 +219,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider);
-    final jumlahOutfit =
-        ref.watch(savedOutfitsProvider).valueOrNull?.length ?? 0;
+    final outfitState = ref.watch(savedOutfitsProvider);
+    final jumlahOutfit = outfitState.isLoading
+        ? 0
+        : (outfitState.valueOrNull?.length ?? 0);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

@@ -160,7 +160,9 @@ Future<void> _editOutfit(
           name: result.name,
           formality: result.formality,
         );
+    await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
     ref.invalidate(savedOutfitsProvider);
+    ref.invalidate(userPreferencesProvider);
     if (!context.mounted) return;
     ScaffoldMessenger.of(
       context,

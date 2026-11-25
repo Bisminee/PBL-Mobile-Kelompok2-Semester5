@@ -53,7 +53,7 @@ class PhotoStorage {
     return Directory(p.join(base.path, 'wardrobe'));
   }
 
-  /// Menyalin foto lama tanpa menghapus sumbernya. Sumber baru dihapus setelah
+  /// Menyalin foto lama tanpa menghapus sumbernya. Sumber lama dihapus setelah
   /// seluruh baris database berhasil diklaim, sehingga proses yang terhenti di
   /// tengah tidak menghilangkan foto.
   static Future<String?> copyLegacyFile(String uid, String oldPath) async {
