@@ -12,21 +12,29 @@ class AccountDataService {
 
   Future<int> legacyCount() => _db.legacyDataCount();
 
-  /// Klaim manual: foto dipindahkan ke folder uid, lalu baris database diberi
-  /// owner_uid. Jika pemindahan foto gagal, path lama tetap dipakai agar data
-  /// tidak hilang.
+  /// Klaim manual: foto disalin ke folder uid, lalu baris database diberi
+  /// owner_uid. Foto lama baru dihapus setelah semua baris berhasil diklaim,
+  /// sehingga proses yang terhenti di tengah tidak menghilangkan data.
   Future<void> claimLegacy(String uid) async {
     final items = await _db.legacyWardrobe();
+    final oldPhotos = <String>[];
     for (final item in items) {
       final id = item['id'] as int;
       final oldPath = item['image_path'] as String?;
       var path = oldPath ?? '';
       if (oldPath != null && oldPath.isNotEmpty) {
-        path = await PhotoStorage.moveLegacyFile(uid, oldPath) ?? oldPath;
+        final copied = await PhotoStorage.copyLegacyFile(uid, oldPath);
+        if (copied != null) {
+          path = copied;
+          oldPhotos.add(oldPath);
+        }
       }
       await _db.claimLegacyWardrobeItem(id, ownerUid: uid, imagePath: path);
     }
     await _db.claimLegacyData(uid);
+    for (final oldPath in oldPhotos) {
+      await PhotoStorage.deleteFileIfOwned(oldPath);
+    }
   }
 
   Future<void> deleteUserData(String uid) async {

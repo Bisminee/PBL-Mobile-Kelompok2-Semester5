@@ -204,7 +204,7 @@ class LocalDb {
   // ---------- Data user ----------
 
   Future<int> insertWardrobeItem({
-    String ownerUid = 'default',
+    required String ownerUid,
     required String imagePath,
     required String type,
     required String slot,
@@ -231,7 +231,7 @@ class LocalDb {
   /// Memperbarui atribut pakaian tanpa mengubah foto dan tanggal ditambahkan.
   Future<void> updateWardrobeItem({
     required int id,
-    String ownerUid = 'default',
+    required String ownerUid,
     required String type,
     required String slot,
     required String color,
@@ -257,7 +257,7 @@ class LocalDb {
 
   /// Urut id naik: item terbaru ada di akhir daftar (sesuai WardrobeNotifier.latest).
   Future<List<Map<String, dynamic>>> wardrobe({
-    String ownerUid = 'default',
+    required String ownerUid,
   }) async => (await db).query(
     'wardrobe_item',
     where: 'owner_uid = ?',
@@ -265,21 +265,19 @@ class LocalDb {
     orderBy: 'id ASC',
   );
 
-  Future<void> deleteWardrobeItem(
-    int id, {
-    String ownerUid = 'default',
-  }) async => (await db).delete(
-    'wardrobe_item',
-    where: 'id = ? AND owner_uid = ?',
-    whereArgs: [id, ownerUid],
-  );
+  Future<void> deleteWardrobeItem(int id, {required String ownerUid}) async =>
+      (await db).delete(
+        'wardrobe_item',
+        where: 'id = ? AND owner_uid = ?',
+        whereArgs: [id, ownerUid],
+      );
 
   Future<int> saveOutfit(
     String name,
     String formality,
     double score,
     List<int> itemIds, {
-    String ownerUid = 'default',
+    required String ownerUid,
   }) async {
     final d = await db;
     return d.transaction((t) async {
@@ -300,7 +298,7 @@ class LocalDb {
   /// Dipakai agar tombol "Simpan Outfit" tidak membuat duplikat.
   Future<bool> outfitSaved(
     List<int> itemIds, {
-    String ownerUid = 'default',
+    required String ownerUid,
   }) async {
     if (itemIds.length < 2) return false;
     final d = await db;
@@ -325,7 +323,7 @@ class LocalDb {
   /// Mengubah nama dan formalitas outfit tersimpan tanpa mengubah itemnya.
   Future<void> updateSavedOutfit(
     int id, {
-    String ownerUid = 'default',
+    required String ownerUid,
     required String name,
     required String formality,
   }) async {
@@ -339,7 +337,7 @@ class LocalDb {
   }
 
   /// Menghapus satu outfit tersimpan. Item lemari tidak ikut dihapus.
-  Future<void> deleteSavedOutfit(int id, {String ownerUid = 'default'}) async {
+  Future<void> deleteSavedOutfit(int id, {required String ownerUid}) async {
     final d = await db;
     await d.transaction((t) async {
       final owned = await t.query(
@@ -360,7 +358,7 @@ class LocalDb {
   }
 
   /// Semua outfit tersimpan, terbaru lebih dulu, beserta item lemari di dalamnya.
-  Future<List<SavedOutfit>> savedOutfits({String ownerUid = 'default'}) async {
+  Future<List<SavedOutfit>> savedOutfits({required String ownerUid}) async {
     final d = await db;
     final outfits = await d.query(
       'outfit',
@@ -406,7 +404,7 @@ class LocalDb {
   /// Mencatat bahwa pengguna melihat rekomendasi atasan + bawahan ini.
   /// Pasangan yang sama tidak digandakan; catatan lama diganti yang terbaru.
   Future<void> logRecommendation({
-    String ownerUid = 'default',
+    required String ownerUid,
     required int topId,
     required int bottomId,
     required String title,
@@ -427,7 +425,7 @@ class LocalDb {
   /// Riwayat rekomendasi, terbaru lebih dulu. Item yang sudah dihapus dari
   /// lemari ikut hilang dari riwayat.
   Future<List<SavedOutfit>> recommendationHistory({
-    String ownerUid = 'default',
+    required String ownerUid,
     int limit = 50,
   }) async {
     final d = await db;
@@ -474,7 +472,7 @@ class LocalDb {
 
   // ---------- Pengaturan lokal (mis. preferensi notifikasi) ----------
 
-  Future<String?> preference(String key, {String ownerUid = 'default'}) async {
+  Future<String?> preference(String key, {required String ownerUid}) async {
     final d = await db;
     final rows = await d.query(
       'app_preference',
@@ -488,7 +486,7 @@ class LocalDb {
   Future<void> setPreference(
     String key,
     String value, {
-    String ownerUid = 'default',
+    required String ownerUid,
   }) async {
     final d = await db;
     await d.insert('app_preference', {
@@ -505,7 +503,8 @@ class LocalDb {
       "SELECT "
       "(SELECT COUNT(*) FROM wardrobe_item WHERE owner_uid = '__legacy__') + "
       "(SELECT COUNT(*) FROM outfit WHERE owner_uid = '__legacy__') + "
-      "(SELECT COUNT(*) FROM recommendation_history WHERE owner_uid = '__legacy__') "
+      "(SELECT COUNT(*) FROM recommendation_history WHERE owner_uid = '__legacy__') + "
+      "(SELECT COUNT(*) FROM app_preference WHERE owner_uid = '__legacy__') "
       'AS n',
     );
     return (rows.first['n'] as num?)?.toInt() ?? 0;
@@ -521,7 +520,7 @@ class LocalDb {
   /// Memindahkan satu item lama ke akun dan memperbarui path fotonya.
   Future<void> claimLegacyWardrobeItem(
     int id, {
-    String ownerUid = 'default',
+    required String ownerUid,
     required String imagePath,
   }) async {
     final d = await db;

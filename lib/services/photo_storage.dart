@@ -41,7 +41,7 @@ class PhotoStorage {
   }) async {
     final dir = await wardrobeDirectory(uid);
     final ext = extension ?? p.extension(sourcePath);
-    final name = '${DateTime.now().millisecondsSinceEpoch}$ext';
+    final name = '${DateTime.now().microsecondsSinceEpoch}$ext';
     final target = p.join(dir.path, name);
     await File(sourcePath).copy(target);
     return target;
@@ -53,17 +53,14 @@ class PhotoStorage {
     return Directory(p.join(base.path, 'wardrobe'));
   }
 
-  static Future<String?> moveLegacyFile(String uid, String oldPath) async {
+  /// Menyalin foto lama tanpa menghapus sumbernya. Sumber baru dihapus setelah
+  /// seluruh baris database berhasil diklaim, sehingga proses yang terhenti di
+  /// tengah tidak menghilangkan foto.
+  static Future<String?> copyLegacyFile(String uid, String oldPath) async {
     final source = File(oldPath);
     if (!await source.exists()) return null;
     try {
-      final moved = await save(uid, oldPath);
-      try {
-        await source.delete();
-      } catch (_) {
-        // File lama boleh tertinggal; data baru sudah tersalin.
-      }
-      return moved;
+      return await save(uid, oldPath);
     } catch (_) {
       return null;
     }
@@ -81,7 +78,8 @@ class PhotoStorage {
   }
 
   static Future<void> deleteUserFolder(String uid) async {
-    final dir = await wardrobeDirectory(uid);
+    final base = await _baseDirectory();
+    final dir = Directory(p.join(base.path, 'wardrobe', safeUid(uid)));
     if (await dir.exists()) await dir.delete(recursive: true);
   }
 }

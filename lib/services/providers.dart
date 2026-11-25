@@ -349,6 +349,7 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
       for (final item in state)
         if (item.id == garment.id) garment else item,
     ];
+    await _refreshPreferences(uid);
   }
 
   void remove(String id) {
@@ -356,12 +357,31 @@ class WardrobeNotifier extends Notifier<List<Garment>> {
     if (uid == null) return;
     final target = state.where((g) => g.id == id).firstOrNull;
     final n = int.tryParse(id);
-    if (n != null) {
-      unawaited(ref.read(localDbProvider).deleteWardrobeItem(n, ownerUid: uid));
-    }
     final path = target?.imagePath;
-    if (path != null) unawaited(PhotoStorage.deleteFileIfOwned(path));
     state = state.where((g) => g.id != id).toList();
+    unawaited(_deleteAndRefresh(n, uid, path));
+  }
+
+  Future<void> _deleteAndRefresh(int? id, String uid, String? path) async {
+    try {
+      if (id != null) {
+        await ref.read(localDbProvider).deleteWardrobeItem(id, ownerUid: uid);
+      }
+      if (path != null) await PhotoStorage.deleteFileIfOwned(path);
+      await _refreshPreferences(uid);
+    } catch (_) {
+      // Data sudah hilang dari tampilan; kegagalan pembersihan tidak boleh
+      // mengembalikan item ke lemari.
+    }
+  }
+
+  Future<void> _refreshPreferences(String uid) async {
+    try {
+      await ref.read(userPreferenceServiceProvider).refreshFromOutfits(uid);
+      ref.invalidate(userPreferencesProvider);
+    } catch (_) {
+      // Preferensi lokal tetap dipakai bila sinkronisasi gagal.
+    }
   }
 
   /// Mengosongkan lemari, dipakai saat pengguna keluar atau menghapus akun.
@@ -375,8 +395,11 @@ final wardrobeProvider = NotifierProvider<WardrobeNotifier, List<Garment>>(
 );
 
 /// Outfit yang disimpan pengguna dari layar detail. Dibaca dari SQLite.
+/// autoDispose mencegah cache akun lama dipakai setelah pergantian akun.
 /// Panggil `ref.invalidate(savedOutfitsProvider)` setelah menyimpan outfit baru.
-final savedOutfitsProvider = FutureProvider<List<SavedOutfit>>((ref) async {
+final savedOutfitsProvider = FutureProvider.autoDispose<List<SavedOutfit>>((
+  ref,
+) async {
   final uid = ref.watch(activeUidProvider);
   if (uid == null) return const <SavedOutfit>[];
   try {

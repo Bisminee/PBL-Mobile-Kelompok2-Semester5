@@ -215,7 +215,10 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
 
     final outfits = ref.watch(savedOutfitsProvider);
     final legacyCount = ref.watch(legacyDataCountProvider).valueOrNull ?? 0;
-    final semuaOutfit = outfits.valueOrNull ?? const [];
+    // Jangan tampilkan nilai cache saat provider memuat akun baru.
+    final semuaOutfit = outfits.isLoading
+        ? const <SavedOutfit>[]
+        : (outfits.valueOrNull ?? const <SavedOutfit>[]);
     final outfitTersaring = semuaOutfit.where((o) {
       final cocokTeks =
           kueri.isEmpty ||
