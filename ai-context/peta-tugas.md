@@ -6,6 +6,9 @@ Sumber kebenaran: `Pembagian Tugas/feature-breakdown-id.md`,
 `Pembagian Tugas/pembagian-tugas-minggu-11.md`, dan
 `Pembagian Tugas/tugas-ml-per-anggota.md`.
 
+Pembagian mobile dan ML terbaru: `Pembagian Tugas/pembagian-tugas-minggu-14.md`
+(25 November 2026).
+
 ## 1. Epic dan status
 
 | Epic | Nama | Status |

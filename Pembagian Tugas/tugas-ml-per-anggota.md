@@ -3,6 +3,10 @@
 Diperbarui: 9 November 2026
 Branch acuan: `dev` (`f67732a`)
 
+> Catatan 25 November 2026: pembagian mobile dan ML terbaru ada di
+> `Pembagian Tugas/pembagian-tugas-minggu-14.md`. Dokumen ini disimpan sebagai
+> arsip status per 9 November 2026.
+
 Dokumen ini menjelaskan tiga komponen ML Sera-Z, pembagian tugas ML tiap
 anggota, lokasi berkasnya, dan bagaimana alurnya bekerja di aplikasi.
 
