@@ -14,6 +14,8 @@ PROGRAM STUDI TEKNIK INFORMATIKA
 
 November 2026
 
+Diperbarui: 27 November 2026
+
 > Catatan kerja: dokumen ini adalah draf Milestone 2. Bagian yang masih perlu
 > dilengkapi ditandai dengan `[isi ...]`. Hapus catatan kerja sebelum ekspor PDF.
 
@@ -37,7 +39,7 @@ November 2026
 
 ### S.2 Status Milestone 2
 
-Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai rekomendasi: pengguna memilih foto, melakukan crop, model mengklasifikasikan jenis pakaian, warna diekstrak dan dapat dikoreksi, lalu lemari dan rekomendasi outfit menampilkan hasil. Model ML sudah dipanggil dari aplikasi dan ambang 70 persen dipakai untuk menolak hasil yang tidak meyakinkan. Aplikasi sudah dipasang pada perangkat Android dan 170 test otomatis lulus. Logbook Minggu 9–12 sudah disusun, tetapi tangkapan layar akhir, video demo, tag `milestone-2`, dan bukti pengujian manual formal belum lengkap. Model 9 kelas belum dipasang sebagai aset aplikasi; aset yang dipakai masih 15 kelas. Rencana perbaikan ada di Bab 4.3 dan S.6.
+Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai rekomendasi: pengguna memilih foto, melakukan crop, model mengklasifikasikan jenis pakaian, warna diekstrak dan dapat dikoreksi, lalu lemari dan rekomendasi outfit menampilkan hasil. Model ML sudah dipanggil dari aplikasi dan ambang 70 persen dipakai untuk menolak hasil yang tidak meyakinkan. Aplikasi sudah dipasang pada perangkat Android dan 174 test otomatis lulus. Pemisahan data lokal, foto, preferensi, dan riwayat per akun sudah digabung lewat PR #62. Notebook remapping 16 warna ke 14 warna tabel ML sudah digabung lewat PR #63 sebagai acuan Izza. Logbook Minggu 9–12 sudah disusun, tetapi tangkapan layar akhir, video demo, tag `milestone-2`, dan bukti pengujian manual formal belum lengkap. Model 9 kelas belum dipasang sebagai aset aplikasi; aset yang dipakai masih 15 kelas. Rencana perbaikan ada di Bab 4.3 dan S.6.
 
 ### S.3 Tindak Lanjut Milestone 1
 
@@ -45,10 +47,11 @@ Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai
 |---|---|---|---|
 | Ekspor TFLite model sendiri belum selesai | Pembelajaran Mesin | Model 9 kelas sudah dievaluasi, tetapi aset aplikasi masih 15 kelas | Belum selesai |
 | Uji perangkat belum dilakukan | Penjaminan Mutu | APK debug dipasang dan diuji pada Samsung A32 | Sebagian |
-| Rencana QA formal belum ada | Penjaminan Mutu | Test otomatis naik dari 39 menjadi 170; kasus uji manual disusun di Bab 4 | Sebagian |
+| Rencana QA formal belum ada | Penjaminan Mutu | Test otomatis naik dari 39 menjadi 174; kasus uji manual disusun di Bab 4 | Sebagian |
 | Model 3 masih memakai data sintetis | Pembelajaran Mesin | Tabel skor pasangan dipakai; MLP sintetis belum dipakai aplikasi | Belum selesai |
 | Halaman Admin dan Detail belum selesai | Pemrograman Mobile | Detail pakaian dan detail outfit selesai; Admin masih PR #36 | Sebagian |
-| Integrasi warna masih 14 palet | Pembelajaran Mesin | Acuan 16 keluarga warna dan koreksi warna pengguna sudah ditambahkan | Selesai |
+| Data pengguna belum terpisah per akun | Pemrograman Mobile | Data lokal, foto, preferensi, dan riwayat sudah dipisahkan per uid; uji A/B manual belum | Sebagian |
+| Integrasi warna masih 14 palet | Pembelajaran Mesin | Acuan 16 keluarga warna dan koreksi warna pengguna sudah ditambahkan; pemetaan 16 ke 14 tersedia di notebook | Selesai |
 | Klaim model 10 kelas belum valid | Pembelajaran Mesin | PR #32 ditahan; TFLite hanya benar 3 dari 270 foto | Ditolak sementara |
 
 ### Ringkasan Perubahan dari Milestone 1
@@ -61,8 +64,9 @@ Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai
 | Kamera | Ambil foto dan pratinjau | Crop tiga tombol, flash, hapus nama berkas, validasi area | Memperbaiki UX dan kualitas input |
 | Ambang deteksi | Keyakinan tinggi hanya memberi peringatan | Di bawah 70 persen ditolak sebagai bukan pakaian | Mengurangi hasil yang menyesatkan |
 | Lemari | Tambah, lihat, hapus | Edit atribut dan menu tekan lama | Melengkapi CRUD |
-| Database | Versi 3, 14 warna | Versi 4, lima warna baru di `ref_color` | Mendukung 16 warna |
-| QA | 39 test | 170 test, analyze bersih, APK diuji | Meningkatkan bukti kualitas |
+| Database | Versi 3, 14 warna | Versi 5, 16 warna dan data per `owner_uid` | Mendukung 16 warna dan akun terpisah |
+| QA | 39 test | 174 test, analyze bersih, APK diuji | Meningkatkan bukti kualitas |
+| Data pengguna | Satu ruang data lokal | Lemari, outfit, riwayat, preferensi, dan foto per uid | Mendukung lebih dari satu akun di perangkat yang sama |
 | Model 1 | 9 kelas terlatih, aset 15 kelas | Belum berubah: aset masih 15 kelas | Ekspor dan validasi TFLite belum selesai |
 | Model 3 | Data sintetis | Belum berubah | Data pasangan nyata belum tersedia |
 
@@ -71,10 +75,12 @@ Status kami Sebagian. Alur utama aplikasi mobile sudah berjalan dari foto sampai
 | Fitur | Status | Catatan |
 |---|---|---|
 | Login Google dan mode uji | Selesai | Firebase Auth dan Firestore |
+| Data lokal per akun | Selesai implementasi | SQLite versi 5, folder foto per uid; uji A/B manual belum |
 | Kamera, flash, dan pratinjau | Selesai | Termasuk tiga tombol simetris |
 | Crop dan validasi area | Selesai | Kamera dan galeri |
 | Klasifikasi jenis pakaian | Sebagian | Aset 15 kelas; model 9 kelas belum dipasang |
 | Ekstraksi warna | Sebagian | HSV; K-Means Dart belum |
+| Pemetaan 16 ke 14 warna | Selesai sebagai referensi | Notebook PR #63; integrasi aplikasi belum |
 | Koreksi warna pengguna | Selesai | 16 warna acuan |
 | Ambang bukan pakaian 70 persen | Selesai | Layar khusus jika di bawah ambang |
 | Lemari dan edit atribut | Selesai | Tambah, lihat, edit, hapus, tekan lama |
@@ -109,10 +115,10 @@ Daftar periksa target TI Semester 5:
 
 | Minggu | Target | Penanggung jawab |
 |---|---|---|
-| 13 | Ekspor dan validasi TFLite model 9 kelas; sambungkan aset; validasi logbook 9–12 | Ahmad, Bisma |
-| 14 | Integrasi K-Means dan 16 warna; selesaikan PR Admin; uji manual 10 kasus | Faatihurrizki, Izza, Abim |
-| 15 | Uji performa dan kompatibilitas; perbaiki bug; siapkan tangkapan layar, video, dan laporan | Seluruh tim |
-| 16 | Demo Day, Expo, dan penyelesaian laporan akhir | Seluruh tim |
+| 13 | Audit 16 warna, harmoni CIELAB, dan QA; 170 test | Bisma, Izza |
+| 14 | PR #62 data per akun dan PR #63 notebook remapping digabung; 174 test; PR #36/#51 masih konflik | Bisma, Izza, Pras |
+| 15 | Ekspor dan pasang TFLite model 9 kelas; uji A/B akun; selesaikan Admin; uji 34 kasus | Ahmad, Bisma, Izza |
+| 16 | Uji performa dan kompatibilitas; demo, video, tag, dan laporan akhir | Seluruh tim |
 
 ## Bab 1. Pendahuluan
 
@@ -224,11 +230,11 @@ Database lokal `fashion_app.db` memakai SQLite. Tabel utama:
 
 | Tabel | Isi | Kunci atau batasan |
 |---|---|---|
-| `wardrobe_item` | Pakaian pengguna | id, garment_type, slot, color_family, color_hex |
-| `outfit` | Outfit tersimpan | id, name, target_formality, match_score |
+| `wardrobe_item` | Pakaian pengguna | id, owner_uid, garment_type, slot, color_family, color_hex |
+| `outfit` | Outfit tersimpan | id, owner_uid, name, target_formality, match_score |
 | `outfit_item` | Relasi outfit ke pakaian | outfit_id, wardrobe_item_id |
-| `recommendation_history` | Riwayat rekomendasi | top_item_id, bottom_item_id, unique pair |
-| `app_preference` | Preferensi lokal | key, value |
+| `recommendation_history` | Riwayat rekomendasi | owner_uid, top_item_id, bottom_item_id, unique pair |
+| `app_preference` | Preferensi lokal | owner_uid, key, value |
 | `ref_color` | Warna acuan | color_family, hex |
 | `ref_garment_type` | Jenis pakaian | garment_type, slot, detectable |
 | `catalog_item` | Katalog untuk saran slot | garment_type, color_family, slot |
@@ -236,21 +242,22 @@ Database lokal `fashion_app.db` memakai SQLite. Tabel utama:
 | `ml_style` | Prediksi style | jenis, warna, gender, age |
 | `ml_pair_score` | Skor pasangan | type_a, color_a, type_b, color_b |
 
-Versi database 4 menambahkan `cream`, `maroon`, `olive`, `teal`, dan `navy` ke `ref_color`. Migrasi dijalankan lewat `onUpgrade` tanpa menghapus data pengguna.
+Versi database 5 menambahkan `owner_uid` ke `wardrobe_item`, `outfit`, dan `recommendation_history`, serta memisahkan preferensi per akun. Versi 4 sebelumnya menambahkan `cream`, `maroon`, `olive`, `teal`, dan `navy` ke `ref_color`. Migrasi dijalankan lewat `onUpgrade` tanpa menghapus data pengguna. Foto disimpan di folder aplikasi per uid, bukan di galeri umum.
 
 Normalisasi:
 
-1. `wardrobe_item` menyimpan satu item per baris.
+1. `wardrobe_item` menyimpan satu item per baris dan satu pemilik.
 2. `outfit_item` memisahkan relasi banyak-ke-banyak.
 3. `recommendation_history` memakai pasangan unik agar tidak menggandakan riwayat.
-4. `ref_color` dan `ref_garment_type` menjadi tabel referensi.
+4. `app_preference` memakai pasangan `(owner_uid, key)`.
+5. `ref_color` dan `ref_garment_type` menjadi tabel referensi.
 
 ### 2.4 Rancangan Model ML
 
 | Komponen | Rancangan | Status |
 |---|---|---|
 | Model 1 | YOLOv11n-cls, input 224 x 224, 9 kelas target | Terlatih; aset aplikasi 15 kelas |
-| Modul warna | HSV area tengah, 16 keluarga acuan | Berjalan; K-Means Dart belum |
+| Modul warna | HSV area tengah, 16 keluarga acuan | Berjalan; K-Means Dart belum; pemetaan 16 ke 14 tersedia di notebook |
 | Model 3 | Tabel skor pasangan dan aturan harmoni | Berjalan; MLP sintetis belum dipakai |
 | Penolakan non-pakaian | Ambang confidence 70 persen | Berjalan |
 | Segmentasi | Belum | Wacana |
@@ -348,14 +355,14 @@ Detail outfit mencatat riwayat rekomendasi ke `recommendation_history`. Pasangan
 
 ### 3.3 Basis Data
 
-Database naik ke versi 4. Migrasi menambahkan warna baru ke `ref_color`. Contoh:
+Database naik ke versi 5. Versi 4 menambahkan warna baru ke `ref_color`; versi 5 menambahkan `owner_uid` dan memisahkan preferensi per akun. Contoh:
 
 ```sql
 INSERT OR IGNORE INTO ref_color (color_family, hex)
 VALUES ('cream', '#F2E3C6');
 ```
 
-Data pengguna tidak dihapus. Tabel referensi ML tetap 14 warna; warna pengguna baru disimpan di `ref_color` agar edit atribut tidak gagal.
+Data pengguna tidak dihapus. Tabel referensi ML tetap 14 warna; warna pengguna 16 keluarga dipetakan ke 14 warna saat mencari skor. Foto pengguna disimpan di folder aplikasi per uid.
 
 ### 3.4 Model dan Cara Memasangnya ke Aplikasi
 
@@ -367,10 +374,11 @@ Data pengguna tidak dihapus. Tabel referensi ML tetap 14 warna; warna pengguna b
 6. Model latihan 9 kelas belum diekspor dan dipasang sebagai aset final.
 7. Model 10 kelas di PR #32 belum valid.
 8. Model 3 memakai tabel `ml_pair_score`, bukan inferensi MLP.
+9. Notebook remapping 16 ke 14 warna tersedia di `ml/notebooks/remapping_warna_sera_z.ipynb`; integrasi ke aplikasi belum.
 
 ### 3.5 Penyambungan dan Deploy
 
-APK debug arm64 dibangun dan dipasang pada perangkat Samsung A32, Android 13. Web belum didukung karena `tflite_flutter` dan `ffi` tidak dapat dikompilasi ke web. Tag `milestone-2` belum dibuat.
+APK debug arm64 dibangun dan dipasang pada perangkat Samsung A32, Android 13. Web belum didukung karena `tflite_flutter` dan `ffi` tidak dapat dikompilasi ke web. Tag `milestone-2` belum dibuat. APK terbaru memakai 174 test otomatis dan sudah memuat perbaikan pemisahan data per akun dari PR #62.
 
 ## Bab 4. Pengujian dan Evaluasi
 
@@ -383,6 +391,7 @@ Jenis pengujian:
 3. Uji perangkat untuk kamera, tekan lama, detail outfit, dan edit.
 4. Uji ambang 70 persen melalui unit test dan rencana uji foto.
 5. Uji manual alur utama minimal 10 kasus.
+6. Uji akun A/B untuk memastikan data, foto, dan preferensi tidak tercampur.
 
 Alat dan perangkat:
 
@@ -409,6 +418,7 @@ Alat dan perangkat:
 | TC-12 | Detail outfit tersimpan | Detail terbuka | Berhasil di perangkat | Lulus |
 | TC-13 | Tekan lama pakaian/outfit | Menu Lihat, Edit, Hapus | Berhasil di perangkat untuk outfit; pakaian diuji widget | Lulus |
 | TC-14 | Flash kamera | Mode berubah | Widget test lulus | Lulus otomatis |
+| TC-15 | Akun A/B | Data, foto, dan preferensi tidak tercampur | Implementasi dan migrasi perangkat sudah; uji A/B formal belum | Perlu uji manual |
 
 Keterlacakan kebutuhan ke kasus uji:
 
@@ -422,6 +432,7 @@ Keterlacakan kebutuhan ke kasus uji:
 | Rekomendasi | TC-10, TC-11 |
 | Outfit tersimpan | TC-12, TC-13 |
 | Flash | TC-14 |
+| Data per akun | TC-15 |
 
 ### 4.3 Bug yang Ditemukan
 
@@ -436,6 +447,7 @@ Keterlacakan kebutuhan ke kasus uji:
 | BUG-07 | Tekan lama dan detail outfit tidak berjalan di APK lama | Tinggi | Selesai | Install ulang non-streaming |
 | BUG-08 | Warna deteksi hilang setelah koreksi | Sedang | Selesai | Komposisi asli dipertahankan |
 | BUG-09 | PR Admin masih konflik | Sedang | Terbuka | Rebase PR #36 |
+| BUG-10 | Pemetaan 16 ke 14 warna belum masuk aplikasi | Sedang | Terbuka | Integrasikan notebook PR #63 lewat M6.6 |
 
 ### 4.4 Hasil Awal Model
 
@@ -476,7 +488,7 @@ Ditulis pada laporan akhir.
 
 ### 5.1 Rencana dan Realisasi
 
-| Tugas | Penanggung jawab | Rencana | Realisasi sampai Minggu 12 |
+| Tugas | Penanggung jawab | Rencana | Realisasi sampai Minggu 14 |
 |---|---|---|---|
 | Fondasi aplikasi dan autentikasi | Bisma, Abim | Minggu 1–3 | Selesai |
 | Model 1 dan evaluasi | Ahmad, Bisma | Minggu 3–6 | Model 9 kelas selesai; aset belum |
@@ -486,15 +498,16 @@ Ditulis pada laporan akhir.
 | Lemari, edit atribut, tekan lama | Bisma, Abim | Minggu 10–11 | Selesai |
 | Rekomendasi per piece | Bisma, Faatihurrizki | Minggu 10–11 | Selesai |
 | Outfit tersimpan dan detail | Bisma | Minggu 11 | Selesai |
-| QA dan dokumentasi | Bisma, Izza | Minggu 11–12 | 170 test; dokumen sebagian |
-| Admin Master Data | Izza | Minggu 10–12 | Belum, PR #36 konflik |
+| Data lokal per akun dan foto per uid | Bisma | Minggu 13–14 | Selesai implementasi; uji A/B belum |
+| QA dan dokumentasi | Bisma, Izza | Minggu 11–14 | 174 test; dokumen sebagian |
+| Admin Master Data | Izza | Minggu 10–14 | Belum, PR #36 konflik |
 | Model 3 data nyata | Ahmad, Faatihurrizki | Minggu 9–12 | Belum |
 
 ### 5.2 Kontribusi Anggota
 
 | Nama | Tugas selesai | Bukti | Estimasi kontribusi | Bagian demo |
 |---|---|---|---|---|
-| Bisma Adhiaksa | Integrasi, rekomendasi, QA, dokumen, perbaikan UX | Commit, PR #59, #61 | 30 persen | Alur utama dan rekomendasi |
+| Bisma Adhiaksa | Integrasi, rekomendasi, QA, dokumen, perbaikan UX, data per akun | Commit, PR #59, #61, #62, #63 | 30 persen | Alur utama dan rekomendasi |
 | Abim Mustawa | UI mobile, kamera, layout, profil | Commit dan PR terkait | 17 persen | Kamera dan profil |
 | Ahmad Falahi | Pipeline ML, evaluasi Model 1 | Commit ML dan laporan | 17 persen | Model 1 |
 | Faatihurrizki Prasojo | Integrasi SQLite/TFLite, mesin outfit | PR #13 | 24 persen | Inferensi dan lemari |
@@ -513,15 +526,17 @@ Perubahan dari Milestone 1:
 | Warna menjadi 16 keluarga dan dapat dikoreksi | Validasi pengguna dan harmoni | Arahan 16 warna |
 | Ambang 70 persen | Mengurangi hasil bukan pakaian | Internal tim |
 | Kamera tiga tombol dan flash | Perbaikan UX | Umpan balik pengujian |
-| Database versi 4 | Mendukung warna baru | Internal tim |
+| Database versi 5 | Mendukung 16 warna dan data per akun | Internal tim |
+| Data lokal per akun | Privasi dan pemakaian beberapa akun | PR #62 |
 | Admin ditunda | Konflik dan prioritas alur utama | Akan dikonsultasikan |
 
 Risiko:
 
 | Risiko | Tingkat | Tindakan |
 |---|---|---|
-| Model 9 kelas belum menjadi aset aplikasi | Tinggi | Ekspor dan validasi Minggu 13 |
-| Tabel ML masih 14 warna | Tinggi | Legacy family atau regenerasi tabel |
+| Model 9 kelas belum menjadi aset aplikasi | Tinggi | Ekspor dan validasi Minggu 15 |
+| Tabel ML masih 14 warna | Tinggi | Pemetaan 16 ke 14 lewat notebook PR #63; integrasi aplikasi belum |
+| Uji A/B akun belum formal | Tinggi | Jalankan skenario akun A/B di perangkat |
 | Model 3 sintetis | Tinggi | Cari data pasangan nyata atau nyatakan batasan |
 | QA dan logbook belum lengkap | Sedang | Lengkapi Minggu 13–15 |
 | Latensi dan ukuran APK | Sedang | Ukur dan optimalkan |
@@ -552,7 +567,7 @@ Logbook Minggu 1–8 tersedia di `Pembagian Tugas/Logbook/logbook.md`. Logbook M
 | 11 (24–30 Nov) | Ekspor TFLite 9 kelas, uji manual 14 kasus, tangkapan layar, video, tag `milestone-2`, lengkapi Lampiran B/F/E, rebase PR #36 | Ahmad, Bisma, Izza | Label dan preprocessing harus sama; tautan harus publik | Demo |
 | 12 (1–7 Des) | Demo Day, perbaikan umpan balik, Bab 4.6/5.4/5.5, ekspor PDF dan unggah | Seluruh tim | Prioritas bug dan waktu | Selesai |
 
-Catatan: Minggu 11 dan 12 masih berstatus rencana per 23 November 2026. Hasil aktual perlu diperbarui setelah pelaksanaan.
+Catatan: status per 27 November 2026. Minggu 11 dan 12 masih berisi rencana; hasil aktual perlu diperbarui setelah pelaksanaan.
 
 ## Lampiran C. Dokumen Rujukan
 
@@ -576,8 +591,10 @@ Tidak ada dokumen tambahan yang diumumkan secara tertulis. Jika ada, tambahkan D
 | 1 | Repositori Git | S.5 | https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5 | Publik |
 | 2 | PR revisi mobile | Bab 3, 4 | https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/pull/59 | Publik |
 | 3 | PR ambang deteksi | Bab 4 | https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/pull/61 | Publik |
-| 4 | Tag milestone-2 | S.5 | [isi URL tag] | Publik |
-| 5 | Video demo | S.5 | [isi URL video] | Siapa saja yang memiliki link |
+| 4 | PR data per akun | Bab 2, 3 | https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/pull/62 | Publik |
+| 5 | PR notebook remapping warna | Bab 2, 3 | https://github.com/Bisminee/PBL-Mobile-Kelompok2-Semester5/pull/63 | Publik |
+| 6 | Tag milestone-2 | S.5 | [isi URL tag] | Publik |
+| 7 | Video demo | S.5 | [isi URL video] | Siapa saja yang memiliki link |
 
 ## Lampiran F. Dokumentasi Model Pembelajaran Mesin
 
@@ -660,5 +677,5 @@ Tidak wajib untuk TI Semester 5. Kueri SQLite yang penting:
 
 | Bagian | Alat | Tujuan | Pemeriksaan |
 |---|---|---|---|
-| Kode dan dokumentasi teknis | AI coding assistant | Contoh implementasi dan perapian dokumen | Ditinjau, `flutter analyze`, dan 170 test |
+| Kode dan dokumentasi teknis | AI coding assistant | Contoh implementasi dan perapian dokumen | Ditinjau, `flutter analyze`, dan 174 test |
 | Laporan | AI assistant | Merapikan kalimat dan tabel | Diperiksa dan disesuaikan tim |
