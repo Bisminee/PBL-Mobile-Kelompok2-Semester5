@@ -6,11 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_routes.dart';
-import '../../config/app_text_styles.dart';
 import '../../models/scan_source.dart';
+import '../../services/app_settings_service.dart';
+import '../../services/camera_error.dart';
 import '../../services/camera_service.dart';
 import '../../services/photo_intake.dart';
 import '../../widgets/scan/camera_controls.dart';
+import '../../widgets/scan/camera_error_panel.dart';
 import '../../widgets/scan/camera_overlay.dart';
 import 'gallery_pick.dart';
 
@@ -30,6 +32,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   bool _isInitializing = false;
   bool _isProcessing = false;
   String? _errorMessage;
+  bool _permissionDenied = false;
   FlashMode _flashMode = FlashMode.off;
 
   List<CameraDescription> get _cameras => CameraService.cameras;
@@ -47,7 +50,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     if (_cameras.isEmpty) {
-      _errorMessage = 'No camera was found on this device.';
+      _errorMessage = 'Kamera tidak ditemukan di perangkat ini.';
     } else {
       _initializeCamera(_cameras[_cameraIndex]);
     }
@@ -80,6 +83,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       setState(() {
         _isInitializing = true;
         _errorMessage = null;
+        _permissionDenied = false;
       });
     }
 
@@ -95,7 +99,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       _controller = controller;
       await _applyFlashMode(controller, _flashMode);
     } on CameraException catch (e) {
-      _errorMessage = _describeError(e);
+      final error = describeCameraError(e);
+      _errorMessage = error.message;
+      _permissionDenied = error.permissionDenied;
     }
 
     if (mounted) {
@@ -141,7 +147,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(_describeError(e))));
+      ).showSnackBar(SnackBar(content: Text(describeCameraError(e).message)));
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -205,16 +211,16 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
   }
 
-  String _describeError(CameraException e) {
-    switch (e.code) {
-      case 'CameraAccessDenied':
-      case 'CameraAccessDeniedWithoutPrompt':
-        return 'Camera permission was denied. Please allow it in settings.';
-      case 'CameraAccessRestricted':
-        return 'Camera access is restricted on this device.';
-      default:
-        return 'Camera error: ${e.description ?? e.code}';
-    }
+  Future<void> _openSettings() async {
+    final opened = await AppSettingsService.open();
+    if (!mounted || opened) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Pengaturan aplikasi tidak bisa dibuka di perangkat ini.',
+        ),
+      ),
+    );
   }
 
   @override
@@ -253,33 +259,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   Widget _buildPreview() {
     if (_errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.no_photography, size: 64, color: Colors.white),
-              const SizedBox(height: 12),
-              Text(
-                _errorMessage!,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body.copyWith(color: Colors.white),
-              ),
-              if (_cameras.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                TextButton.icon(
-                  onPressed: () => _initializeCamera(_cameras[_cameraIndex]),
-                  icon: const Icon(Icons.refresh, color: Colors.white),
-                  label: const Text(
-                    'Refresh',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
+      return CameraErrorPanel(
+        message: _errorMessage!,
+        showSettings: _permissionDenied,
+        onOpenSettings: _permissionDenied ? _openSettings : null,
+        onRefresh: _cameras.isEmpty
+            ? null
+            : () => _initializeCamera(_cameras[_cameraIndex]),
       );
     }
 

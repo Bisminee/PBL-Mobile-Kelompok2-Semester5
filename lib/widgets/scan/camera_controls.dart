@@ -79,7 +79,7 @@ class CameraControls extends StatelessWidget {
   Widget _shutter() {
     return Semantics(
       button: true,
-      label: 'Take picture',
+      label: 'Ambil foto',
       child: GestureDetector(
         onTap: canCapture ? onCapture : null,
         child: Opacity(
@@ -107,7 +107,7 @@ class CameraControls extends StatelessWidget {
   Widget _switchButton() {
     return Semantics(
       button: true,
-      label: 'Switch camera',
+      label: 'Ganti kamera',
       child: GestureDetector(
         onTap: canSwitch ? onSwitch : null,
         child: Opacity(

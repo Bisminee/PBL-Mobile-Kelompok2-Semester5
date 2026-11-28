@@ -52,7 +52,7 @@ void main() {
     var captured = 0;
     await pumpControls(tester, onGallery: () {}, onCapture: () => captured++);
 
-    await tester.tap(find.bySemanticsLabel('Take picture'));
+    await tester.tap(find.bySemanticsLabel('Ambil foto'));
     await tester.pump();
 
     expect(captured, 1);
