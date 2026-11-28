@@ -90,6 +90,22 @@ void main() {
       expect(find.text('Buka Pengaturan'), findsNothing);
       expect(find.text('Muat Ulang'), findsOneWidget);
     });
+
+    testWidgets('tidak overflow di layar 320 px', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await pump(
+        tester,
+        showSettings: true,
+        onOpenSettings: () {},
+        onRefresh: () {},
+      );
+
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets('layar kamera tanpa kamera memakai pesan Indonesia', (
