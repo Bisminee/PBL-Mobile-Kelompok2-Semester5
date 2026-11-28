@@ -255,7 +255,7 @@ class _DetectionResultScreenState extends ConsumerState<DetectionResultScreen> {
                       ),
                     PillChip(
                       label: 'Lainnya…',
-                      selected: false,
+                      selected: d.alternatives.every((a) => a.label != d.type),
                       onTap: _pickOtherType,
                     ),
                   ],
