@@ -37,22 +37,32 @@ class PillChip extends StatelessWidget {
             color: selected ? AppColors.accent : AppColors.border,
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 14, color: fg),
-              const SizedBox(width: 6),
-            ],
-            Text(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final labelText = Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: AppTextStyles.body.copyWith(
                 color: fg,
                 fontSize: small ? 12 : 14,
                 fontWeight: FontWeight.w500,
               ),
-            ),
-          ],
+            );
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 14, color: fg),
+                  const SizedBox(width: 6),
+                ],
+                if (constraints.hasBoundedWidth)
+                  Flexible(child: labelText)
+                else
+                  labelText,
+              ],
+            );
+          },
         ),
       ),
     );

@@ -12,6 +12,7 @@ import '../../services/providers.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/circle_icon_button.dart';
 import '../../widgets/common/garment_photo.dart';
+import '../../widgets/common/pill_chip.dart';
 import '../../widgets/common/responsive.dart';
 
 /// Detail satu pakaian di lemari. Pakaian dikirim lewat `extra` dari go_router.
@@ -224,10 +225,13 @@ class _ClothingDetailScreenState extends ConsumerState<ClothingDetailScreen> {
       showDragHandle: true,
       builder: (sheetContext) => StatefulBuilder(
         builder: (ctx, setSheet) {
-          InputDecoration decoration(String label) => InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-            isDense: true,
+          Widget field(String label, List<Widget> chips) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: AppTextStyles.title.copyWith(fontSize: 14)),
+              const SizedBox(height: 8),
+              Wrap(spacing: 8, runSpacing: 8, children: chips),
+            ],
           );
 
           return SafeArea(
@@ -249,60 +253,41 @@ class _ClothingDetailScreenState extends ConsumerState<ClothingDetailScreen> {
                     style: AppTextStyles.bodySecondary,
                   ),
                   const SizedBox(height: 18),
-                  DropdownButtonFormField<String>(
-                    initialValue: type,
-                    decoration: decoration('Jenis pakaian'),
-                    items: [
-                      for (final t in types)
-                        DropdownMenuItem(value: t, child: Text(typeLabel(t))),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) setSheet(() => type = value);
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: color.key,
-                    decoration: decoration('Warna'),
-                    items: [
-                      for (final family in ColorFamily.values)
-                        DropdownMenuItem(
-                          value: family.key,
-                          child: Text(family.label),
-                        ),
-                    ],
-                    onChanged: (value) {
-                      final next = ColorFamily.byKey(value ?? '');
-                      if (next != null) setSheet(() => color = next);
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: formality,
-                    decoration: decoration('Formalitas'),
-                    items: [
-                      for (final f in formalityValues)
-                        DropdownMenuItem(
-                          value: f,
-                          child: Text(formalityLabel(f)),
-                        ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) setSheet(() => formality = value);
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: style,
-                    decoration: decoration('Style'),
-                    items: [
-                      for (final s in styleValues)
-                        DropdownMenuItem(value: s, child: Text(styleLabel(s))),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) setSheet(() => style = value);
-                    },
-                  ),
+                  field('Jenis pakaian', [
+                    for (final t in types)
+                      PillChip(
+                        label: typeLabel(t),
+                        selected: t == type,
+                        onTap: () => setSheet(() => type = t),
+                      ),
+                  ]),
+                  const SizedBox(height: 18),
+                  field('Warna', [
+                    for (final family in ColorFamily.values)
+                      PillChip(
+                        label: family.label,
+                        selected: family.key == color.key,
+                        onTap: () => setSheet(() => color = family),
+                      ),
+                  ]),
+                  const SizedBox(height: 18),
+                  field('Formalitas', [
+                    for (final f in formalityValues)
+                      PillChip(
+                        label: formalityLabel(f),
+                        selected: f == formality,
+                        onTap: () => setSheet(() => formality = f),
+                      ),
+                  ]),
+                  const SizedBox(height: 18),
+                  field('Style', [
+                    for (final s in styleValues)
+                      PillChip(
+                        label: styleLabel(s),
+                        selected: s == style,
+                        onTap: () => setSheet(() => style = s),
+                      ),
+                  ]),
                   const SizedBox(height: 20),
                   Row(
                     children: [
